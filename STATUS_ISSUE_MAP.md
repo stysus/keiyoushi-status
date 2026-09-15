@@ -1,19 +1,20 @@
 # Bug Issue → Extension Map
 
-Matched: 187 of 190 open bug issues\
-Timestamp: `2026-09-14T13:17:12+00:00`
+Matched: 188 of 191 open bug issues\
+Timestamp: `2026-09-15T08:46:04+00:00`
 
 
 ## Exact match
 
 
-Count: 141
+Count: 142
 
 | Issue | Source | Status | Extension | URL |
 |-------|--------|:------:|-----------|-----|
+| [#19092](https://github.com/keiyoushi/extensions-source/issues/19092) Read Horimiya Online: `No chapters found` / website redesign | Read Horimiya Online | ✅ | Read Horimiya Online `100%` | [https://read-horimiya.online](https://read-horimiya.online) |
+| [#19082](https://github.com/keiyoushi/extensions-source/issues/19082) Atsumaru: Opening any latest chapter of a series won't load. "HTTP 410, check website in Webview" error happens. | Atsumaru | ✅ | Atsumaru `100%` | [https://atsu.moe](https://atsu.moe) |
 | [#19075](https://github.com/keiyoushi/extensions-source/issues/19075) Astral Scans change the domain | Astral Scans | ❌ | Astral Scans `100%` | [https://astralscans.top](https://astralscans.top) |
-| [#19069](https://github.com/keiyoushi/extensions-source/issues/19069) Capítulos e obras do XXX Yaoi não abre | XXX Yaoi | 🛑 | XXX Yaoi `100%` | [https://3xyaoi.com](https://3xyaoi.com) |
-| [#19062](https://github.com/keiyoushi/extensions-source/issues/19062) pages not found | Ikigai Mangas | 🚧 | Ikigai Mangas `100%` | [https://visorikigai.gettocaboca.com](https://visorikigai.gettocaboca.com) |
+| [#19069](https://github.com/keiyoushi/extensions-source/issues/19069) XXX Yaoi: `Attempt to invoke virtual method`, `Nenhuma página encontrada` error | XXX Yaoi | 🛑 | XXX Yaoi `100%` | [https://3xyaoi.com](https://3xyaoi.com) |
 | [#19040](https://github.com/keiyoushi/extensions-source/issues/19040) Mangitto: No results found | Mangitto | 🛑 | Mangitto `100%` | [https://mangtto.com](https://mangtto.com) |
 | [#19039](https://github.com/keiyoushi/extensions-source/issues/19039) Slept Manga: no results found | Slept Manga | 🚧 | Slept Manga `100%` | [https://sleptmanga.com.tr](https://sleptmanga.com.tr) |
 | [#19024](https://github.com/keiyoushi/extensions-source/issues/19024) Toonkor: New website URL (`tkor152.com`) | Toonkor | 🔀 | Toonkor `100%` | [https://tkor151.com](https://tkor151.com) |
@@ -156,21 +157,20 @@ Count: 141
 ## Single match
 
 
-Count: 28
+Count: 27
 
 | Issue | Source | Status | Extension | URL |
 |-------|--------|:------:|-----------|-----|
-| [#19074](https://github.com/keiyoushi/extensions-source/issues/19074) Submanhwa is having Cloudflare issues. | submanhwa | 🚧 | Submanhwa `100%` | [https://submanhwa.com](https://submanhwa.com) |
-| [#19072](https://github.com/keiyoushi/extensions-source/issues/19072) New chapter redirect to another site (No content) | Artlapsa | ✅ | Art Lapsa `94%` | [https://artlapsa.com](https://artlapsa.com) |
+| [#19074](https://github.com/keiyoushi/extensions-source/issues/19074) Submanhwa: `HTTP 403` error on chapter images | submanhwa | 🚧 | Submanhwa `100%` | [https://submanhwa.com](https://submanhwa.com) |
+| [#19072](https://github.com/keiyoushi/extensions-source/issues/19072) Art Lapsa: `HTTP 404` error on some chapter images | Artlapsa | ✅ | Art Lapsa `100%` | [https://artlapsa.com](https://artlapsa.com) |
 | [#19056](https://github.com/keiyoushi/extensions-source/issues/19056) Siren scans "null epointer exception" | Siren scans | 🔀 | Siren Scans `100%` | [https://sirenscans.com](https://sirenscans.com) |
 | [#19038](https://github.com/keiyoushi/extensions-source/issues/19038) Mangagg Mising chapters. Download or not. | MangaGG Keiyoushi  en.mangagg | 🚧 | MangaGG `100%` | [https://mangagg.com](https://mangagg.com) |
 | [#19036](https://github.com/keiyoushi/extensions-source/issues/19036) Manwa 1.4.14 needs to be updated please | Manwa | 🚧 | 漫蛙 `100%` | [https://manwa.me](https://manwa.me) |
 | [#19019](https://github.com/keiyoushi/extensions-source/issues/19019) La biblioteca no se actualiza correctamente de eternal manga | Eternal mangas | 🚧 | EternalMangas `96%` | [https://eternalmangas.org](https://eternalmangas.org) |
-| [#19018](https://github.com/keiyoushi/extensions-source/issues/19018) Ikigai mangas | Ikigai mangas | 🚧 | Ikigai Mangas `100%` | [https://visorikigai.gettocaboca.com](https://visorikigai.gettocaboca.com) |
 | [#19015](https://github.com/keiyoushi/extensions-source/issues/19015) Siyah Melek: `IllegalArgumentException: Expected URL scheme` error on chapter pages, `No pages found` error on paid chapters/option to hide paid chapters | Siyah melek | ⚠️ | Siyah Melek `100%` | [https://siyahmelek.live](https://siyahmelek.live) |
-| [#19014](https://github.com/keiyoushi/extensions-source/issues/19014) mangakawaii url change | mangakawaii | 🛑 | Mangakawaii `100%` | [https://www.mangakawaii.io](https://www.mangakawaii.io) |
+| [#19014](https://github.com/keiyoushi/extensions-source/issues/19014) mangakawaii url change | mangakawaii | ❌ | Mangakawaii `100%` | [https://www.mangakawaii.io](https://www.mangakawaii.io) |
 | [#18999](https://github.com/keiyoushi/extensions-source/issues/18999) The Blank: `Unexpected JSON token` error | The blank | 🛑 | The Blank `100%` | [https://theblank.net](https://theblank.net) |
-| [#18943](https://github.com/keiyoushi/extensions-source/issues/18943) Ikigai mangas sale con Cloudflare y la página no tiene | Ikigai mangas | 🚧 | Ikigai Mangas `100%` | [https://visorikigai.gettocaboca.com](https://visorikigai.gettocaboca.com) |
+| [#18943](https://github.com/keiyoushi/extensions-source/issues/18943) Ikigai Mangas: No covers, `HTTP 403` with chapter pages | Ikigai mangas | 🚧 | Ikigai Mangas `100%` | [https://visorikigai.gettocaboca.com](https://visorikigai.gettocaboca.com) |
 | [#18894](https://github.com/keiyoushi/extensions-source/issues/18894) 肉漫屋 / Roumanwu: `Attempt to invoke virtual method` error | Roumanwu | ✅ | 肉漫屋 `100%` | [https://rouman5.com](https://rouman5.com) |
 | [#18852](https://github.com/keiyoushi/extensions-source/issues/18852) Categories filters doesnt work on IMHentai | all.imhentai | 🚧 | IMHentai `100%` | [https://imhentai.xxx](https://imhentai.xxx) |
 | [#18842](https://github.com/keiyoushi/extensions-source/issues/18842) Alphabet and tags missing on asmhentai | All.asmhentai. | ✅ | AsmHentai `100%` | [https://asmhentai.com](https://asmhentai.com) |
@@ -192,10 +192,12 @@ Count: 28
 ## Multiple matches
 
 
-Count: 18
+Count: 19
 
 | Issue | Source | Status | Extension | URL |
 |-------|--------|:------:|-----------|-----|
+| [#19089](https://github.com/keiyoushi/extensions-source/issues/19089) [ES] Ikigai Mangas - Pages replaced by anti-scraping | Ikigai Mangas 1.4. 36.  Miau Scan | ✅ | Miau Scan `100%` | [https://leemiau.com](https://leemiau.com) |
+| ↳ [#19089] |  | 🚧 | Ikigai Mangas `100%` | [https://visorikigai.gettocaboca.com](https://visorikigai.gettocaboca.com) |
 | [#18672](https://github.com/keiyoushi/extensions-source/issues/18672) Rimu Scans: `Failed to initialize decoder`/chapter pages doesn't load with Premium chapters | 1.4.35 rimu scan | 🛑 | Rimu Scans `title 100%` | [https://rimuscan.fr](https://rimuscan.fr) |
 | ↳ [#18672] |  | ✅ | Grim Scans `title 90%` | [https://grimscans.com](https://grimscans.com) |
 | [#18609](https://github.com/keiyoushi/extensions-source/issues/18609) Komga: Permissions/settings leak with multiple server instances | Komga: Permissions/settings leak with multiple server instances | ❌ | Komga `100%` | [https://127.0.0.1:25600](https://127.0.0.1:25600) |
@@ -212,7 +214,7 @@ Count: 18
 | ↳ [#17434] |  | ✅ | 늑대닷컴 - 포토툰 `title 100%` | [https://wfwf414.com](https://wfwf414.com) |
 | [#17374](https://github.com/keiyoushi/extensions-source/issues/17374) [FR] Scan-Manga: Broken extension due to hardcoded invalid subdomain | Scan-Manga | ⚠️ | Scan-Manga `100%` | [https://m.scan-manga.com](https://m.scan-manga.com) |
 | ↳ [#17374] |  | 🚧 | Manga Can `95%` | [https://mangacanblog.com](https://mangacanblog.com) |
-| [#16816](https://github.com/keiyoushi/extensions-source/issues/16816) Manga-TR: `No results found` error, website redesign | Manga-TR | ✅ | Manga-TR `100%` | [https://manga-tr.com](https://manga-tr.com) |
+| [#16816](https://github.com/keiyoushi/extensions-source/issues/16816) Manga-TR: `No results found` error, website redesign | Manga-TR | ⚠️ | Manga-TR `100%` | [https://manga-tr.com](https://manga-tr.com) |
 | ↳ [#16816] |  | ✅ | NTR-Manga `94%` | [https://www.ntr-manga.net](https://www.ntr-manga.net) |
 | [#13566](https://github.com/keiyoushi/extensions-source/issues/13566) GigaViewer theme sources not showing downloads | Comic Days 1.4.9, Sunday Web Every | ✅ | Comic Days `100%` | [https://comic-days.com](https://comic-days.com) |
 | ↳ [#13566] |  | ✅ | Sunday Web Every `100%` | [https://www.sunday-webry.com](https://www.sunday-webry.com) |
