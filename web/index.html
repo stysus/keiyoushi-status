@@ -45,17 +45,17 @@
       background: transparent;
     }
     ::-webkit-scrollbar-thumb {
-      background: rgba(161, 161, 170, 0.25);
+      background: rgba(161, 161, 170, 0.35);
       border-radius: 9999px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: rgba(161, 161, 170, 0.45);
+      background: rgba(161, 161, 170, 0.55);
     }
     .dark ::-webkit-scrollbar-thumb {
-      background: rgba(82, 82, 91, 0.35);
+      background: rgba(113, 113, 122, 0.45);
     }
     .dark ::-webkit-scrollbar-thumb:hover {
-      background: rgba(82, 82, 91, 0.6);
+      background: rgba(113, 113, 122, 0.7);
     }
     /* Tabular numbers for clean financial/data alignment */
     .tabular-nums {
@@ -63,21 +63,21 @@
     }
   </style>
 </head>
-<body class="bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 font-sans min-h-screen flex flex-col antialiased selection:bg-zinc-200 dark:selection:bg-zinc-800">
+<body class="bg-white text-zinc-950 dark:bg-zinc-950 dark:text-zinc-50 font-sans min-h-screen flex flex-col antialiased selection:bg-zinc-200 dark:selection:bg-zinc-800">
   
   <!-- Header / Navigation Bar -->
-  <header class="sticky top-0 z-40 w-full border-b border-zinc-200/80 dark:border-zinc-800/80 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md">
+  <header class="sticky top-0 z-40 w-full border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-4">
       
       <!-- Brand & Status Pill -->
       <div class="flex items-center gap-3">
         <a href="#" class="flex items-center gap-2 group">
-          <div class="w-6 h-6 rounded-md bg-zinc-900 dark:bg-zinc-100 flex items-center justify-center text-white dark:text-zinc-950 font-mono font-bold text-xs">
+          <div class="w-6 h-6 rounded-md bg-zinc-950 dark:bg-zinc-100 flex items-center justify-center text-white dark:text-zinc-950 font-mono font-bold text-xs shadow-sm">
             K
           </div>
           <div class="flex items-baseline gap-1.5">
-            <span class="text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 group-hover:text-zinc-600 dark:group-hover:text-zinc-300 transition-colors">Keiyoushi</span>
-            <span class="text-xs text-zinc-400 dark:text-zinc-500 font-normal">/ status</span>
+            <span class="text-sm font-bold tracking-tight text-zinc-950 dark:text-white group-hover:text-zinc-700 dark:group-hover:text-zinc-300 transition-colors">Keiyoushi</span>
+            <span class="text-xs text-zinc-500 dark:text-zinc-400 font-normal">/ status</span>
           </div>
         </a>
       </div>
@@ -86,17 +86,17 @@
       <div class="flex items-center gap-2">
         <!-- Export Dropdown -->
         <div class="relative inline-block text-left" id="exportMenuContainer">
-          <button id="exportBtn" type="button" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors">
+          <button id="exportBtn" type="button" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
             <span>Export</span>
-            <svg class="w-3 h-3 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            <svg class="w-3 h-3 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
           </button>
           
           <div id="exportMenu" class="hidden absolute right-0 mt-1 w-36 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 py-1 shadow-lg shadow-zinc-950/10 dark:shadow-zinc-950/50 z-50 text-xs">
-            <button id="exportCsvBtn" type="button" class="w-full text-left px-3 py-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-medium">
+            <button id="exportCsvBtn" type="button" class="w-full text-left px-3 py-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-medium">
               Export as CSV
             </button>
-            <button id="exportJsonBtn" type="button" class="w-full text-left px-3 py-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-medium">
+            <button id="exportJsonBtn" type="button" class="w-full text-left px-3 py-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-medium">
               Export as JSON
             </button>
           </div>
@@ -105,13 +105,13 @@
         <!-- GitHub Repository Link -->
         <a href="https://github.com/stysus/keiyoushi-status" target="_blank" rel="noopener noreferrer" 
            title="View on GitHub"
-           class="p-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors">
+           class="p-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors">
           <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
         </a>
 
         <!-- Dark/Light Theme Toggle -->
         <button id="themeToggle" type="button" aria-label="Toggle theme" 
-                class="p-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors">
+                class="p-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors">
           <!-- Sun icon -->
           <svg id="sunIcon" class="hidden w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 9h-1m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
           <!-- Moon icon -->
@@ -125,7 +125,7 @@
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
 
     <!-- Unified System Health Overview Hero -->
-    <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 p-5 sm:p-6 space-y-4">
+    <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 p-5 sm:p-6 space-y-4">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <!-- Hero headline -->
         <div class="flex items-center gap-3">
@@ -134,18 +134,18 @@
             <span id="heroDot" class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
           </div>
           <div>
-            <h2 id="heroStatusText" class="text-base sm:text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+            <h2 id="heroStatusText" class="text-base sm:text-lg font-bold tracking-tight text-zinc-950 dark:text-zinc-50 flex items-center gap-2">
               Loading system health...
             </h2>
-            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 mt-0.5 font-normal">
               Automated multi-region DNS & connection health monitoring
             </p>
           </div>
         </div>
 
         <!-- Relative Last Checked with UTC tooltip -->
-        <div class="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5 self-start sm:self-center font-mono" id="timeContainer">
-          <svg class="w-3.5 h-3.5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <div class="text-xs text-zinc-600 dark:text-zinc-400 flex items-center gap-1.5 self-start sm:self-center font-mono" id="timeContainer">
+          <svg class="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           <span id="lastUpdatedRelative" title="Loading timestamp...">Checking...</span>
         </div>
       </div>
@@ -161,41 +161,41 @@
         </div>
       </div>
 
-      <!-- Inline Metrics Strip -->
+      <!-- Inline Metrics Strip (High Contrast) -->
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 pt-1 font-mono text-xs">
-        <div class="bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 rounded-lg p-2.5">
-          <div class="text-zinc-400 text-[11px]">TOTAL MONITORED</div>
-          <div class="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mt-0.5 tabular-nums" id="statTotal">-</div>
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 shadow-sm">
+          <div class="text-zinc-600 dark:text-zinc-400 text-xs font-semibold tracking-tight">TOTAL MONITORED</div>
+          <div class="text-sm font-bold text-zinc-950 dark:text-white mt-0.5 tabular-nums" id="statTotal">-</div>
         </div>
-        <div class="bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 rounded-lg p-2.5">
-          <div class="text-emerald-600 dark:text-emerald-400 text-[11px] flex items-center gap-1">
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 shadow-sm">
+          <div class="text-emerald-700 dark:text-emerald-400 text-xs font-semibold tracking-tight flex items-center gap-1">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> OPERATIONAL
           </div>
-          <div class="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mt-0.5 tabular-nums" id="statOk">-</div>
+          <div class="text-sm font-bold text-zinc-950 dark:text-white mt-0.5 tabular-nums" id="statOk">-</div>
         </div>
-        <div class="bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 rounded-lg p-2.5">
-          <div class="text-blue-600 dark:text-blue-400 text-[11px] flex items-center gap-1">
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 shadow-sm">
+          <div class="text-blue-700 dark:text-blue-400 text-xs font-semibold tracking-tight flex items-center gap-1">
             <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> REDIRECTS
           </div>
-          <div class="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mt-0.5 tabular-nums" id="statRedirect">-</div>
+          <div class="text-sm font-bold text-zinc-950 dark:text-white mt-0.5 tabular-nums" id="statRedirect">-</div>
         </div>
-        <div class="bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 rounded-lg p-2.5">
-          <div class="text-amber-600 dark:text-amber-400 text-[11px] flex items-center gap-1">
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 shadow-sm">
+          <div class="text-amber-800 dark:text-amber-400 text-xs font-semibold tracking-tight flex items-center gap-1">
             <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> CF IUAM
           </div>
-          <div class="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mt-0.5 tabular-nums" id="statIuam">-</div>
+          <div class="text-sm font-bold text-zinc-950 dark:text-white mt-0.5 tabular-nums" id="statIuam">-</div>
         </div>
-        <div class="bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 rounded-lg p-2.5">
-          <div class="text-rose-600 dark:text-rose-400 text-[11px] flex items-center gap-1">
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 shadow-sm">
+          <div class="text-rose-700 dark:text-rose-400 text-xs font-semibold tracking-tight flex items-center gap-1">
             <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> CF BLOCKED
           </div>
-          <div class="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mt-0.5 tabular-nums" id="statBlock">-</div>
+          <div class="text-sm font-bold text-zinc-950 dark:text-white mt-0.5 tabular-nums" id="statBlock">-</div>
         </div>
-        <div class="bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 rounded-lg p-2.5">
-          <div class="text-red-600 dark:text-red-400 text-[11px] flex items-center gap-1">
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 shadow-sm">
+          <div class="text-red-700 dark:text-red-400 text-xs font-semibold tracking-tight flex items-center gap-1">
             <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> FAILED / OTHER
           </div>
-          <div class="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mt-0.5 tabular-nums" id="statError">-</div>
+          <div class="text-sm font-bold text-zinc-950 dark:text-white mt-0.5 tabular-nums" id="statError">-</div>
         </div>
       </div>
     </div>
@@ -205,23 +205,23 @@
       <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         
         <!-- Segmented Tab Pill Control (with 1, 2, 3 shortcuts) -->
-        <div class="inline-flex p-1 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 self-start text-xs font-medium" role="tablist">
-          <button id="tabExtensions" type="button" class="tab-btn px-3 py-1.5 rounded-lg flex items-center gap-2 transition-all bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-sm border border-zinc-200/60 dark:border-zinc-700/60" data-tab="extensions">
-            <span class="w-4 h-4 rounded text-[10px] font-mono flex items-center justify-center bg-zinc-100 dark:bg-zinc-700 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-600">1</span>
+        <div class="inline-flex p-1 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 self-start text-xs font-medium" role="tablist">
+          <button id="tabExtensions" type="button" class="tab-btn px-3 py-1.5 rounded-lg flex items-center gap-2 transition-all bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white shadow-sm border border-zinc-200 dark:border-zinc-700 font-semibold" data-tab="extensions">
+            <span class="w-4 h-4 rounded text-xs font-mono flex items-center justify-center bg-zinc-100 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-600 font-medium">1</span>
             <span>Extension Sources</span>
-            <span id="tabCountExtensions" class="px-1.5 py-0.2 rounded font-mono text-[11px] bg-zinc-100 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300">...</span>
+            <span id="tabCountExtensions" class="px-1.5 py-0.5 rounded font-mono text-xs bg-zinc-100 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-medium">...</span>
           </button>
           
-          <button id="tabIssues" type="button" class="tab-btn px-3 py-1.5 rounded-lg flex items-center gap-2 transition-all text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200" data-tab="issues">
-            <span class="w-4 h-4 rounded text-[10px] font-mono flex items-center justify-center bg-zinc-200/60 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400">2</span>
+          <button id="tabIssues" type="button" class="tab-btn px-3 py-1.5 rounded-lg flex items-center gap-2 transition-all text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white font-medium" data-tab="issues">
+            <span class="w-4 h-4 rounded text-xs font-mono flex items-center justify-center bg-zinc-200/70 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">2</span>
             <span>Issue URLs</span>
-            <span id="tabCountIssues" class="px-1.5 py-0.2 rounded font-mono text-[11px] text-zinc-400">...</span>
+            <span id="tabCountIssues" class="px-1.5 py-0.5 rounded font-mono text-xs text-zinc-500 dark:text-zinc-400">...</span>
           </button>
           
-          <button id="tabMap" type="button" class="tab-btn px-3 py-1.5 rounded-lg flex items-center gap-2 transition-all text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200" data-tab="map">
-            <span class="w-4 h-4 rounded text-[10px] font-mono flex items-center justify-center bg-zinc-200/60 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400">3</span>
+          <button id="tabMap" type="button" class="tab-btn px-3 py-1.5 rounded-lg flex items-center gap-2 transition-all text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white font-medium" data-tab="map">
+            <span class="w-4 h-4 rounded text-xs font-mono flex items-center justify-center bg-zinc-200/70 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">3</span>
             <span>Bug Issue Map</span>
-            <span id="tabCountMap" class="px-1.5 py-0.2 rounded font-mono text-[11px] text-zinc-400">...</span>
+            <span id="tabCountMap" class="px-1.5 py-0.5 rounded font-mono text-xs text-zinc-500 dark:text-zinc-400">...</span>
           </button>
         </div>
 
@@ -229,24 +229,24 @@
         <div class="flex items-center gap-3 w-full lg:w-auto">
           <!-- Command Input Search Bar -->
           <div class="relative flex-1 lg:w-80">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-400">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500 dark:text-zinc-400">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             </div>
             <input type="text" id="searchInput" placeholder="Filter current view..." 
-                   class="block w-full pl-9 pr-14 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-600 transition-colors">
+                   class="block w-full pl-9 pr-14 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-xs text-zinc-950 dark:text-white placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:border-zinc-500 dark:focus:border-zinc-500 transition-colors">
             
             <div class="absolute inset-y-0 right-0 pr-2.5 flex items-center gap-1">
-              <button id="clearSearchBtn" class="hidden text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 p-0.5">
+              <button id="clearSearchBtn" class="hidden text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 p-0.5">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
               </button>
-              <kbd class="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono text-zinc-400 bg-zinc-100 dark:bg-zinc-800 rounded border border-zinc-200 dark:border-zinc-700 select-none">/</kbd>
+              <kbd class="hidden sm:inline-block px-1.5 py-0.5 text-xs font-mono text-zinc-600 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 rounded border border-zinc-200 dark:border-zinc-700 select-none">/</kbd>
             </div>
           </div>
 
           <!-- Page Size selector -->
-          <div class="flex items-center gap-1.5 text-xs text-zinc-500 font-mono flex-shrink-0">
+          <div class="flex items-center gap-1.5 text-xs text-zinc-700 dark:text-zinc-300 font-mono flex-shrink-0">
             <span>Rows:</span>
-            <select id="pageSizeSelect" class="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 py-1.5 px-2 text-xs text-zinc-800 dark:text-zinc-200 focus:outline-none">
+            <select id="pageSizeSelect" class="rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 py-1.5 px-2 text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none">
               <option value="25">25</option>
               <option value="50" selected>50</option>
               <option value="100">100</option>
@@ -263,24 +263,24 @@
     </div>
 
     <!-- Data Table Container -->
-    <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 overflow-hidden flex flex-col shadow-sm">
+    <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/70 overflow-hidden flex flex-col shadow-sm">
       
       <!-- Loading State -->
       <div id="loadingState" class="p-16 flex flex-col items-center justify-center gap-3">
-        <svg class="animate-spin h-5 w-5 text-zinc-400" fill="none" viewBox="0 0 24 24">
+        <svg class="animate-spin h-5 w-5 text-zinc-500 dark:text-zinc-400" fill="none" viewBox="0 0 24 24">
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
         </svg>
-        <p class="text-xs text-zinc-400 font-mono">Fetching data...</p>
+        <p class="text-xs text-zinc-600 dark:text-zinc-400 font-mono">Fetching data...</p>
       </div>
 
       <!-- Table View -->
       <div id="tableWrapper" class="overflow-x-auto hidden">
         <table class="w-full text-left border-collapse text-xs">
-          <thead id="tableHead" class="bg-zinc-50/80 dark:bg-zinc-950/80 border-b border-zinc-200 dark:border-zinc-800 text-zinc-500 font-medium font-mono sticky top-0 select-none">
+          <thead id="tableHead" class="bg-zinc-50/90 dark:bg-zinc-950/90 border-b border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 font-semibold font-mono sticky top-0 select-none">
             <!-- Headers with sort hooks rendered via app.js -->
           </thead>
-          <tbody id="tableBody" class="divide-y divide-zinc-100 dark:divide-zinc-850">
+          <tbody id="tableBody" class="divide-y divide-zinc-200/80 dark:divide-zinc-800/80">
             <!-- Table rows generated dynamically -->
           </tbody>
         </table>
@@ -288,20 +288,20 @@
 
       <!-- Empty State -->
       <div id="emptyState" class="hidden p-16 text-center">
-        <div class="inline-flex w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-800 items-center justify-center text-zinc-400 mb-3">
+        <div class="inline-flex w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-800 items-center justify-center text-zinc-500 dark:text-zinc-400 mb-3">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
         </div>
-        <p class="text-sm font-medium text-zinc-800 dark:text-zinc-200">No matching entries found</p>
-        <p class="text-xs text-zinc-400 mt-1 max-w-sm mx-auto">No records match your active query or filters. Clear the filter to view all records.</p>
-        <button id="resetFiltersBtn" class="mt-4 px-3 py-1.5 rounded-lg text-xs font-medium border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 transition-colors">
+        <p class="text-sm font-semibold text-zinc-950 dark:text-white">No matching entries found</p>
+        <p class="text-xs text-zinc-600 dark:text-zinc-400 mt-1 max-w-sm mx-auto">No records match your active query or filters. Clear the filter to view all records.</p>
+        <button id="resetFiltersBtn" class="mt-4 px-3 py-1.5 rounded-lg text-xs font-semibold border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100 transition-colors">
           Reset Search & Filters
         </button>
       </div>
 
       <!-- Pagination Footer -->
-      <div id="paginationContainer" class="px-4 py-3 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between flex-wrap gap-4 text-xs font-mono text-zinc-500">
+      <div id="paginationContainer" class="px-4 py-3 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between flex-wrap gap-4 text-xs font-mono text-zinc-600 dark:text-zinc-400">
         <div id="paginationInfo">
-          Showing <span class="font-medium text-zinc-800 dark:text-zinc-200 tabular-nums" id="pageStart">1</span> to <span class="font-medium text-zinc-800 dark:text-zinc-200 tabular-nums" id="pageEnd">50</span> of <span class="font-medium text-zinc-800 dark:text-zinc-200 tabular-nums" id="pageTotal">1500</span> entries
+          Showing <span class="font-bold text-zinc-950 dark:text-white tabular-nums" id="pageStart">1</span> to <span class="font-bold text-zinc-950 dark:text-white tabular-nums" id="pageEnd">50</span> of <span class="font-bold text-zinc-950 dark:text-white tabular-nums" id="pageTotal">1500</span> entries
         </div>
         <div class="flex items-center gap-1" id="paginationButtons">
           <!-- Buttons rendered via app.js -->
@@ -311,26 +311,26 @@
   </main>
 
   <!-- Minimal Toast Notification -->
-  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-8 opacity-0 pointer-events-none transition-all duration-200 bg-zinc-900 dark:bg-white text-zinc-100 dark:text-zinc-950 px-3 py-2 rounded-lg shadow-xl text-xs font-medium flex items-center gap-2 font-mono">
-    <svg class="w-3.5 h-3.5 text-emerald-400 dark:text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-8 opacity-0 pointer-events-none transition-all duration-200 bg-zinc-950 dark:bg-white text-zinc-50 dark:text-zinc-950 px-3 py-2 rounded-lg shadow-xl text-xs font-semibold flex items-center gap-2 font-mono">
+    <svg class="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
     <span id="toastMsg">URL copied</span>
   </div>
 
   <!-- Minimal Footer -->
-  <footer class="mt-auto border-t border-zinc-200 dark:border-zinc-800 py-6 text-xs text-zinc-400 dark:text-zinc-500 font-mono">
+  <footer class="mt-auto border-t border-zinc-200 dark:border-zinc-800 py-6 text-xs text-zinc-600 dark:text-zinc-400 font-mono">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
       <div class="flex items-center gap-2">
         <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-        <span>Keiyoushi Extensions Monitor</span>
+        <span class="text-zinc-700 dark:text-zinc-300 font-medium">Keiyoushi Extensions Monitor</span>
       </div>
-      <div class="flex items-center gap-4 text-zinc-500">
-        <a href="https://github.com/keiyoushi/extensions-source" target="_blank" rel="noopener noreferrer" class="hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors">source repo</a>
+      <div class="flex items-center gap-4 text-zinc-600 dark:text-zinc-400">
+        <a href="https://github.com/keiyoushi/extensions-source" target="_blank" rel="noopener noreferrer" class="hover:text-zinc-950 dark:hover:text-white transition-colors">source repo</a>
         <span>•</span>
-        <a href="https://github.com/stysus/keiyoushi-status" target="_blank" rel="noopener noreferrer" class="hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors">status repo</a>
+        <a href="https://github.com/stysus/keiyoushi-status" target="_blank" rel="noopener noreferrer" class="hover:text-zinc-950 dark:hover:text-white transition-colors">status repo</a>
       </div>
     </div>
   </footer>
 
-  <script src="app.js"></script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>
