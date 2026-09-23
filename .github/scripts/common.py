@@ -47,47 +47,61 @@ PATTERN_WWSUB = re.compile(r"^ww\d+\.")
 MIN_NODES_WARN = 20
 TIME_PRECISION_CUTOFF_SECONDS = 10
 
-DNS_NAMESERVERS = [
-    "https://adfree.usableprivacy.net/",
+DNS_NAMESERVERS_RU = [
+    "https://common.dot.dns.yandex.net/dns-query",  # ru
+]
+
+DNS_NAMESERVERS_ZH = [
+    "https://dns.alidns.com/dns-query",  # zh
+    "https://doh.pub/dns-query",  # zh
+    "https://doh.onedns.net/dns-query",  # zh
+    "https://doh.360.cn/dns-query",  # zh
+]
+
+DNS_NAMESERVERS_JP = [
+    "https://public.dns.iij.jp/dns-query",  # jp
+    "https://ibuki.cgnat.net/dns-query",  # jp
+]
+
+DNS_NAMESERVERS_GLOBAL = [
     "https://cloudflare-dns.com/dns-query",
+    "https://dns.google/dns-query",
+    "https://dns.quad9.net/dns-query",
+    "https://freedns.controld.com/p0",  # Control D uncensored Anycast
+    "https://doh.dns.sb/dns-query",
+    "https://doh.mullvad.net/dns-query",
+    "https://doh.opendns.com/dns-query",
+    "https://dns.nextdns.io/dns-query",
     "https://dns.aa.net.uk/dns-query",
-    "https://dns.adguard-dns.com/dns-query",  # filter
+    "https://adfree.usableprivacy.net/",
     "https://dns.brahma.world/dns-query",
     "https://dns.digitale-gesellschaft.ch/dns-query",
     "https://dns.dnshome.de/dns-query",
     "https://dns.dnsoverhttps.com/dnfs-query",
     "https://dns.flatuslifir.is/dns-query",
-    "https://dns.google/dns-query",
     "https://dns.hostux.net/dns-query",
-    "https://dns.nextdns.io/dns-query",
     "https://dns.njal.la/dns-query",
-    "https://dns.quad9.net/dns-query",
     "https://dns.switch.ch/dns-query",
     "https://dnsforge.de/dns-query",
     "https://doh-de.blahdns.com/dns-query",
     "https://doh.42l.fr/dns-query",
     "https://doh.applied-privacy.net/query",
-    "https://doh.cleanbrowsing.org/doh/security-filter/",
-    "https://doh.dns.sb/dns-query",
     "https://doh.ffmuc.net/dns-query",
     "https://doh.li/dns-query",
     "https://doh.libredns.gr/dns-query",
-    "https://doh.mullvad.net/dns-query",
-    "https://doh.opendns.com/dns-query",
     "https://doh.tiarap.org/dns-query",
     "https://doh.xfinity.com/dns-query",
-    "https://ibuki.cgnat.net/dns-query",
     "https://ordns.he.net/dns-query",
     "https://private.canadianshield.cira.ca/dns-query",
-    "https://public.dns.iij.jp/dns-query",
     "https://wikimedia-dns.org/dns-query",
 ]
 
-DNS_NAMESERVERS_ZH = [
-    "https://dns.alidns.com/dns-query",  # zh
-    "https://doh.onedns.net/dns-query",  # zh
-    "https://doh.pub/dns-query",  # zh
-]
+# Backward-compatibility alias
+DNS_NAMESERVERS = DNS_NAMESERVERS_GLOBAL
+
+DNS_TLDS_RU = (".ru", ".su", ".by", ".kz")
+DNS_TLDS_ZH = (".cn", ".top", ".wang", ".xin", ".site")
+DNS_TLDS_JP = (".jp",)
 
 DNS_RDTYPES_BY_FAMILY = {
     socket.AF_INET: (dns.rdatatype.A,),
@@ -168,23 +182,78 @@ class _PersistentDoHNameserver(dns.nameserver.DoHNameserver):
 
 
 class DNSPythonResolver(AbstractResolver):
-    def __init__(self, nameservers: list[str], fallback_nameservers: list[str]) -> None:
+    def __init__(
+        self,
+        nameservers: list[str] | None = None,
+        fallback_nameservers: list[str] | None = None,
+        *,
+        ru_nameservers: list[str] | None = None,
+        zh_nameservers: list[str] | None = None,
+        jp_nameservers: list[str] | None = None,
+    ) -> None:
         # own Random instance: avoids interleaving with generate_headers' global random.seed/setstate
         self._rng = random.Random()
-        self._scores = {ns: _NameserverScore() for ns in nameservers}
-        self._fallback_scores = {ns: _NameserverScore() for ns in fallback_nameservers}
+        self._global_nameservers = list(nameservers) if nameservers is not None else list(DNS_NAMESERVERS_GLOBAL)
+        self._ru_nameservers = list(ru_nameservers) if ru_nameservers is not None else list(DNS_NAMESERVERS_RU)
+        self._zh_nameservers = (
+            list(zh_nameservers)
+            if zh_nameservers is not None
+            else (list(fallback_nameservers) if fallback_nameservers is not None else list(DNS_NAMESERVERS_ZH))
+        )
+        self._jp_nameservers = list(jp_nameservers) if jp_nameservers is not None else list(DNS_NAMESERVERS_JP)
+
+        all_unique = list(
+            dict.fromkeys(
+                self._global_nameservers
+                + self._ru_nameservers
+                + self._zh_nameservers
+                + self._jp_nameservers
+            )
+        )
+        self._scores = {ns: _NameserverScore() for ns in all_unique}
         self._clients: dict[str, httpx.AsyncClient] = {}
         self._resolvers: dict[str, dns.asyncresolver.Resolver] = {}
-        for ns in [*nameservers, *fallback_nameservers]:
+        for ns in all_unique:
             client = httpx.AsyncClient(http2=True)
             self._clients[ns] = client
             resolver = dns.asyncresolver.Resolver(configure=False)
             resolver.nameservers = [_PersistentDoHNameserver(ns, client)]
             self._resolvers[ns] = resolver
 
-    def _pick_nameservers(self, scores: dict[str, _NameserverScore], k: int) -> list[str]:
-        pool = [(ns, score.weight) for ns, score in scores.items()]
-        return _weighted_sample_without_replacement(pool, k, self._rng)
+    def _pick_nameservers(self, servers: list[str], k: int) -> list[str]:
+        pool = [(ns, self._scores[ns].weight) for ns in servers if ns in self._scores]
+        return _weighted_sample_without_replacement(pool, min(k, len(pool)), self._rng)
+
+    def _get_nameservers_for_host(self, host: str) -> list[str]:
+        host_lower = host.lower().rstrip(".")
+        if any(host_lower == tld.lstrip(".") or host_lower.endswith(tld) for tld in DNS_TLDS_RU):
+            primary = self._ru_nameservers
+            secondary = self._global_nameservers
+            tertiary = self._zh_nameservers + self._jp_nameservers
+        elif any(host_lower == tld.lstrip(".") or host_lower.endswith(tld) for tld in DNS_TLDS_ZH):
+            primary = self._zh_nameservers
+            secondary = self._global_nameservers
+            tertiary = self._ru_nameservers + self._jp_nameservers
+        elif any(host_lower == tld.lstrip(".") or host_lower.endswith(tld) for tld in DNS_TLDS_JP):
+            primary = self._jp_nameservers
+            secondary = self._global_nameservers
+            tertiary = self._ru_nameservers + self._zh_nameservers
+        else:
+            primary = self._global_nameservers
+            secondary = self._zh_nameservers + self._jp_nameservers + self._ru_nameservers
+            tertiary = []
+
+        chosen: list[str] = []
+        k_primary = len(primary) if primary is not self._global_nameservers else DNS_MAX_ATTEMPTS
+        chosen.extend(self._pick_nameservers(primary, k_primary))
+
+        k_secondary = DNS_MAX_ATTEMPTS if secondary is self._global_nameservers else len(secondary)
+        chosen.extend(self._pick_nameservers(secondary, k_secondary))
+
+        if tertiary:
+            chosen.extend(self._pick_nameservers(tertiary, len(tertiary)))
+
+        return list(dict.fromkeys(chosen))
 
     async def resolve(
         self,
@@ -194,20 +263,18 @@ class DNSPythonResolver(AbstractResolver):
     ) -> list[ResolveResult]:
         results: list[ResolveResult] = []
         for rdtype in DNS_RDTYPES_BY_FAMILY.get(family, (dns.rdatatype.A, dns.rdatatype.AAAA)):
-            # fall back to ZH nameservers if the primary attempts are exhausted
-            nameservers = self._pick_nameservers(self._scores, DNS_MAX_ATTEMPTS) + self._pick_nameservers(
-                self._fallback_scores,
-                len(self._fallback_scores),
-            )
+            nameservers = self._get_nameservers_for_host(host)
             for nameserver in nameservers:
-                scores = self._scores if nameserver in self._scores else self._fallback_scores
+                score = self._scores.get(nameserver)
                 try:
                     answer = await self._resolvers[nameserver].resolve(host, rdtype)
                 except dns.exception.DNSException as e:
                     log.debug("DNS %s %s failed via %s: %s", dns.rdatatype.to_text(rdtype), host, nameserver, e)
-                    scores[nameserver].penalize()
+                    if score is not None:
+                        score.penalize()
                     continue
-                scores[nameserver].reward()
+                if score is not None:
+                    score.reward()
                 log.info(
                     "DNS %s %s -> %s via %s",
                     dns.rdatatype.to_text(rdtype),
@@ -237,7 +304,12 @@ class DNSPythonResolver(AbstractResolver):
 
 
 def create_connector() -> aiohttp.TCPConnector:
-    resolver = DNSPythonResolver(DNS_NAMESERVERS, DNS_NAMESERVERS_ZH)
+    resolver = DNSPythonResolver(
+        DNS_NAMESERVERS_GLOBAL,
+        ru_nameservers=DNS_NAMESERVERS_RU,
+        zh_nameservers=DNS_NAMESERVERS_ZH,
+        jp_nameservers=DNS_NAMESERVERS_JP,
+    )
     return aiohttp.TCPConnector(resolver=resolver)
 
 
