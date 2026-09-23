@@ -1,7 +1,7 @@
 # Bug Issue → Extension Map
 
 Matched: 179 of 183 open bug issues\
-Timestamp: `2026-09-23T14:38:08+00:00`
+Timestamp: `2026-09-23T14:52:23+00:00`
 
 
 ## Exact match
