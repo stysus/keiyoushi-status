@@ -98,6 +98,54 @@ export function renderTableHead(activeTab, sortColumn, sortDirection) {
 }
 
 /**
+ * Renders the Notes / Category cell with clean inline-flex layout and sanitization.
+ * @param {string} subcategory
+ * @param {string} info
+ * @returns {string}
+ */
+export function renderNotesCell(subcategory, info) {
+  let displayInfo = (info || '').trim();
+
+  // Strip trailing colons e.g. "HTTP 202:" or "Few nodes (13). HTTP 202:"
+  displayInfo = displayInfo.replace(/:\s*$/, '').trim();
+
+  // If subcategory is present, clean redundant prefixes/duplicates from info
+  if (subcategory && displayInfo) {
+    const subcatLower = subcategory.toLowerCase();
+
+    // If Cloudflare 52x, title is usually boilerplate e.g. "HTTP 525: domain.com | 525: SSL handshake failed"
+    if (subcatLower.startsWith('cloudflare') && displayInfo.includes('|')) {
+      displayInfo = '';
+    } else if (subcatLower === displayInfo.toLowerCase() || subcatLower.includes(displayInfo.toLowerCase())) {
+      displayInfo = '';
+    } else {
+      // Strip redundant status code e.g. "Few nodes (13). HTTP 403: " or "HTTP 403: "
+      displayInfo = displayInfo.replace(/^(?:Few nodes \(\d+\)\.\s*)?(?:HTTP\s*)?\d{3}\s*[:\s-]\s*/i, '').trim();
+      displayInfo = displayInfo.replace(/:\s*$/, '').trim();
+      if (subcatLower.includes(displayInfo.toLowerCase())) {
+        displayInfo = '';
+      }
+    }
+  }
+
+  const subcatBadge = subcategory ? renderBadge(subcategory) : '';
+  const infoText = displayInfo
+    ? `<span class="text-xs text-zinc-600 dark:text-zinc-300 font-normal leading-relaxed">${escapeHtml(displayInfo)}</span>`
+    : '';
+
+  if (subcatBadge && infoText) {
+    return `<div class="inline-flex flex-wrap items-center gap-2">${subcatBadge}${infoText}</div>`;
+  }
+  if (subcatBadge) {
+    return `<div class="inline-flex items-center">${subcatBadge}</div>`;
+  }
+  if (infoText) {
+    return infoText;
+  }
+  return '<span class="text-zinc-400 dark:text-zinc-500 font-mono">-</span>';
+}
+
+/**
  * Renders table body rows based on the current items and tab.
  * @param {Array<Object>} items
  * @param {string} activeTab
@@ -108,10 +156,6 @@ export function renderTableRows(items, activeTab) {
 
   if (activeTab === 'extensions') {
     for (const item of items) {
-      const subcatBadge = item.subcategory ? renderBadge(item.subcategory) : '';
-      const infoText = item.info
-        ? `<span class="text-xs text-zinc-600 dark:text-zinc-400 font-medium">${escapeHtml(item.info)}</span>`
-        : '';
       const latencyColor = getLatencyColorClass(item.duration);
 
       rowsHtml += `
@@ -130,7 +174,7 @@ export function renderTableRows(items, activeTab) {
             ${escapeHtml(item.time || '-')}
           </td>
           <td class="py-2.5 px-4">
-            ${subcatBadge}${infoText || '<span class="text-zinc-400 dark:text-zinc-500 font-mono">-</span>'}
+            ${renderNotesCell(item.subcategory, item.info)}
           </td>
           <td class="py-2.5 px-4 text-center">
             ${renderCopyButton(item.url)}
@@ -147,8 +191,6 @@ export function renderTableRows(items, activeTab) {
             .map((lbl) => renderBadge(lbl.trim()))
             .join('')
         : '<span class="text-zinc-400 dark:text-zinc-500 font-mono">-</span>';
-
-      const subcatBadge = item.subcategory ? renderBadge(item.subcategory) : '';
 
       rowsHtml += `
         <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-850/60 transition-colors group">
@@ -173,8 +215,8 @@ export function renderTableRows(items, activeTab) {
             ${escapeHtml(item.time || '-')}
           </td>
           <td class="py-2.5 px-4 whitespace-nowrap">${labelsBadge}</td>
-          <td class="py-2.5 px-4 text-zinc-600 dark:text-zinc-400 font-medium">
-            ${subcatBadge}${escapeHtml(item.info) || '<span class="text-zinc-400 dark:text-zinc-500 font-mono">-</span>'}
+          <td class="py-2.5 px-4">
+            ${renderNotesCell(item.subcategory, item.info)}
           </td>
           <td class="py-2.5 px-4 text-center">
             ${renderCopyButton(item.url)}

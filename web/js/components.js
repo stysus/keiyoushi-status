@@ -41,7 +41,7 @@ export function renderBadge(text, variant = 'neutral') {
   if (variant === 'method') {
     return `<span class="inline-block px-1.5 py-0.5 rounded text-xs bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-mono mr-1 border border-zinc-200 dark:border-zinc-700">${escaped}</span>`;
   }
-  return `<span class="inline-block px-1.5 py-0.5 rounded text-xs font-mono bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 mr-1.5 border border-zinc-300 dark:border-zinc-700 font-medium">${escaped}</span>`;
+  return `<span class="inline-flex items-center shrink-0 px-1.5 py-0.5 rounded text-xs font-mono bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700 font-medium">${escaped}</span>`;
 }
 
 /**

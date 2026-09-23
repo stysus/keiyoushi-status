@@ -348,6 +348,34 @@ WINDOW_LOCATION_RE = re.compile(
     r"""(?:window|self|top)\.location(?:\.href\s*=\s*|\s*=\s*|\.replace\s*\(\s*)['"](https?://[^'"]+)['"]""",
     re.IGNORECASE,
 )
+TITLE_DOMAIN_PREFIX_RE = re.compile(r"^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\s*[|:]\s*")
+TITLE_STATUS_PREFIX_RE = re.compile(r"^(?:HTTP\s*)?\d{3}\s*[:\s-]\s*", re.IGNORECASE)
+TITLE_ERROR_PREFIX_RE = re.compile(r"^ERROR:\s*", re.IGNORECASE)
+
+
+def _clean_error_title(title: str, status_code: int, subcategory: str) -> str:
+    if not title:
+        return ""
+    cleaned = TITLE_DOMAIN_PREFIX_RE.sub("", title).strip()
+    cleaned = TITLE_STATUS_PREFIX_RE.sub("", cleaned).strip()
+    cleaned = TITLE_ERROR_PREFIX_RE.sub("", cleaned).strip()
+    cleaned = cleaned.rstrip(":").strip()
+
+    if not cleaned:
+        return ""
+
+    if subcategory.startswith("Cloudflare 52"):
+        return ""
+
+    subcat_lower = subcategory.lower()
+    cleaned_lower = cleaned.lower()
+    if cleaned_lower in subcat_lower:
+        return ""
+
+    if cleaned_lower in (str(status_code), f"http {status_code}"):
+        return ""
+
+    return cleaned
 
 PARKED_DOMAINS = [
     "https://bulsis.net/",
@@ -593,8 +621,6 @@ async def check_url_generic(
         soup = BeautifulSoup(html, "lxml")
 
         node_count = len(soup.select("*"))
-        if node_count < MIN_NODES_WARN:
-            infos.append(f"Few nodes ({node_count})")
 
         redirected = not str(resp.url).startswith(url)
         if redirected:
@@ -718,10 +744,12 @@ async def check_url_generic(
                 infos.append("Database connection failure")
                 return result(Status.WARNING, subcategory="Database Error")
 
+            if node_count < MIN_NODES_WARN:
+                infos.append(f"Few nodes ({node_count})")
+
             return result(Status.OK, subcategory="With Notes" if infos else "")
 
         # 9. Warnings with enriched subcategories
-        infos.append(f"HTTP {resp.status}: {title}")
         if resp.status in (520, 521, 522, 523, 524, 525, 526):
             cf_subcat_map = {
                 520: "Cloudflare 520 (Unknown Error)",
@@ -739,6 +767,10 @@ async def check_url_generic(
             subcategory = "Forbidden (403)"
         else:
             subcategory = f"HTTP {resp.status}"
+
+        cleaned_msg = _clean_error_title(title, resp.status, subcategory)
+        if cleaned_msg:
+            infos.append(cleaned_msg)
 
         return result(Status.WARNING, subcategory=subcategory)
 
