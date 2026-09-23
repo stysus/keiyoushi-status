@@ -9,7 +9,6 @@
 #   "dnspython[doh,idna]",
 #   "publicsuffixlist",
 #   "pygithub",
-#   "tabulate",
 #   "ua-generator",
 #   "yarl",
 # ]
@@ -32,7 +31,6 @@ from typing import NamedTuple
 import aiohttp
 from anyio import Path
 from common import (
-    REPORT_SECTIONS,
     TIME_PRECISION_CUTOFF_SECONDS,
     TIMEOUT_CONNECT_SECONDS,
     TIMEOUT_SOCK_READ_SECONDS,
@@ -43,14 +41,12 @@ from common import (
     create_connector,
     format_duration,
     generate_headers,
-    render_report_generic,
 )
 from publicsuffixlist import PublicSuffixList  # type: ignore[import-untyped]
 from yarl import URL
 
 REPO = "keiyoushi/extensions-source"
 LABELS = {"Source request", "Domain changed"}
-TABLE_COLUMNS = ["Status", "PR", "URL", "Time", "Labels", "Info"]
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
@@ -99,11 +95,6 @@ class CheckResult:
     @property
     def sort_key(self) -> tuple[int, str]:
         return (-self.pr.pr_number, self.pr.url)
-
-    def as_row(self) -> tuple[str, ...]:
-        time_str = format_duration(self.duration, TIME_PRECISION_CUTOFF_SECONDS)
-        pr_link = f"[#{self.pr.pr_number}](https://github.com/{REPO}/issues/{self.pr.pr_number})"
-        return (self.status.value, pr_link, self.pr.url, time_str, self.pr.label, self.info)
 
 
 def extract_source_link_section(body: str) -> str:
@@ -238,16 +229,6 @@ async def main() -> None:
         pr_urls_shuffled = pr_urls.copy()
         random.shuffle(pr_urls_shuffled)
         results = await check_all_generic(session, pr_urls_shuffled, check_url, log_result)
-
-    report = render_report_generic(
-        "URLs from issues",
-        len(results),
-        headers["User-Agent"],
-        results,
-        REPORT_SECTIONS,
-        TABLE_COLUMNS,
-    )
-    await Path("STATUS_ISSUE.md").write_text(report, encoding="utf-8")
 
     json_data = {
         "count": len(results),

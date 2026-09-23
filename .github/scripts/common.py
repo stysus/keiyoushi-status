@@ -9,12 +9,9 @@ import ssl
 import time
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
-from datetime import datetime, timezone
 from enum import StrEnum
 from functools import partial
 from http import HTTPStatus
-from itertools import groupby
-from operator import attrgetter
 from typing import Any, Protocol, TypeVar
 
 import aiohttp
@@ -31,7 +28,6 @@ from aia import AIASession
 from aiohttp.abc import AbstractResolver, ResolveResult
 from bs4 import BeautifulSoup
 from publicsuffixlist import PublicSuffixList  # type: ignore[import-untyped]
-from tabulate import tabulate  # type: ignore[import-untyped]
 from yarl import URL
 
 log = logging.getLogger(__name__)
@@ -468,8 +464,6 @@ class CheckResultProtocol(Protocol):
     @property
     def sort_key(self) -> tuple[Any, ...]: ...
 
-    def as_row(self) -> tuple[str, ...]: ...
-
 
 R = TypeVar("R", bound=CheckResultProtocol)
 T = TypeVar("T")
@@ -780,52 +774,3 @@ async def check_all_generic(
             return res
 
     return await asyncio.gather(*[f(item) for item in items])
-
-
-def _escape_pipes(text: str) -> str:
-    return text.replace("|", r"\|")
-
-
-def make_table(results: list[R], columns: list[str]) -> str:
-    rows = [tuple(_escape_pipes(str(c)) for c in r.as_row()) for r in results]
-    return tabulate(rows, columns, tablefmt="github")
-
-
-def render_report_generic(
-    title: str,
-    count: int,
-    user_agent: str,
-    results: list[R],
-    sections: list[tuple[str, Status]],
-    columns: list[str],
-) -> str:
-    timestamp = datetime.now(tz=timezone.utc).isoformat(timespec="seconds")
-    buf = f"# {title}\n\n"
-    buf += f"Count: {count}\\\n"
-    buf += f"Timestamp: `{timestamp}`\\\n"
-    buf += f"User-Agent: `{user_agent}`\n\n"
-
-    for section_title, status in sections:
-        rows = sorted((r for r in results if r.status == status), key=attrgetter("sort_key"))
-        buf += f"## {section_title}\n\n"
-        buf += f"Count: {len(rows)}\n\n"
-
-        if not rows:
-            continue
-
-        rows_main = [r for r in rows if not r.subcategory]
-        if rows_main:
-            buf += make_table(rows_main, columns) + "\n\n"
-
-        rows_with_subcategory = [r for r in rows if r.subcategory]
-        if not rows_with_subcategory:
-            continue
-
-        rows_with_subcategory.sort(key=lambda r: (r.subcategory, r.sort_key))
-        for subcategory, group in groupby(rows_with_subcategory, key=attrgetter("subcategory")):
-            rows_group = list(group)
-            buf += f"### {subcategory}\n\n"
-            buf += f"Count: {len(rows_group)}\n\n"
-            buf += make_table(rows_group, columns) + "\n\n"
-
-    return buf.rstrip() + "\n"

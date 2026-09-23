@@ -9,7 +9,6 @@
 #   "betterproto==2.0.0b7",
 #   "dnspython[doh,idna]",
 #   "publicsuffixlist",
-#   "tabulate",
 #   "ua-generator",
 #   "yarl",
 # ]
@@ -30,7 +29,6 @@ from typing import NamedTuple
 import aiohttp
 from anyio import Path
 from common import (
-    REPORT_SECTIONS,
     TIME_PRECISION_CUTOFF_SECONDS,
     TIMEOUT_CONNECT_SECONDS,
     TIMEOUT_SOCK_READ_SECONDS,
@@ -41,13 +39,10 @@ from common import (
     create_connector,
     format_duration,
     generate_headers,
-    render_report_generic,
 )
 from generated import Index
 
 REPO_INDEX_URL = "https://raw.githubusercontent.com/keiyoushi/extensions/repo/index.pb"
-TABLE_COLUMNS = ["Status", "Name", "URL", "Time", "Info"]
-SITES_REPORT_SECTIONS = REPORT_SECTIONS
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
@@ -69,10 +64,6 @@ class CheckResult:
     @property
     def sort_key(self) -> tuple[str, str]:
         return (self.source.name.lower(), self.source.url.lower())
-
-    def as_row(self) -> tuple[str, str, str, str, str]:
-        time_str = format_duration(self.duration, TIME_PRECISION_CUTOFF_SECONDS)
-        return (self.status.value, self.source.name, self.source.url, time_str, self.info)
 
 
 def extract_sources(index: Index) -> list[Source]:
@@ -121,16 +112,6 @@ async def main() -> None:
         sources_shuffled = sources.copy()
         random.shuffle(sources_shuffled)
         results = await check_all_generic(session, sources_shuffled, check_source, log_result)
-
-    report = render_report_generic(
-        "Site Status Report",
-        len(results),
-        headers["User-Agent"],
-        results,
-        SITES_REPORT_SECTIONS,
-        TABLE_COLUMNS,
-    )
-    await Path("STATUS.md").write_text(report, encoding="utf-8")
 
     json_data = {
         "count": len(results),

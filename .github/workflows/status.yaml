@@ -28,7 +28,6 @@ on:
     paths:
       - .github/scripts/**
       - .github/workflows/status.yaml
-      - STATUS.md
       - web/**
 
 concurrency:
@@ -58,7 +57,6 @@ jobs:
             scripts:
               - '.github/scripts/**'
               - '.github/workflows/status.yaml'
-              - 'STATUS.md'
 
       - name: Determine execution flags
         id: flags
@@ -118,9 +116,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: extensions-output
-          path: |
-            STATUS.md
-            web/data/extensions.json
+          path: web/data/extensions.json
           retention-days: 1
           if-no-files-found: error
 
@@ -129,9 +125,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: issues-output
-          path: |
-            STATUS_ISSUE.md
-            web/data/issues.json
+          path: web/data/issues.json
           retention-days: 1
           if-no-files-found: error
 
@@ -190,7 +184,7 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: 'chore: update extensions, issues, and bug issue map'
-          file_pattern: '*.md web/data/*.json'
+          file_pattern: 'web/data/*.json'
 
       - name: Setup Pages
         if: needs.detect.outputs.should_deploy == 'true'

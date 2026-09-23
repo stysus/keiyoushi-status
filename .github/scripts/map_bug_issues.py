@@ -24,8 +24,7 @@ from rapidfuzz import fuzz, process
 from rapidfuzz import utils as fuzz_utils
 
 EXT_REPO = Path(os.getenv("EXT_REPO", "extensions-source")) / "src"
-STATUS_MD = Path(os.getenv("STATUS_MD", "STATUS.md"))
-OUTPUT_FILE = Path(os.getenv("OUTPUT_FILE", "STATUS_ISSUE_MAP.md"))
+EXTENSIONS_JSON = Path(os.getenv("EXTENSIONS_JSON", "web/data/extensions.json"))
 OUTPUT_JSON = Path(os.getenv("OUTPUT_JSON", "web/data/issue_map.json"))
 REPO = os.getenv("SOURCE_REPO", "keiyoushi/extensions-source")
 SCORE_CUTOFF = 90
@@ -51,8 +50,6 @@ SOURCE_INFO_RE = re.compile(
 )
 VERSION_RE = re.compile(r"(?:\s+-\s+|\s+)v?\d[\d.]*(?:/\d+)?\s*$", re.IGNORECASE)
 KANA_RE = re.compile(r"[\u3040-\u309f\u30a0-\u30ff]")
-STATUS_ROW_URL_RE = re.compile(r"\|\s*(\S+)\s*\|\s*(.+?)\s*\|\s*(https?://\S+?)\s*\|")
-STATUS_ROW_RE = re.compile(r"\|\s*(\S+)\s*\|\s*(.+?)\s*\|\s*\|")
 STRIP_PROTO_RE = re.compile(r"^https?://")
 STRIP_WWW_RE = re.compile(r"^(www\.)?")
 SLUG_NORM_RE = re.compile(r"[\s\-_]+")
@@ -143,16 +140,18 @@ def build_ext_db(src: Path) -> dict[str, set[tuple[str, str]]]:
     return db
 
 
-def parse_status_md(path: Path) -> tuple[list[StatusEntry], list[str], dict[str, StatusEntry]]:
-    base: list[StatusEntry] = []
-    for line in path.read_text(encoding="utf-8").splitlines():
-        m = STATUS_ROW_URL_RE.match(line)
-        if m:
-            base.append(StatusEntry(m.group(1), m.group(2).strip(), m.group(3).strip()))
-            continue
-        m = STATUS_ROW_RE.match(line)
-        if m and (name := m.group(2).strip()) and not name.startswith("-"):
-            base.append(StatusEntry(m.group(1), name, ""))
+def parse_extensions_json(path: Path) -> tuple[list[StatusEntry], list[str], dict[str, StatusEntry]]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    results = payload.get("results", []) if isinstance(payload, dict) else payload
+    base = [
+        StatusEntry(
+            emoji=item.get("status", ""),
+            name=item.get("name", "").strip(),
+            url=item.get("url", "").strip(),
+        )
+        for item in results
+        if item.get("name")
+    ]
 
     match_entries: list[StatusEntry] = list(base)
     match_names: list[str] = [e.name for e in base]
@@ -280,75 +279,6 @@ def match_issue(
     return sorted(seen.values(), key=lambda m: ("url" not in m.methods, -m.score))
 
 
-def render_table(results: list[IssueResult]) -> str:
-    timestamp = datetime.now(tz=timezone.utc).isoformat(timespec="seconds")
-    matched = sum(1 for r in results if r.matches)
-    table_header = ["| Issue | Source | Status | Extension | URL |", "|-------|--------|:------:|-----------|-----|"]
-
-    def issue_rows(r: IssueResult) -> list[str]:
-        issue_link = f"[#{r.number}](https://github.com/{REPO}/issues/{r.number})"
-        title = r.title.replace("|", "\\|")
-        source = (r.source_name or "-").replace("|", "\\|")
-        rows = []
-        for i, m in enumerate(r.matches):
-            issue_cell = f"{issue_link} {title}" if i == 0 else f"↳ [#{r.number}]"
-            src_cell = source if i == 0 else ""
-            url_cell = f"[{m.entry.url}]({m.entry.url})" if m.entry.url else ""
-            score_str = f"{m.score:.0f}%" if m.score < 100 else "100%"
-            has_url = "url" in m.methods
-            body_direct = "gh:body→extName" in m.methods
-            # Notable methods: title only if body didn't already match directly; kt variants always
-            notable = [
-                mth
-                for mth in m.methods
-                if mth not in {"url", "gh:body→extName"} and not (mth == "gh:title→extName" and body_direct)
-            ]
-            # Rename gh:title→extName to "title" for display
-            notable_display = ["title" if mth == "gh:title→extName" else mth for mth in notable]
-            if has_url and not notable:
-                detail = " `url`"
-            elif has_url:
-                detail = f" `url {' '.join(notable_display)} {score_str}`"
-            elif not notable:
-                detail = f" `{score_str}`"
-            else:
-                detail = f" `{' '.join(notable_display)} {score_str}`"
-            rows.append(
-                f"| {issue_cell} | {src_cell} | {m.entry.emoji} | {m.entry.name.replace('|', chr(92) + '|')}{detail} | {url_cell} |",
-            )
-        return rows
-
-    exact_results = [r for r in results if len(r.matches) == 1 and r.matches[0].entry.name == r.source_name]
-    single_results = [r for r in results if len(r.matches) == 1 and r.matches[0].entry.name != r.source_name]
-    multi_results = [r for r in results if len(r.matches) > 1]
-    unmatched_results = [r for r in results if not r.matches]
-
-    def section(heading: str, subset: list[IssueResult]) -> list[str]:
-        return [
-            f"\n## {heading}\n\n",
-            f"Count: {len(subset)}\n",
-            *table_header,
-            *(row for r in subset for row in issue_rows(r)),
-        ]
-
-    lines = [
-        "# Bug Issue → Extension Map\n",
-        f"Matched: {matched} of {len(results)} open bug issues\\",
-        f"Timestamp: `{timestamp}`\n",
-        *section("Exact match", exact_results),
-        *section("Single match", single_results),
-        *section("Multiple matches", multi_results),
-        "\n## No match\n\n",
-        f"Count: {len(unmatched_results)}\n",
-        *table_header,
-        *(
-            f"| [#{r.number}](https://github.com/{REPO}/issues/{r.number}) {r.title.replace('|', chr(92) + '|')} | {(r.source_name or '-').replace('|', chr(92) + '|')} | | | |"
-            for r in unmatched_results
-        ),
-    ]
-    return "\n".join(lines) + "\n"
-
-
 def main() -> None:
     result = subprocess.run(
         [
@@ -371,7 +301,7 @@ def main() -> None:
         check=True,
     )
     issues = json.loads(result.stdout)
-    match_entries, match_names, host_map = parse_status_md(STATUS_MD)
+    match_entries, match_names, host_map = parse_extensions_json(EXTENSIONS_JSON)
     ext_db = build_ext_db(EXT_REPO)
 
     results: list[IssueResult] = []
@@ -398,7 +328,6 @@ def main() -> None:
         )
 
     results.sort(key=lambda r: -r.number)
-    OUTPUT_FILE.write_text(render_table(results), encoding="utf-8")
 
     json_data = {
         "total": len(results),
