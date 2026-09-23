@@ -3,6 +3,16 @@ name: Status
 
 on:
   workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Execution mode'
+        required: true
+        default: 'full'
+        type: choice
+        options:
+          - full
+          - deploy_only
+          - scrape_only
   schedule:
     # Low activity: 23:00-08:00 UTC
     - cron: '53 2 * * 0'
@@ -16,10 +26,7 @@ on:
     branches:
       - main
     paths:
-      - .github/scripts/check_extensions.py
-      - .github/scripts/check_issues.py
-      - .github/scripts/common.py
-      - .github/scripts/map_bug_issues.py
+      - .github/scripts/**
       - .github/workflows/status.yaml
       - STATUS.md
       - web/**
@@ -36,10 +43,58 @@ permissions:
 jobs:
   status:
     runs-on: ubuntu-latest
+    outputs:
+      should_deploy: ${{ steps.flags.outputs.should_deploy }}
     steps:
       - uses: actions/checkout@v6
-      - uses: astral-sh/setup-uv@v7
-      - uses: actions/checkout@v6
+
+      - name: Filter changed paths on push
+        uses: dorny/paths-filter@v3
+        id: filter
+        if: github.event_name == 'push'
+        with:
+          filters:
+            scripts:
+              - '.github/scripts/**'
+              - '.github/workflows/status.yaml'
+              - 'STATUS.md'
+
+      - name: Determine execution flags
+        id: flags
+        run: |
+          SHOULD_SCRAPE=true
+          SHOULD_DEPLOY=true
+
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            MODE="${{ inputs.mode }}"
+            if [ "$MODE" = "deploy_only" ]; then
+              SHOULD_SCRAPE=false
+              SHOULD_DEPLOY=true
+            elif [ "$MODE" = "scrape_only" ]; then
+              SHOULD_SCRAPE=true
+              SHOULD_DEPLOY=false
+            fi
+          elif [ "${{ github.event_name }}" = "push" ]; then
+            if [ "${{ steps.filter.outputs.scripts }}" = "false" ]; then
+              SHOULD_SCRAPE=false
+              SHOULD_DEPLOY=true
+            fi
+          fi
+
+          echo "should_scrape=$SHOULD_SCRAPE" >> "$GITHUB_OUTPUT"
+          echo "should_deploy=$SHOULD_DEPLOY" >> "$GITHUB_OUTPUT"
+          echo "Determined flags: should_scrape=$SHOULD_SCRAPE, should_deploy=$SHOULD_DEPLOY"
+
+      - name: Setup uv with dependency caching
+        uses: astral-sh/setup-uv@v7
+        if: steps.flags.outputs.should_scrape == 'true'
+        with:
+          enable-cache: true
+          cache-dependency-glob: '.github/scripts/*.py'
+
+      - name: Checkout extensions source
+        uses: actions/checkout@v6
+        if: steps.flags.outputs.should_scrape == 'true'
         with:
           repository: keiyoushi/extensions-source
           path: extensions-source
@@ -47,7 +102,9 @@ jobs:
           filter: blob:none
           sparse-checkout: src
 
-      - env:
+      - name: Run status and mapping scripts
+        if: steps.flags.outputs.should_scrape == 'true'
+        env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
@@ -58,20 +115,25 @@ jobs:
 
           .github/scripts/map_bug_issues.py
 
-      - uses: stefanzweifel/git-auto-commit-action@v7
+      - name: Commit updated status files
+        uses: stefanzweifel/git-auto-commit-action@v7
+        if: steps.flags.outputs.should_scrape == 'true'
         with:
           commit_message: 'chore: update extensions, issues, and bug issue map'
           file_pattern: '*.md web/data/*.json'
 
       - name: Setup Pages
+        if: steps.flags.outputs.should_deploy == 'true'
         uses: actions/configure-pages@v5
 
       - name: Upload Pages Artifact
+        if: steps.flags.outputs.should_deploy == 'true'
         uses: actions/upload-pages-artifact@v3
         with:
           path: web/
 
   deploy:
+    if: needs.status.outputs.should_deploy == 'true'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
