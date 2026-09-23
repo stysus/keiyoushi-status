@@ -271,10 +271,28 @@ REPORT_SECTIONS: list[tuple[str, Status]] = [
     ("Errors", Status.ERROR),
 ]
 
+MAX_BODY_BYTES = 256 * 1024  # 256 KB safety limit
+META_REFRESH_RE = re.compile(
+    r"""<meta[^>]+http-equiv=['"]?refresh['"]?[^>]+content=['"]?\d+\s*;\s*url=['"]?([^'">\s]+)""",
+    re.IGNORECASE,
+)
+WINDOW_LOCATION_RE = re.compile(
+    r"""(?:window|self|top)\.location(?:\.href\s*=\s*|\s*=\s*|\.replace\s*\(\s*)['"](https?://[^'"]+)['"]""",
+    re.IGNORECASE,
+)
+
 PARKED_DOMAINS = [
     "https://bulsis.net/",
     "https://expireddomains.com/",
     "https://teksishe.net/",
+    "https://dan.com/",
+    "https://sedo.com/",
+    "https://afternic.com/",
+    "https://hugedomains.com/",
+    "https://bodis.com/",
+    "https://parkingcrew.net/",
+    "https://domainmarket.com/",
+    "https://www.godaddy.com/domainsearch/",
 ]
 
 PARKED_QUERIES = [
@@ -296,6 +314,16 @@ PLACEHOLDER_BODIES = [
 PARKED_TITLES = [
     "Loading...",
     "Redirecting...",
+    "Buy this domain",
+    "This domain is for sale",
+    "Domain Name for Sale",
+    "Domain for Sale",
+    "Inquire About This Domain",
+    "Domain Parking",
+    "Parking Page",
+    "Domain Suspended",
+    "Website Suspended",
+    "Account Suspended",
 ]
 
 PARKED_BODIES = [
@@ -315,6 +343,37 @@ PARKED_BODIES = [
     """sedo.com/services/parking.php""",
     """sedoparking.com""",
     """window.location.href="/lander""",
+    "buy this domain",
+    "domain is for sale",
+    "domain may be for sale",
+    "inquire about this domain",
+    "the domain has expired",
+    "this domain has expired",
+    "parked free courtesy of",
+    "parked by godaddy",
+    "parked by namecheap",
+    "dan.com/buy-domain",
+    "hugedomains.com/domain_profile",
+    "parkingcrew.net",
+    "bodis.com",
+]
+
+MAINTENANCE_TITLES = [
+    "under maintenance",
+    "maintenance mode",
+    "site maintenance",
+    "down for maintenance",
+    "scheduled maintenance",
+    "we'll be back soon",
+]
+
+DB_ERROR_PATTERNS = [
+    "error establishing a database connection",
+    "database connection error",
+    "database error",
+    "mysqli_connect",
+    "pdoexception",
+    "cannot select database",
 ]
 
 
@@ -439,12 +498,31 @@ async def check_url_generic(
     try:
         try:
             async with session.get(url) as resp:
-                html = await resp.text(errors="replace")
+                content_type = resp.content_type.lower()
+                # Safety check: bypass parsing for non-HTML binaries
+                if any(content_type.startswith(b) for b in ("image/", "video/", "audio/", "application/zip", "application/pdf", "application/octet-stream", "application/vnd.")):
+                    infos.append(f"Non-HTML ({content_type})")
+                    if resp.status == HTTPStatus.OK:
+                        return result(Status.OK, subcategory=f"Binary ({content_type})")
+                    return result(Status.WARNING, subcategory=f"Binary {resp.status}")
+
+                raw_bytes = await resp.content.read(MAX_BODY_BYTES)
+                encoding = resp.charset or "utf-8"
+                html = raw_bytes.decode(encoding, errors="replace")
         except aiohttp.ClientConnectorCertificateError:
             # some servers omit intermediate certs; complete the chain like a browser would
             ssl_context = await _build_aia_ssl_context(url)
             async with session.get(url, ssl=ssl_context) as resp:
-                html = await resp.text(errors="replace")
+                content_type = resp.content_type.lower()
+                if any(content_type.startswith(b) for b in ("image/", "video/", "audio/", "application/zip", "application/pdf", "application/octet-stream", "application/vnd.")):
+                    infos.append(f"Non-HTML ({content_type})")
+                    if resp.status == HTTPStatus.OK:
+                        return result(Status.OK, subcategory=f"Binary ({content_type})")
+                    return result(Status.WARNING, subcategory=f"Binary {resp.status}")
+
+                raw_bytes = await resp.content.read(MAX_BODY_BYTES)
+                encoding = resp.charset or "utf-8"
+                html = raw_bytes.decode(encoding, errors="replace")
 
         soup = BeautifulSoup(html, "lxml")
 
@@ -462,23 +540,76 @@ async def check_url_generic(
         html_lower = html.lower()
         server_header = resp.headers.get("server", "").lower()
 
+        # HTML Meta Refresh & JS Redirect Detection
+        meta_refresh_match = META_REFRESH_RE.search(html[:4096])
+        if meta_refresh_match:
+            target = meta_refresh_match.group(1).strip()
+            if not target.startswith(("http://", "https://")):
+                target = str(URL(url).join(URL(target)))
+            if target != url:
+                infos.append(f"Meta Refresh -> {target}")
+                subcat = "Same Authority (Meta)" if is_same_authority(url, target) else "Meta Refresh"
+                return result(Status.REDIRECT, subcat)
+
+        js_redirect_match = WINDOW_LOCATION_RE.search(html[:4096])
+        if js_redirect_match:
+            target = js_redirect_match.group(1).strip()
+            if target != url:
+                infos.append(f"JS Redirect -> {target}")
+                subcat = "Same Authority (JS)" if is_same_authority(url, target) else "JS Redirect"
+                return result(Status.REDIRECT, subcat)
+
         # 1. Cloudflare Challenges & Blocks
         if not redirected:
-            if title == "Just a moment...":
+            if (
+                title in ("Just a moment...", "Checking your browser...", "Verify you are human")
+                or "challenges.cloudflare.com" in html_lower
+                or "cf-turnstile" in html_lower
+                or "turnstile-wrapper" in html_lower
+                or "cf-browser-verification" in html_lower
+                or ("ray id:" in html_lower and ("verifying you are human" in html_lower or "enable javascript and cookies" in html_lower))
+            ):
                 infos = []
                 return result(Status.CF_IUAM)
-            if title == "Attention Required! | Cloudflare" or "attention required! | cloudflare" in title_lower:
+
+            if (
+                title == "Attention Required! | Cloudflare"
+                or "attention required! | cloudflare" in title_lower
+                or "error 1020" in html_lower
+                or "error 1006" in html_lower
+                or "error 1007" in html_lower
+                or "sorry, you have been blocked" in html_lower
+                or ("access denied" in html_lower and "cloudflare" in html_lower)
+            ):
                 infos = []
                 return result(Status.CF_BLOCK)
 
-        # 2. Third-Party WAF / DDoS-Guard
+        # 2. Third-Party WAF / DDoS-Guard / Sucuri / Imperva
         if (
             "ddos-guard" in server_header
             or "ddos-guard" in title_lower
             or "ddos protection by ddos-guard" in html_lower
             or "checking your browser before accessing" in html_lower
+            or "check.ddos-guard.net" in html_lower
         ):
             return result(Status.WAF, subcategory="DDoS-Guard")
+
+        if (
+            "x-sucuri-id" in resp.headers
+            or "x-sucuri-cache" in resp.headers
+            or "sucuri website firewall" in html_lower
+            or "access denied - sucuri" in title_lower
+        ):
+            return result(Status.WAF, subcategory="Sucuri WAF")
+
+        if (
+            "imperva" in resp.headers.get("x-cdn", "").lower()
+            or "_incapsula_resource" in html_lower
+            or "incapsula incident id" in html_lower
+            or "request unsuccessful. incapsula" in html_lower
+        ):
+            return result(Status.WAF, subcategory="Imperva WAF")
+
         if "security check" in title_lower or "challenge validation" in title_lower:
             return result(Status.WAF, subcategory="WAF Challenge")
 
@@ -490,24 +621,40 @@ async def check_url_generic(
         if resp.status == HTTPStatus.NOT_FOUND:
             return result(Status.NOT_FOUND, subcategory="HTTP 404")
 
-        # 5. Placeholders & Parked Domains
+        # 5. Placeholders & Maintenance
         if check_placeholder_content(title, html):
-            return result(Status.PLACEHOLDER)
+            return result(Status.PLACEHOLDER, subcategory="Default Server Page")
 
+        if any(m in title_lower for m in MAINTENANCE_TITLES) or ("under maintenance" in html_lower and node_count < 30):
+            infos.append("Site under maintenance")
+            return result(Status.PLACEHOLDER, subcategory="Maintenance")
+
+        # 6. Parked / For Sale / Expired Domains
         parked_signals.extend(check_parked_content(title, html))
         if parked_signals:
-            return result(Status.PARKED)
+            return result(Status.PARKED, subcategory="Domain For Sale / Parked")
 
-        # 6. Redirects
+        # 7. HTTP Redirects
         if redirected:
             subcategory = "Same Authority" if is_same_authority(url, str(resp.url)) else ""
             return result(Status.REDIRECT, subcategory)
 
-        # 7. Operational (HTTP 200 OK)
+        # 8. Operational (HTTP 200 OK) with False-Positive Checks
         if resp.status == HTTPStatus.OK:
+            # Check A: Blank page (few nodes and minimal text)
+            body_text = soup.text.strip()
+            if node_count < 6 and len(body_text) < 20:
+                infos.append(f"Empty page ({node_count} nodes)")
+                return result(Status.WARNING, subcategory="Blank Page")
+
+            # Check B: Database connection error disguised as 200
+            if any(db_err in html_lower for db_err in DB_ERROR_PATTERNS):
+                infos.append("Database connection failure")
+                return result(Status.WARNING, subcategory="Database Error")
+
             return result(Status.OK, subcategory="With Notes" if infos else "")
 
-        # 8. Warnings with enriched subcategories
+        # 9. Warnings with enriched subcategories
         infos.append(f"HTTP {resp.status}: {title}")
         if resp.status in (520, 521, 522, 523, 524, 525, 526):
             cf_subcat_map = {
@@ -532,7 +679,9 @@ async def check_url_generic(
     except Exception as e:
         if msg := str(e):
             infos.append(msg)
-        # Classify DNS & Connection Errors
+        # Classify DNS, SSL, Timeout, Redirect Loop, and Connection Errors
+        if isinstance(e, aiohttp.TooManyRedirects):
+            return result(Status.WARNING, subcategory="Redirect Loop")
         if isinstance(e, (aiohttp.ClientConnectorDNSError, socket.gaierror)) or "DNS lookup failed" in str(e):
             return result(Status.DNS_ERROR, subcategory="DNS Failure")
         if isinstance(e, (aiohttp.ClientConnectorSSLError, aiohttp.ClientConnectorCertificateError, ssl.SSLError)):
