@@ -1,8 +1,14 @@
 {
-  "total": 183,
+  "total": 184,
   "matched": 179,
-  "timestamp": "2026-09-23T16:37:17+00:00",
+  "timestamp": "2026-09-23T16:57:19+00:00",
   "results": [
+    {
+      "number": 19311,
+      "title": "NyxScans Novels in Series List",
+      "source_name": "NyxScans Novels in Series List",
+      "matches": []
+    },
     {
       "number": 19296,
       "title": "LeerCapitulo: HTTP 404 error",
@@ -605,7 +611,7 @@
       "source_name": "Traducciones Moonlight",
       "matches": [
         {
-          "status": "✅",
+          "status": "⚠️",
           "name": "Traducciones Moonlight",
           "url": "https://traduccionesmoonlight.com",
           "score": 100.0,
@@ -2495,7 +2501,7 @@
       "source_name": "MangaTuk",
       "matches": [
         {
-          "status": "✅",
+          "status": "⚠️",
           "name": "MangaTuk",
           "url": "https://mangatuk.com",
           "score": 100.0,
@@ -2637,7 +2643,7 @@
       "source_name": "YaoiChan",
       "matches": [
         {
-          "status": "🔀",
+          "status": "❌",
           "name": "YaoiChan",
           "url": "https://yaoi-chan.me",
           "score": 100.0,
