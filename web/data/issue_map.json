@@ -1,7 +1,7 @@
 {
-  "total": 188,
-  "matched": 184,
-  "timestamp": "2026-09-23T13:41:36+00:00",
+  "total": 183,
+  "matched": 179,
+  "timestamp": "2026-09-23T14:09:43+00:00",
   "results": [
     {
       "number": 19296,
@@ -28,22 +28,6 @@
           "status": "✅",
           "name": "LeerCapitulo",
           "url": "https://www.leercapitulo.co",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19265,
-      "title": "[MikuDoujin] Search fails with \"closed\" error",
-      "source_name": "MikuDoujin Version",
-      "matches": [
-        {
-          "status": "🛑",
-          "name": "MikuDoujin",
-          "url": "https://miku-doujin.com",
           "score": 100.0,
           "methods": [
             "gh:body→extName"
@@ -90,7 +74,7 @@
       "source_name": "Niceoppai",
       "matches": [
         {
-          "status": "⚠️",
+          "status": "✅",
           "name": "Niceoppai",
           "url": "https://www.niceoppai.net",
           "score": 100.0,
@@ -191,23 +175,6 @@
       ]
     },
     {
-      "number": 19206,
-      "title": "Fallo al evitar cloudflare ikigai mangas",
-      "source_name": "Ikigai mangas",
-      "matches": [
-        {
-          "status": "🚧",
-          "name": "Ikigai Mangas",
-          "url": "https://visorikigai.gettocaboca.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 19190,
       "title": "KuroMangas: `Sessão recusada pelo site`/`CSRF token mismatch` error",
       "source_name": "Kuromanga",
@@ -223,7 +190,7 @@
           ]
         },
         {
-          "status": "⚠️",
+          "status": "✅",
           "name": "Kuro Manga",
           "url": "https://kuromanga.id",
           "score": 94.7,
@@ -327,22 +294,6 @@
       ]
     },
     {
-      "number": 19130,
-      "title": "BigSolo : Search, Recent and Popular broken",
-      "source_name": "BigSolo",
-      "matches": [
-        {
-          "status": "🚧",
-          "name": "BigSolo",
-          "url": "https://bigsolo.org",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 19127,
       "title": "Epsilon scan Attestation Refused",
       "source_name": "Epsilon Scan",
@@ -371,23 +322,6 @@
           "score": 100.0,
           "methods": [
             "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19122,
-      "title": "XCOMIC error",
-      "source_name": "XCOMIC",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "XCOMIC",
-          "url": "https://comik.to",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
           ]
         }
       ]
@@ -687,7 +621,7 @@
       "source_name": "1.4.35 rimu scan",
       "matches": [
         {
-          "status": "🛑",
+          "status": "🔀",
           "name": "Rimu Scans",
           "url": "https://rimuscan.fr",
           "score": 100.0,
@@ -1919,22 +1853,6 @@
       ]
     },
     {
-      "number": 16605,
-      "title": "Wolftoon: Unexpected JSON token",
-      "source_name": "Wolftoon",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "Wolftoon",
-          "url": "https://wolftoon.lovable.app",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 16551,
       "title": "Manga168: No chapters found",
       "source_name": "Manga168",
@@ -2479,7 +2397,7 @@
           ]
         },
         {
-          "status": "⚠️",
+          "status": "✅",
           "name": "GocTruyenTranh",
           "url": "https://goctruyentranh.com",
           "score": 90.3,
