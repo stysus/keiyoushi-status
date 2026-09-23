@@ -19,9 +19,12 @@ from __future__ import annotations
 
 import asyncio
 import gzip
+import json
 import logging
 import random
 from dataclasses import dataclass
+from datetime import datetime, timezone
+from operator import attrgetter
 from typing import NamedTuple
 
 import aiohttp
@@ -122,6 +125,27 @@ async def main() -> None:
         TABLE_COLUMNS,
     )
     await Path("STATUS.md").write_text(report, encoding="utf-8")
+
+    json_data = {
+        "count": len(results),
+        "timestamp": datetime.now(tz=timezone.utc).isoformat(timespec="seconds"),
+        "user_agent": headers["User-Agent"],
+        "results": [
+            {
+                "status": r.status.value,
+                "name": r.source.name,
+                "url": r.source.url,
+                "duration": round(r.duration, 3) if r.duration >= 0 else None,
+                "time": format_duration(r.duration, TIME_PRECISION_CUTOFF_SECONDS),
+                "info": r.info,
+                "subcategory": r.subcategory,
+            }
+            for r in sorted(results, key=attrgetter("sort_key"))
+        ],
+    }
+    json_path = Path("web/data/extensions.json")
+    await json_path.parent.mkdir(parents=True, exist_ok=True)
+    await json_path.write_text(json.dumps(json_data, indent=2, ensure_ascii=False), encoding="utf-8")
 
 
 if __name__ == "__main__":

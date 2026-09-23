@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Keiyoushi Status | Extension & Issue Monitor</title>
+  <meta name="description" content="Live health status and issue tracking dashboard for Keiyoushi extensions ecosystem.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%20%22100%22%20%22100%22><text y=%22.9em%22 font-size=%2290%22>📡</text></svg>">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.05);
+    }
+    .dark ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.03);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(100, 116, 139, 0.4);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(100, 116, 139, 0.6);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col antialiased transition-colors duration-200">
+  <!-- Header Navbar -->
+  <header class="sticky top-0 z-40 w-full backdrop-blur flex-none border-b border-slate-200/80 dark:border-slate-800/80 bg-white/80 dark:bg-slate-950/80 transition-colors">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center text-white shadow-md shadow-brand-500/20 text-xl font-bold">
+          ⚡
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg font-bold tracking-tight text-slate-900 dark:text-white">Keiyoushi Status</h1>
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-400 border border-emerald-300/50 dark:border-emerald-800/50">
+              Live
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Extension Health & GitHub Issue Tracking Dashboard</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <!-- GitHub Links -->
+        <a href="https://github.com/keiyoushi/extensions-source" target="_blank" rel="noopener noreferrer" 
+           class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+          extensions-source
+        </a>
+
+        <!-- Dark/Light Theme Toggle -->
+        <button id="themeToggle" type="button" aria-label="Toggle theme" 
+                class="p-2 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors">
+          <!-- Sun icon -->
+          <svg id="sunIcon" class="hidden w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 9h-1m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+          <!-- Moon icon -->
+          <svg id="moonIcon" class="hidden w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- Summary Stats Overview -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4" id="statsGrid">
+      <div class="bg-white dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm">
+        <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Total Checked</p>
+        <p class="text-2xl font-bold mt-1 text-slate-900 dark:text-white" id="statTotal">-</p>
+      </div>
+      <div class="bg-white dark:bg-slate-900/60 p-4 rounded-xl border border-emerald-200/50 dark:border-emerald-950/60 shadow-sm">
+        <p class="text-xs font-medium text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Online (OK)
+        </p>
+        <p class="text-2xl font-bold mt-1 text-emerald-700 dark:text-emerald-300" id="statOk">-</p>
+      </div>
+      <div class="bg-white dark:bg-slate-900/60 p-4 rounded-xl border border-blue-200/50 dark:border-blue-950/60 shadow-sm">
+        <p class="text-xs font-medium text-blue-600 dark:text-blue-400 flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-blue-500"></span> Redirects
+        </p>
+        <p class="text-2xl font-bold mt-1 text-blue-700 dark:text-blue-300" id="statRedirect">-</p>
+      </div>
+      <div class="bg-white dark:bg-slate-900/60 p-4 rounded-xl border border-amber-200/50 dark:border-amber-950/60 shadow-sm">
+        <p class="text-xs font-medium text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-amber-500"></span> Cloudflare IUAM
+        </p>
+        <p class="text-2xl font-bold mt-1 text-amber-700 dark:text-amber-300" id="statIuam">-</p>
+      </div>
+      <div class="bg-white dark:bg-slate-900/60 p-4 rounded-xl border border-rose-200/50 dark:border-rose-950/60 shadow-sm">
+        <p class="text-xs font-medium text-rose-600 dark:text-rose-400 flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-rose-500"></span> Cloudflare Block
+        </p>
+        <p class="text-2xl font-bold mt-1 text-rose-700 dark:text-rose-300" id="statBlock">-</p>
+      </div>
+      <div class="bg-white dark:bg-slate-900/60 p-4 rounded-xl border border-red-200/50 dark:border-red-950/60 shadow-sm">
+        <p class="text-xs font-medium text-red-600 dark:text-red-400 flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-red-500"></span> Errors / Failed
+        </p>
+        <p class="text-2xl font-bold mt-1 text-red-700 dark:text-red-300" id="statError">-</p>
+      </div>
+    </div>
+
+    <!-- Main Navigation Tabs -->
+    <div class="border-b border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
+      <nav class="flex space-x-2 sm:space-x-4" aria-label="Tabs">
+        <button id="tabExtensions" type="button" class="tab-btn px-4 py-3 text-sm font-medium border-b-2 border-brand-600 text-brand-600 dark:text-brand-400 transition-colors flex items-center gap-2" data-tab="extensions">
+          <span>📦 Extension Sources</span>
+          <span id="tabCountExtensions" class="px-2 py-0.5 rounded-full text-xs bg-brand-100 text-brand-700 dark:bg-brand-950 dark:text-brand-300 font-semibold">...</span>
+        </button>
+        <button id="tabIssues" type="button" class="tab-btn px-4 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors flex items-center gap-2" data-tab="issues">
+          <span>🔗 Issue URLs</span>
+          <span id="tabCountIssues" class="px-2 py-0.5 rounded-full text-xs bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 font-semibold">...</span>
+        </button>
+        <button id="tabMap" type="button" class="tab-btn px-4 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors flex items-center gap-2" data-tab="map">
+          <span>🗺️ Bug Issue Map</span>
+          <span id="tabCountMap" class="px-2 py-0.5 rounded-full text-xs bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 font-semibold">...</span>
+        </button>
+      </nav>
+
+      <!-- Timestamp info -->
+      <div id="metaTimestamp" class="text-xs text-slate-500 dark:text-slate-400 pb-2 sm:pb-0 flex items-center gap-1.5">
+        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span>Last checked: <strong class="text-slate-700 dark:text-slate-200" id="lastUpdated">-</strong></span>
+      </div>
+    </div>
+
+    <!-- Controls (Search + Filters + Pagination size) -->
+    <div class="space-y-3">
+      <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+        <!-- Search input -->
+        <div class="relative flex-1 max-w-lg">
+          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+          <input type="text" id="searchInput" placeholder="Search extension, URL, issue, label... (Press '/' to focus)" 
+                 class="block w-full pl-10 pr-9 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors shadow-sm">
+          <button id="clearSearchBtn" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+
+        <div class="flex items-center gap-3 self-end sm:self-auto">
+          <!-- Page size selector -->
+          <div class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+            <span>Show:</span>
+            <select id="pageSizeSelect" class="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-1.5 px-2.5 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-brand-500 shadow-sm">
+              <option value="25">25</option>
+              <option value="50" selected>50</option>
+              <option value="100">100</option>
+              <option value="all">All</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Status Filter Chips -->
+      <div class="flex items-center gap-1.5 flex-wrap pt-1" id="filterChipsContainer">
+        <!-- Rendered dynamically in app.js -->
+      </div>
+    </div>
+
+    <!-- Table Container -->
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm overflow-hidden flex flex-col">
+      <!-- Loading State -->
+      <div id="loadingState" class="p-12 flex flex-col items-center justify-center gap-3">
+        <svg class="animate-spin h-8 w-8 text-brand-600 dark:text-brand-400" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <p class="text-sm text-slate-500 dark:text-slate-400">Loading data...</p>
+      </div>
+
+      <!-- Responsive Table View -->
+      <div id="tableWrapper" class="overflow-x-auto hidden">
+        <table class="w-full text-left border-collapse text-xs sm:text-sm">
+          <thead id="tableHead" class="bg-slate-50/80 dark:bg-slate-950/60 border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-semibold sticky top-0">
+            <!-- Table headers dynamically generated based on active tab -->
+          </thead>
+          <tbody id="tableBody" class="divide-y divide-slate-100 dark:divide-slate-800/60">
+            <!-- Table rows dynamically generated -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="hidden p-12 text-center">
+        <p class="text-3xl mb-2">🔍</p>
+        <p class="text-sm font-semibold text-slate-700 dark:text-slate-300">No matching entries found</p>
+        <p class="text-xs text-slate-400 mt-1">Try refining your search query or reset status filters.</p>
+        <button id="resetFiltersBtn" class="mt-4 px-3 py-1.5 rounded-lg text-xs font-medium bg-brand-50 text-brand-600 dark:bg-brand-950/60 dark:text-brand-300 border border-brand-200 dark:border-brand-800 hover:bg-brand-100 transition-colors">
+          Reset Filters
+        </button>
+      </div>
+
+      <!-- Pagination Footer -->
+      <div id="paginationContainer" class="px-4 py-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4 text-xs text-slate-500 dark:text-slate-400">
+        <div id="paginationInfo">
+          Showing <span class="font-semibold text-slate-700 dark:text-slate-200" id="pageStart">1</span> to <span class="font-semibold text-slate-700 dark:text-slate-200" id="pageEnd">50</span> of <span class="font-semibold text-slate-700 dark:text-slate-200" id="pageTotal">1500</span> entries
+        </div>
+        <div class="flex items-center gap-1.5" id="paginationButtons">
+          <!-- Prev / Next / Page buttons -->
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Toast notification for copied text -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-12 opacity-0 pointer-events-none transition-all duration-300 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-2 rounded-xl shadow-lg flex items-center gap-2 text-xs font-medium">
+    <svg class="w-4 h-4 text-emerald-400 dark:text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+    <span id="toastMsg">URL copied to clipboard!</span>
+  </div>
+
+  <!-- Footer -->
+  <footer class="mt-auto border-t border-slate-200 dark:border-slate-800 py-6 text-center text-xs text-slate-400 dark:text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <p>Automated status tracker for <a href="https://github.com/keiyoushi" target="_blank" class="hover:underline text-slate-600 dark:text-slate-300">Keiyoushi</a>.</p>
+      <p>Generated with Python & GitHub Actions.</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -26,6 +26,7 @@ from rapidfuzz import utils as fuzz_utils
 EXT_REPO = Path(os.getenv("EXT_REPO", "extensions-source")) / "src"
 STATUS_MD = Path(os.getenv("STATUS_MD", "STATUS.md"))
 OUTPUT_FILE = Path(os.getenv("OUTPUT_FILE", "STATUS_ISSUE_MAP.md"))
+OUTPUT_JSON = Path(os.getenv("OUTPUT_JSON", "web/data/issue_map.json"))
 REPO = os.getenv("SOURCE_REPO", "keiyoushi/extensions-source")
 SCORE_CUTOFF = 90
 SKIP_LABELS = frozenset({"Meta request"})
@@ -398,6 +399,32 @@ def main() -> None:
 
     results.sort(key=lambda r: -r.number)
     OUTPUT_FILE.write_text(render_table(results), encoding="utf-8")
+
+    json_data = {
+        "total": len(results),
+        "matched": sum(1 for r in results if r.matches),
+        "timestamp": datetime.now(tz=timezone.utc).isoformat(timespec="seconds"),
+        "results": [
+            {
+                "number": r.number,
+                "title": r.title,
+                "source_name": r.source_name,
+                "matches": [
+                    {
+                        "status": m.entry.emoji,
+                        "name": m.entry.name,
+                        "url": m.entry.url,
+                        "score": round(m.score, 1),
+                        "methods": list(m.methods),
+                    }
+                    for m in r.matches
+                ],
+            }
+            for r in results
+        ],
+    }
+    OUTPUT_JSON.parent.mkdir(parents=True, exist_ok=True)
+    OUTPUT_JSON.write_text(json.dumps(json_data, indent=2, ensure_ascii=False), encoding="utf-8")
 
     matched = sum(1 for r in results if r.matches)
     print(f"Total: {len(results)} | Matched: {matched} | No match: {len(results) - matched}")

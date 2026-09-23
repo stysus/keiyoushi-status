@@ -25,6 +25,8 @@ import random
 import re
 import subprocess  # noqa: S404
 from dataclasses import dataclass
+from datetime import datetime, timezone
+from operator import attrgetter
 from typing import NamedTuple
 
 import aiohttp
@@ -240,6 +242,28 @@ async def main() -> None:
         TABLE_COLUMNS,
     )
     await Path("STATUS_ISSUE.md").write_text(report, encoding="utf-8")
+
+    json_data = {
+        "count": len(results),
+        "timestamp": datetime.now(tz=timezone.utc).isoformat(timespec="seconds"),
+        "user_agent": headers["User-Agent"],
+        "results": [
+            {
+                "status": r.status.value,
+                "pr_number": r.pr.pr_number,
+                "url": r.pr.url,
+                "duration": round(r.duration, 3) if r.duration >= 0 else None,
+                "time": format_duration(r.duration, TIME_PRECISION_CUTOFF_SECONDS),
+                "labels": r.pr.label,
+                "info": r.info,
+                "subcategory": r.subcategory,
+            }
+            for r in sorted(results, key=attrgetter("sort_key"))
+        ],
+    }
+    json_path = Path("web/data/issues.json")
+    await json_path.parent.mkdir(parents=True, exist_ok=True)
+    await json_path.write_text(json.dumps(json_data, indent=2, ensure_ascii=False), encoding="utf-8")
 
 
 if __name__ == "__main__":
