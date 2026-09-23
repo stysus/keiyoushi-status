@@ -1,7 +1,7 @@
 {
   "total": 184,
   "matched": 179,
-  "timestamp": "2026-09-23T16:57:19+00:00",
+  "timestamp": "2026-09-23T17:27:30+00:00",
   "results": [
     {
       "number": 19311,
@@ -322,9 +322,9 @@
       "source_name": "Madara Scans",
       "matches": [
         {
-          "status": "✅",
+          "status": "🚧",
           "name": "Madara Scans",
-          "url": "https://madarascans.org",
+          "url": "https://madarascans.com",
           "score": 100.0,
           "methods": [
             "gh:body→extName"
@@ -356,7 +356,7 @@
         {
           "status": "✅",
           "name": "NovelCool",
-          "url": "https://de.novelcool.com",
+          "url": "https://br.novelcool.com",
           "score": 100.0,
           "methods": [
             "gh:body→extName",
@@ -2468,9 +2468,9 @@
       "source_name": "包子漫画",
       "matches": [
         {
-          "status": "✅",
+          "status": "🚧",
           "name": "包子漫画",
-          "url": "https://cn.baozimh.com",
+          "url": "https://appcn.baozimh.com",
           "score": 100.0,
           "methods": [
             "gh:body→extName",
@@ -2842,9 +2842,9 @@
       "source_name": "SchaleNetwork",
       "matches": [
         {
-          "status": "✅",
+          "status": "🔌",
           "name": "SchaleNetwork",
-          "url": "https://niyaniya.moe",
+          "url": "https://anchira.to",
           "score": 100.0,
           "methods": [
             "gh:body→extName"
