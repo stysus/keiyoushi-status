@@ -1,8 +1,8 @@
-// Keiyoushi Status Dashboard Script
+// Keiyoushi Status Dashboard - Minimalist DevTool Edition
 (function () {
   'use strict';
 
-  // State
+  // Global State
   const state = {
     activeTab: 'extensions', // 'extensions' | 'issues' | 'map'
     data: {
@@ -14,46 +14,38 @@
     searchQuery: '',
     pageSize: 50,
     currentPage: 1,
-    sortField: null,
-    sortAsc: true,
+    sortColumn: null, // string
+    sortDirection: 'asc', // 'asc' | 'desc'
   };
 
-  // Status Definitions & Friendly Names
-  const STATUS_META = {
-    '✅': { label: 'OK', color: 'emerald' },
-    '🔀': { label: 'Redirect', color: 'blue' },
-    '🚧': { label: 'IUAM', color: 'amber' },
-    '🛑': { label: 'Blocked', color: 'rose' },
-    '🅿️': { label: 'Parked', color: 'purple' },
-    '🪧': { label: 'Placeholder', color: 'cyan' },
-    '⚠️': { label: 'Warning', color: 'yellow' },
-    '❌': { label: 'Error', color: 'red' },
-    '🔍': { label: 'Not Found', color: 'slate' },
+  // Status Definitions
+  const STATUS_CONFIG = {
+    '✅': { label: 'Operational', dot: 'bg-emerald-500', text: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
+    '🔀': { label: 'Redirect', dot: 'bg-blue-500', text: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
+    '🚧': { label: 'IUAM', dot: 'bg-amber-500', text: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20' },
+    '🛑': { label: 'Blocked', dot: 'bg-rose-500', text: 'text-rose-600 dark:text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/20' },
+    '🅿️': { label: 'Parked', dot: 'bg-purple-500', text: 'text-purple-600 dark:text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/20' },
+    '🪧': { label: 'Placeholder', dot: 'bg-cyan-500', text: 'text-cyan-600 dark:text-cyan-400', bg: 'bg-cyan-500/10', border: 'border-cyan-500/20' },
+    '⚠️': { label: 'Warning', dot: 'bg-yellow-500', text: 'text-yellow-600 dark:text-yellow-400', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20' },
+    '❌': { label: 'Error', dot: 'bg-red-500', text: 'text-red-600 dark:text-red-400', bg: 'bg-red-500/10', border: 'border-red-500/20' },
+    '🔍': { label: 'Not Found', dot: 'bg-zinc-400', text: 'text-zinc-600 dark:text-zinc-400', bg: 'bg-zinc-500/10', border: 'border-zinc-500/20' },
   };
 
-  // DOM Elements
-  const elements = {
+  // DOM Cache
+  const el = {
     themeToggle: document.getElementById('themeToggle'),
     sunIcon: document.getElementById('sunIcon'),
     moonIcon: document.getElementById('moonIcon'),
-    searchInput: document.getElementById('searchInput'),
-    clearSearchBtn: document.getElementById('clearSearchBtn'),
-    pageSizeSelect: document.getElementById('pageSizeSelect'),
-    filterChipsContainer: document.getElementById('filterChipsContainer'),
-    tableWrapper: document.getElementById('tableWrapper'),
-    tableHead: document.getElementById('tableHead'),
-    tableBody: document.getElementById('tableBody'),
-    loadingState: document.getElementById('loadingState'),
-    emptyState: document.getElementById('emptyState'),
-    resetFiltersBtn: document.getElementById('resetFiltersBtn'),
-    paginationContainer: document.getElementById('paginationContainer'),
-    pageStart: document.getElementById('pageStart'),
-    pageEnd: document.getElementById('pageEnd'),
-    pageTotal: document.getElementById('pageTotal'),
-    paginationButtons: document.getElementById('paginationButtons'),
-    toast: document.getElementById('toast'),
-    toastMsg: document.getElementById('toastMsg'),
-    lastUpdated: document.getElementById('lastUpdated'),
+    // Hero
+    heroPulse: document.getElementById('heroPulse'),
+    heroDot: document.getElementById('heroDot'),
+    heroStatusText: document.getElementById('heroStatusText'),
+    lastUpdatedRelative: document.getElementById('lastUpdatedRelative'),
+    barOk: document.getElementById('barOk'),
+    barRedirect: document.getElementById('barRedirect'),
+    barIuam: document.getElementById('barIuam'),
+    barBlock: document.getElementById('barBlock'),
+    barError: document.getElementById('barError'),
     // Stats
     statTotal: document.getElementById('statTotal'),
     statOk: document.getElementById('statOk'),
@@ -61,24 +53,48 @@
     statIuam: document.getElementById('statIuam'),
     statBlock: document.getElementById('statBlock'),
     statError: document.getElementById('statError'),
-    // Tab buttons & badges
+    // Tabs & Navigation
     tabBtns: document.querySelectorAll('.tab-btn'),
     tabCountExtensions: document.getElementById('tabCountExtensions'),
     tabCountIssues: document.getElementById('tabCountIssues'),
     tabCountMap: document.getElementById('tabCountMap'),
+    // Controls
+    searchInput: document.getElementById('searchInput'),
+    clearSearchBtn: document.getElementById('clearSearchBtn'),
+    pageSizeSelect: document.getElementById('pageSizeSelect'),
+    filterChipsContainer: document.getElementById('filterChipsContainer'),
+    exportBtn: document.getElementById('exportBtn'),
+    exportMenu: document.getElementById('exportMenu'),
+    exportCsvBtn: document.getElementById('exportCsvBtn'),
+    exportJsonBtn: document.getElementById('exportJsonBtn'),
+    // Table
+    tableWrapper: document.getElementById('tableWrapper'),
+    tableHead: document.getElementById('tableHead'),
+    tableBody: document.getElementById('tableBody'),
+    loadingState: document.getElementById('loadingState'),
+    emptyState: document.getElementById('emptyState'),
+    resetFiltersBtn: document.getElementById('resetFiltersBtn'),
+    // Pagination
+    pageStart: document.getElementById('pageStart'),
+    pageEnd: document.getElementById('pageEnd'),
+    pageTotal: document.getElementById('pageTotal'),
+    paginationButtons: document.getElementById('paginationButtons'),
+    // Toast
+    toast: document.getElementById('toast'),
+    toastMsg: document.getElementById('toastMsg'),
   };
 
   // -------------------------------------------------------------
-  // Theme Management
+  // Theme Manager
   // -------------------------------------------------------------
   function initTheme() {
-    const savedTheme = localStorage.getItem('keiyoushi-theme');
+    const saved = localStorage.getItem('keiyoushi-theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const isDark = savedTheme ? savedTheme === 'dark' : prefersDark;
+    const isDark = saved ? saved === 'dark' : prefersDark;
 
     applyTheme(isDark);
 
-    elements.themeToggle.addEventListener('click', () => {
+    el.themeToggle.addEventListener('click', () => {
       const willBeDark = !document.documentElement.classList.contains('dark');
       applyTheme(willBeDark);
       localStorage.setItem('keiyoushi-theme', willBeDark ? 'dark' : 'light');
@@ -94,22 +110,20 @@
   function applyTheme(isDark) {
     if (isDark) {
       document.documentElement.classList.add('dark');
-      elements.sunIcon.classList.remove('hidden');
-      elements.moonIcon.classList.add('hidden');
+      el.sunIcon.classList.remove('hidden');
+      el.moonIcon.classList.add('hidden');
     } else {
       document.documentElement.classList.remove('dark');
-      elements.sunIcon.classList.add('hidden');
-      elements.moonIcon.classList.remove('hidden');
+      el.sunIcon.classList.add('hidden');
+      el.moonIcon.classList.remove('hidden');
     }
   }
 
   // -------------------------------------------------------------
-  // Data Fetching
+  // Data Loader
   // -------------------------------------------------------------
   async function loadData(tab) {
-    if (state.data[tab]) {
-      return state.data[tab];
-    }
+    if (state.data[tab]) return state.data[tab];
 
     const endpoints = {
       extensions: 'data/extensions.json',
@@ -130,7 +144,7 @@
   }
 
   // -------------------------------------------------------------
-  // Formatting & Helpers
+  // Helpers & Formatting
   // -------------------------------------------------------------
   function escapeHtml(str) {
     if (str === null || str === undefined) return '';
@@ -142,54 +156,87 @@
       .replace(/'/g, '&#39;');
   }
 
-  function formatTime(isoStr) {
-    if (!isoStr) return '-';
+  function formatRelativeTime(isoString) {
+    if (!isoString) return 'Unknown';
     try {
-      const date = new Date(isoStr);
-      return date.toLocaleString(undefined, {
-        dateStyle: 'medium',
-        timeStyle: 'short',
-      });
+      const date = new Date(isoString);
+      const now = new Date();
+      const diffMs = now - date;
+      const diffSec = Math.floor(diffMs / 1000);
+      const diffMin = Math.floor(diffSec / 60);
+      const diffHour = Math.floor(diffMin / 60);
+      const diffDay = Math.floor(diffHour / 24);
+
+      if (diffSec < 60) return 'just now';
+      if (diffMin < 60) return `${diffMin}m ago`;
+      if (diffHour < 24) return `${diffHour}h ago`;
+      if (diffDay === 1) return 'yesterday';
+      return `${diffDay}d ago`;
     } catch {
-      return isoStr;
+      return isoString;
     }
+  }
+
+  function renderStatusPill(statusEmoji) {
+    const conf = STATUS_CONFIG[statusEmoji] || {
+      label: statusEmoji || 'Unknown',
+      dot: 'bg-zinc-400',
+      text: 'text-zinc-500',
+      bg: 'bg-zinc-500/10',
+      border: 'border-zinc-500/20',
+    };
+
+    return `
+      <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-medium font-mono ${conf.bg} ${conf.text} border ${conf.border}">
+        <span class="w-1.5 h-1.5 rounded-full ${conf.dot}"></span>
+        <span>${conf.label}</span>
+      </span>
+    `;
   }
 
   function showToast(message) {
-    elements.toastMsg.textContent = message;
-    elements.toast.classList.remove('translate-y-12', 'opacity-0');
-    elements.toast.classList.add('translate-y-0', 'opacity-100');
+    el.toastMsg.textContent = message;
+    el.toast.classList.remove('translate-y-8', 'opacity-0');
+    el.toast.classList.add('translate-y-0', 'opacity-100');
     clearTimeout(window.__toastTimeout);
     window.__toastTimeout = setTimeout(() => {
-      elements.toast.classList.remove('translate-y-0', 'opacity-100');
-      elements.toast.classList.add('translate-y-12', 'opacity-0');
-    }, 2000);
+      el.toast.classList.remove('translate-y-0', 'opacity-100');
+      el.toast.classList.add('translate-y-8', 'opacity-0');
+    }, 1800);
   }
 
-  window.copyText = function (text) {
-    if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(text).then(() => {
-        showToast('URL copied to clipboard!');
-      });
-    } else {
-      const input = document.createElement('textarea');
-      input.value = text;
-      document.body.appendChild(input);
-      input.select();
-      document.execCommand('copy');
-      document.body.removeChild(input);
-      showToast('URL copied to clipboard!');
-    }
+  window.copyUrlToClipboard = function (btn, url) {
+    const copyAction = (navigator.clipboard && window.isSecureContext)
+      ? navigator.clipboard.writeText(url)
+      : new Promise((resolve) => {
+          const input = document.createElement('textarea');
+          input.value = url;
+          document.body.appendChild(input);
+          input.select();
+          document.execCommand('copy');
+          document.body.removeChild(input);
+          resolve();
+        });
+
+    copyAction.then(() => {
+      showToast('URL copied to clipboard');
+      // Visual button feedback
+      const originalSvg = btn.innerHTML;
+      btn.innerHTML = `<svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>`;
+      setTimeout(() => {
+        btn.innerHTML = originalSvg;
+      }, 1500);
+    });
   };
 
   // -------------------------------------------------------------
-  // Stats Calculation & Tab Badges
+  // Hero & Global Stats Calculation
   // -------------------------------------------------------------
-  function updateGlobalStats() {
-    const extData = state.data.extensions;
-    if (!extData || !extData.results) return;
+  function updateHeroOverview() {
+    const ext = state.data.extensions;
+    if (!ext || !ext.results) return;
 
-    const list = extData.results;
+    const list = ext.results;
     const total = list.length;
     let ok = 0;
     let redirect = 0;
@@ -203,35 +250,66 @@
       else if (s === '🔀') redirect++;
       else if (s === '🚧') iuam++;
       else if (s === '🛑') block++;
-      else if (s === '❌' || s === '⚠️' || s === '🅿️' || s === '🪧') error++;
+      else error++;
     }
 
-    elements.statTotal.textContent = total.toLocaleString();
-    elements.statOk.textContent = ok.toLocaleString();
-    elements.statRedirect.textContent = redirect.toLocaleString();
-    elements.statIuam.textContent = iuam.toLocaleString();
-    elements.statBlock.textContent = block.toLocaleString();
-    elements.statError.textContent = error.toLocaleString();
+    el.statTotal.textContent = total.toLocaleString();
+    el.statOk.textContent = ok.toLocaleString();
+    el.statRedirect.textContent = redirect.toLocaleString();
+    el.statIuam.textContent = iuam.toLocaleString();
+    el.statBlock.textContent = block.toLocaleString();
+    el.statError.textContent = error.toLocaleString();
 
-    if (extData.timestamp) {
-      elements.lastUpdated.textContent = formatTime(extData.timestamp);
+    // Percentages for bar
+    const pOk = (ok / total) * 100;
+    const pRedirect = (redirect / total) * 100;
+    const pIuam = (iuam / total) * 100;
+    const pBlock = (block / total) * 100;
+    const pError = (error / total) * 100;
+
+    el.barOk.style.width = `${pOk}%`;
+    el.barRedirect.style.width = `${pRedirect}%`;
+    el.barIuam.style.width = `${pIuam}%`;
+    el.barBlock.style.width = `${pBlock}%`;
+    el.barError.style.width = `${pError}%`;
+
+    // Headline
+    const percentage = pOk.toFixed(1);
+    el.heroStatusText.innerHTML = `<span>${percentage}% Sources Operational</span>`;
+
+    if (pOk >= 90) {
+      el.heroPulse.className = 'animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75';
+      el.heroDot.className = 'relative inline-flex rounded-full h-3 w-3 bg-emerald-500';
+    } else if (pOk >= 75) {
+      el.heroPulse.className = 'animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75';
+      el.heroDot.className = 'relative inline-flex rounded-full h-3 w-3 bg-amber-500';
+    } else {
+      el.heroPulse.className = 'animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75';
+      el.heroDot.className = 'relative inline-flex rounded-full h-3 w-3 bg-rose-500';
+    }
+
+    // Timestamp
+    if (ext.timestamp) {
+      const rel = formatRelativeTime(ext.timestamp);
+      el.lastUpdatedRelative.textContent = `Checked ${rel}`;
+      el.lastUpdatedRelative.title = `${ext.timestamp} (UTC)`;
     }
   }
 
   function updateTabBadges() {
     if (state.data.extensions) {
-      elements.tabCountExtensions.textContent = (state.data.extensions.results || []).length.toLocaleString();
+      el.tabCountExtensions.textContent = (state.data.extensions.results || []).length.toLocaleString();
     }
     if (state.data.issues) {
-      elements.tabCountIssues.textContent = (state.data.issues.results || []).length.toLocaleString();
+      el.tabCountIssues.textContent = (state.data.issues.results || []).length.toLocaleString();
     }
     if (state.data.map) {
-      elements.tabCountMap.textContent = (state.data.map.results || []).length.toLocaleString();
+      el.tabCountMap.textContent = (state.data.map.results || []).length.toLocaleString();
     }
   }
 
   // -------------------------------------------------------------
-  // Filter Chips Rendering
+  // Filter Chips
   // -------------------------------------------------------------
   function renderFilterChips(items) {
     const counts = { all: items.length };
@@ -244,41 +322,42 @@
     }
 
     let chipsHtml = `
-      <button type="button" class="filter-chip px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors flex items-center gap-1.5 ${
+      <button type="button" class="filter-chip px-2.5 py-1 rounded-md text-xs font-mono font-medium border transition-colors flex items-center gap-1.5 ${
         state.filterStatus === 'all'
-          ? 'bg-slate-900 text-white border-slate-900 dark:bg-white dark:text-slate-900 dark:border-white shadow-sm'
-          : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800'
+          ? 'bg-zinc-900 text-white border-zinc-900 dark:bg-zinc-100 dark:text-zinc-900 dark:border-zinc-100 shadow-sm'
+          : 'bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700'
       }" data-status="all">
         <span>All</span>
-        <span class="text-[10px] px-1.5 py-0.2 rounded-full ${
-          state.filterStatus === 'all' ? 'bg-slate-800 dark:bg-slate-200' : 'bg-slate-100 dark:bg-slate-800'
+        <span class="text-[10px] px-1 rounded ${
+          state.filterStatus === 'all' ? 'bg-zinc-800 text-zinc-200 dark:bg-zinc-200 dark:text-zinc-800' : 'text-zinc-400'
         }">${counts.all}</span>
       </button>
     `;
 
-    for (const [emoji, meta] of Object.entries(STATUS_META)) {
+    for (const [emoji, conf] of Object.entries(STATUS_CONFIG)) {
       if (!counts[emoji]) continue;
       const isActive = state.filterStatus === emoji;
       chipsHtml += `
-        <button type="button" class="filter-chip px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors flex items-center gap-1.5 ${
+        <button type="button" class="filter-chip px-2.5 py-1 rounded-md text-xs font-mono font-medium border transition-colors flex items-center gap-1.5 ${
           isActive
-            ? 'bg-slate-900 text-white border-slate-900 dark:bg-white dark:text-slate-900 dark:border-white shadow-sm'
-            : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800'
+            ? 'bg-zinc-900 text-white border-zinc-900 dark:bg-zinc-100 dark:text-zinc-900 dark:border-zinc-100 shadow-sm'
+            : 'bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700'
         }" data-status="${emoji}">
-          <span>${emoji} ${meta.label}</span>
-          <span class="text-[10px] px-1.5 py-0.2 rounded-full ${
-            isActive ? 'bg-slate-800 dark:bg-slate-200' : 'bg-slate-100 dark:bg-slate-800'
+          <span class="w-1.5 h-1.5 rounded-full ${conf.dot}"></span>
+          <span>${conf.label}</span>
+          <span class="text-[10px] px-1 rounded ${
+            isActive ? 'bg-zinc-800 text-zinc-200 dark:bg-zinc-200 dark:text-zinc-800' : 'text-zinc-400'
           }">${counts[emoji]}</span>
         </button>
       `;
     }
 
-    elements.filterChipsContainer.innerHTML = chipsHtml;
+    el.filterChipsContainer.innerHTML = chipsHtml;
 
-    elements.filterChipsContainer.querySelectorAll('.filter-chip').forEach((btn) => {
+    el.filterChipsContainer.querySelectorAll('.filter-chip').forEach((btn) => {
       btn.addEventListener('click', () => {
-        const selected = btn.dataset.status;
-        state.filterStatus = state.filterStatus === selected ? 'all' : selected;
+        const s = btn.dataset.status;
+        state.filterStatus = state.filterStatus === s ? 'all' : s;
         state.currentPage = 1;
         renderActiveTab();
       });
@@ -286,16 +365,16 @@
   }
 
   // -------------------------------------------------------------
-  // Data Filtering & Searching
+  // Data Filtering & Column Sorting
   // -------------------------------------------------------------
-  function getFilteredItems() {
+  function getProcessedItems() {
     const rawData = state.data[state.activeTab];
     if (!rawData || !rawData.results) return [];
 
     let items = rawData.results;
     const q = state.searchQuery.trim().toLowerCase();
 
-    // 1. Filter by status
+    // 1. Status Filter
     if (state.filterStatus !== 'all') {
       if (state.activeTab === 'map') {
         items = items.filter((item) => {
@@ -307,7 +386,7 @@
       }
     }
 
-    // 2. Filter by search query
+    // 2. Query Search
     if (q) {
       if (state.activeTab === 'extensions') {
         items = items.filter(
@@ -342,143 +421,234 @@
       }
     }
 
+    // 3. Column Sorting
+    if (state.sortColumn) {
+      const col = state.sortColumn;
+      const asc = state.sortDirection === 'asc';
+
+      items = [...items].sort((a, b) => {
+        let valA, valB;
+
+        if (state.activeTab === 'extensions') {
+          if (col === 'name') {
+            valA = (a.name || '').toLowerCase();
+            valB = (b.name || '').toLowerCase();
+          } else if (col === 'time') {
+            valA = a.duration !== null && a.duration !== undefined ? a.duration : 9999;
+            valB = b.duration !== null && b.duration !== undefined ? b.duration : 9999;
+          } else if (col === 'status') {
+            valA = a.status || '';
+            valB = b.status || '';
+          }
+        } else if (state.activeTab === 'issues') {
+          if (col === 'number') {
+            valA = a.pr_number || 0;
+            valB = b.pr_number || 0;
+          } else if (col === 'time') {
+            valA = a.duration !== null && a.duration !== undefined ? a.duration : 9999;
+            valB = b.duration !== null && b.duration !== undefined ? b.duration : 9999;
+          } else if (col === 'status') {
+            valA = a.status || '';
+            valB = b.status || '';
+          }
+        } else if (state.activeTab === 'map') {
+          if (col === 'number') {
+            valA = a.number || 0;
+            valB = b.number || 0;
+          } else if (col === 'source') {
+            valA = (a.source_name || '').toLowerCase();
+            valB = (b.source_name || '').toLowerCase();
+          }
+        }
+
+        if (valA === valB) return 0;
+        if (valA < valB) return asc ? -1 : 1;
+        return asc ? 1 : -1;
+      });
+    }
+
     return items;
   }
 
   // -------------------------------------------------------------
-  // Render Tables
+  // Table Rendering
   // -------------------------------------------------------------
+  function getSortIndicator(col) {
+    if (state.sortColumn !== col) return `<span class="opacity-30 ml-1">↕</span>`;
+    return state.sortDirection === 'asc' ? `<span class="text-zinc-900 dark:text-zinc-100 ml-1">↑</span>` : `<span class="text-zinc-900 dark:text-zinc-100 ml-1">↓</span>`;
+  }
+
+  function handleHeaderSort(col) {
+    if (state.sortColumn === col) {
+      if (state.sortDirection === 'asc') {
+        state.sortDirection = 'desc';
+      } else {
+        state.sortColumn = null;
+        state.sortDirection = 'asc';
+      }
+    } else {
+      state.sortColumn = col;
+      state.sortDirection = 'asc';
+    }
+    renderActiveTab();
+  }
+
   function renderTableHead() {
     if (state.activeTab === 'extensions') {
-      elements.tableHead.innerHTML = `
+      el.tableHead.innerHTML = `
         <tr>
-          <th class="py-3 px-4 w-16 text-center">Status</th>
-          <th class="py-3 px-4 font-semibold">Extension Name</th>
-          <th class="py-3 px-4 font-semibold">URL</th>
-          <th class="py-3 px-4 w-28 text-right font-semibold">Response</th>
-          <th class="py-3 px-4 font-semibold">Notes / Info</th>
-          <th class="py-3 px-4 w-16 text-center font-semibold">Action</th>
+          <th class="py-2.5 px-4 w-32 cursor-pointer hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors" data-sort="status">
+            STATUS ${getSortIndicator('status')}
+          </th>
+          <th class="py-2.5 px-4 cursor-pointer hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors" data-sort="name">
+            EXTENSION ${getSortIndicator('name')}
+          </th>
+          <th class="py-2.5 px-4 font-normal">URL</th>
+          <th class="py-2.5 px-4 w-28 text-right cursor-pointer hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors" data-sort="time">
+            LATENCY ${getSortIndicator('time')}
+          </th>
+          <th class="py-2.5 px-4 font-normal">NOTES / CATEGORY</th>
+          <th class="py-2.5 px-4 w-12 text-center font-normal"></th>
         </tr>
       `;
     } else if (state.activeTab === 'issues') {
-      elements.tableHead.innerHTML = `
+      el.tableHead.innerHTML = `
         <tr>
-          <th class="py-3 px-4 w-16 text-center">Status</th>
-          <th class="py-3 px-4 w-28 font-semibold">Issue</th>
-          <th class="py-3 px-4 font-semibold">URL</th>
-          <th class="py-3 px-4 w-28 text-right font-semibold">Response</th>
-          <th class="py-3 px-4 font-semibold">Labels</th>
-          <th class="py-3 px-4 font-semibold">Info</th>
-          <th class="py-3 px-4 w-16 text-center font-semibold">Action</th>
+          <th class="py-2.5 px-4 w-32 cursor-pointer hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors" data-sort="status">
+            STATUS ${getSortIndicator('status')}
+          </th>
+          <th class="py-2.5 px-4 w-28 cursor-pointer hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors" data-sort="number">
+            ISSUE ${getSortIndicator('number')}
+          </th>
+          <th class="py-2.5 px-4 font-normal">URL</th>
+          <th class="py-2.5 px-4 w-28 text-right cursor-pointer hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors" data-sort="time">
+            LATENCY ${getSortIndicator('time')}
+          </th>
+          <th class="py-2.5 px-4 font-normal">LABELS</th>
+          <th class="py-2.5 px-4 font-normal">INFO</th>
+          <th class="py-2.5 px-4 w-12 text-center font-normal"></th>
         </tr>
       `;
     } else if (state.activeTab === 'map') {
-      elements.tableHead.innerHTML = `
+      el.tableHead.innerHTML = `
         <tr>
-          <th class="py-3 px-4 w-32 font-semibold">Bug Issue</th>
-          <th class="py-3 px-4 font-semibold">Issue Source</th>
-          <th class="py-3 px-4 w-16 text-center">Status</th>
-          <th class="py-3 px-4 font-semibold">Matched Extension</th>
-          <th class="py-3 px-4 font-semibold">Target URL</th>
-          <th class="py-3 px-4 w-16 text-center font-semibold">Action</th>
+          <th class="py-2.5 px-4 w-36 cursor-pointer hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors" data-sort="number">
+            BUG ISSUE ${getSortIndicator('number')}
+          </th>
+          <th class="py-2.5 px-4 cursor-pointer hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors" data-sort="source">
+            SOURCE ${getSortIndicator('source')}
+          </th>
+          <th class="py-2.5 px-4 w-28 font-normal">STATUS</th>
+          <th class="py-2.5 px-4 font-normal">MATCHED EXTENSION</th>
+          <th class="py-2.5 px-4 font-normal">TARGET URL</th>
+          <th class="py-2.5 px-4 w-12 text-center font-normal"></th>
         </tr>
       `;
     }
+
+    el.tableHead.querySelectorAll('th[data-sort]').forEach((th) => {
+      th.addEventListener('click', () => {
+        handleHeaderSort(th.dataset.sort);
+      });
+    });
   }
 
-  function renderTableRows(pageItems) {
+  function renderTableRows(items) {
     let rowsHtml = '';
 
     if (state.activeTab === 'extensions') {
-      for (const item of pageItems) {
+      for (const item of items) {
         const subcatBadge = item.subcategory
-          ? `<span class="inline-block px-1.5 py-0.5 rounded text-[11px] bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 mr-1.5 font-medium">${escapeHtml(
-              item.subcategory
-            )}</span>`
+          ? `<span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-mono bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 mr-1.5 border border-zinc-200 dark:border-zinc-700">${escapeHtml(item.subcategory)}</span>`
           : '';
-        const infoText = item.info ? `<span class="text-xs text-slate-500">${escapeHtml(item.info)}</span>` : '';
+        const infoText = item.info ? `<span class="text-xs text-zinc-500">${escapeHtml(item.info)}</span>` : '';
+
+        // Response latency styling
+        let latencyColor = 'text-zinc-400';
+        if (item.duration !== null && item.duration !== undefined) {
+          if (item.duration < 2.0) latencyColor = 'text-emerald-600 dark:text-emerald-400';
+          else if (item.duration < 5.0) latencyColor = 'text-amber-600 dark:text-amber-400';
+          else latencyColor = 'text-zinc-400';
+        }
 
         rowsHtml += `
-          <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
-            <td class="py-2.5 px-4 text-center text-lg select-none">${item.status}</td>
-            <td class="py-2.5 px-4 font-medium text-slate-900 dark:text-slate-100 whitespace-nowrap">
+          <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-850/60 transition-colors group">
+            <td class="py-2.5 px-4 whitespace-nowrap">${renderStatusPill(item.status)}</td>
+            <td class="py-2.5 px-4 font-medium text-zinc-900 dark:text-zinc-100 whitespace-nowrap">
               ${escapeHtml(item.name)}
             </td>
             <td class="py-2.5 px-4 font-mono text-xs">
               <a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer" 
-                 class="text-brand-600 dark:text-brand-400 hover:underline break-all inline-flex items-center gap-1">
+                 class="text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:underline break-all inline-flex items-center gap-1">
                 ${escapeHtml(item.url)}
-                <svg class="w-3 h-3 flex-shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
               </a>
             </td>
-            <td class="py-2.5 px-4 text-right font-mono text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">
+            <td class="py-2.5 px-4 text-right font-mono text-xs ${latencyColor} tabular-nums whitespace-nowrap">
               ${escapeHtml(item.time || '-')}
             </td>
             <td class="py-2.5 px-4">
-              ${subcatBadge}${infoText || '<span class="text-slate-400">-</span>'}
+              ${subcatBadge}${infoText || '<span class="text-zinc-400">-</span>'}
             </td>
             <td class="py-2.5 px-4 text-center">
-              <button onclick="copyText('${escapeHtml(item.url)}')" title="Copy URL" 
-                      class="p-1 rounded text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+              <button onclick="copyUrlToClipboard(this, '${escapeHtml(item.url)}')" title="Copy URL" 
+                      class="opacity-0 group-hover:opacity-100 focus:opacity-100 p-1 rounded text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 transition-all">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
               </button>
             </td>
           </tr>
         `;
       }
     } else if (state.activeTab === 'issues') {
-      for (const item of pageItems) {
+      for (const item of items) {
         const ghIssueUrl = `https://github.com/keiyoushi/extensions-source/issues/${item.pr_number}`;
         const labelsBadge = item.labels
           ? item.labels
               .split(',')
               .map(
                 (lbl) =>
-                  `<span class="inline-block px-1.5 py-0.5 rounded text-[11px] bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 mr-1 font-medium">${escapeHtml(
+                  `<span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-mono bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 mr-1 border border-zinc-200 dark:border-zinc-700">${escapeHtml(
                     lbl.trim()
                   )}</span>`
               )
               .join('')
-          : '<span class="text-slate-400">-</span>';
+          : '<span class="text-zinc-400">-</span>';
 
         const subcatBadge = item.subcategory
-          ? `<span class="inline-block px-1.5 py-0.5 rounded text-[11px] bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 mr-1.5 font-medium">${escapeHtml(
+          ? `<span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-mono bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 mr-1.5 border border-zinc-200 dark:border-zinc-700">${escapeHtml(
               item.subcategory
             )}</span>`
           : '';
 
         rowsHtml += `
-          <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
-            <td class="py-2.5 px-4 text-center text-lg select-none">${item.status}</td>
-            <td class="py-2.5 px-4 whitespace-nowrap font-medium font-mono text-xs">
+          <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-850/60 transition-colors group">
+            <td class="py-2.5 px-4 whitespace-nowrap">${renderStatusPill(item.status)}</td>
+            <td class="py-2.5 px-4 whitespace-nowrap font-mono text-xs">
               <a href="${ghIssueUrl}" target="_blank" rel="noopener noreferrer" 
-                 class="text-brand-600 dark:text-brand-400 hover:underline inline-flex items-center gap-1">
+                 class="font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:underline">
                 #${item.pr_number}
-                <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
               </a>
             </td>
             <td class="py-2.5 px-4 font-mono text-xs">
               ${
                 item.url
                   ? `<a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer" 
-                        class="text-brand-600 dark:text-brand-400 hover:underline break-all inline-flex items-center gap-1">
+                        class="text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:underline break-all inline-flex items-center gap-1">
                        ${escapeHtml(item.url)}
-                       <svg class="w-3 h-3 flex-shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                      </a>`
-                  : '<span class="text-slate-400 italic">No URL extracted</span>'
+                  : '<span class="text-zinc-400 italic">No URL extracted</span>'
               }
             </td>
-            <td class="py-2.5 px-4 text-right font-mono text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">
+            <td class="py-2.5 px-4 text-right font-mono text-xs text-zinc-400 tabular-nums whitespace-nowrap">
               ${escapeHtml(item.time || '-')}
             </td>
             <td class="py-2.5 px-4 whitespace-nowrap">${labelsBadge}</td>
-            <td class="py-2.5 px-4">${subcatBadge}${escapeHtml(item.info) || '<span class="text-slate-400">-</span>'}</td>
+            <td class="py-2.5 px-4">${subcatBadge}${escapeHtml(item.info) || '<span class="text-zinc-400">-</span>'}</td>
             <td class="py-2.5 px-4 text-center">
               ${
                 item.url
-                  ? `<button onclick="copyText('${escapeHtml(item.url)}')" title="Copy URL" 
-                             class="p-1 rounded text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                  ? `<button onclick="copyUrlToClipboard(this, '${escapeHtml(item.url)}')" title="Copy URL" 
+                             class="opacity-0 group-hover:opacity-100 focus:opacity-100 p-1 rounded text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 transition-all">
+                       <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                      </button>`
                   : ''
               }
@@ -487,61 +657,59 @@
         `;
       }
     } else if (state.activeTab === 'map') {
-      for (const item of pageItems) {
+      for (const item of items) {
         const ghIssueUrl = `https://github.com/keiyoushi/extensions-source/issues/${item.number}`;
         const hasMatches = item.matches && item.matches.length > 0;
 
         if (!hasMatches) {
           rowsHtml += `
-            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+            <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-850/60 transition-colors">
               <td class="py-2.5 px-4 font-mono text-xs">
                 <a href="${ghIssueUrl}" target="_blank" rel="noopener noreferrer" 
-                   class="text-brand-600 dark:text-brand-400 hover:underline font-semibold block">
+                   class="font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:underline block">
                   #${item.number}
                 </a>
-                <span class="text-slate-600 dark:text-slate-300 text-xs">${escapeHtml(item.title)}</span>
+                <span class="text-zinc-500 text-xs font-sans">${escapeHtml(item.title)}</span>
               </td>
-              <td class="py-2.5 px-4 text-slate-600 dark:text-slate-300 whitespace-nowrap">${escapeHtml(
-                item.source_name || '-'
-              )}</td>
-              <td class="py-2.5 px-4 text-center text-slate-400 text-sm">🔍</td>
-              <td class="py-2.5 px-4 text-slate-400 italic">No match found</td>
-              <td class="py-2.5 px-4 text-slate-400">-</td>
-              <td class="py-2.5 px-4 text-center text-slate-400">-</td>
+              <td class="py-2.5 px-4 text-zinc-600 dark:text-zinc-400 whitespace-nowrap">${escapeHtml(item.source_name || '-')}</td>
+              <td class="py-2.5 px-4">${renderStatusPill('🔍')}</td>
+              <td class="py-2.5 px-4 text-zinc-400 italic font-mono text-xs">No match found</td>
+              <td class="py-2.5 px-4 text-zinc-400">-</td>
+              <td class="py-2.5 px-4 text-center text-zinc-400">-</td>
             </tr>
           `;
         } else {
           item.matches.forEach((m, idx) => {
-            const scoreBadge = `<span class="inline-block px-1.5 py-0.2 rounded text-[11px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-mono ml-1.5">${m.score}%</span>`;
+            const scoreBadge = `<span class="inline-block px-1.5 py-0.2 rounded text-[10px] bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 font-mono border border-zinc-200 dark:border-zinc-700 ml-1.5">${m.score}%</span>`;
             const methodsBadge = (m.methods || [])
               .map(
                 (mth) =>
-                  `<span class="inline-block px-1.5 py-0.2 rounded text-[10px] bg-brand-50 text-brand-700 dark:bg-brand-950 dark:text-brand-300 font-mono mr-1">${escapeHtml(
+                  `<span class="inline-block px-1.5 py-0.2 rounded text-[10px] bg-zinc-100 dark:bg-zinc-800 text-zinc-500 font-mono mr-1 border border-zinc-200 dark:border-zinc-700">${escapeHtml(
                     mth
                   )}</span>`
               )
               .join('');
 
             rowsHtml += `
-              <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors ${
-                idx > 0 ? 'bg-slate-50/30 dark:bg-slate-900/30' : ''
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-850/60 transition-colors group ${
+                idx > 0 ? 'bg-zinc-50/20 dark:bg-zinc-900/20' : ''
               }">
                 <td class="py-2.5 px-4 font-mono text-xs">
                   ${
                     idx === 0
                       ? `<a href="${ghIssueUrl}" target="_blank" rel="noopener noreferrer" 
-                            class="text-brand-600 dark:text-brand-400 hover:underline font-semibold block">
+                            class="font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:underline block">
                            #${item.number}
                          </a>
-                         <span class="text-slate-600 dark:text-slate-300 text-xs">${escapeHtml(item.title)}</span>`
-                      : `<span class="text-slate-400 pl-4 text-xs font-mono">↳ #${item.number}</span>`
+                         <span class="text-zinc-500 text-xs font-sans">${escapeHtml(item.title)}</span>`
+                      : `<span class="text-zinc-400 pl-3 text-xs font-mono">↳ #${item.number}</span>`
                   }
                 </td>
-                <td class="py-2.5 px-4 text-slate-600 dark:text-slate-300 whitespace-nowrap">
+                <td class="py-2.5 px-4 text-zinc-600 dark:text-zinc-400 whitespace-nowrap">
                   ${idx === 0 ? escapeHtml(item.source_name || '-') : ''}
                 </td>
-                <td class="py-2.5 px-4 text-center text-lg select-none">${m.status}</td>
-                <td class="py-2.5 px-4 font-medium text-slate-900 dark:text-slate-100 whitespace-nowrap">
+                <td class="py-2.5 px-4 whitespace-nowrap">${renderStatusPill(m.status)}</td>
+                <td class="py-2.5 px-4 font-medium text-zinc-900 dark:text-zinc-100 whitespace-nowrap">
                   ${escapeHtml(m.name)}${scoreBadge}
                   <div class="mt-0.5">${methodsBadge}</div>
                 </td>
@@ -549,19 +717,18 @@
                   ${
                     m.url
                       ? `<a href="${escapeHtml(m.url)}" target="_blank" rel="noopener noreferrer" 
-                            class="text-brand-600 dark:text-brand-400 hover:underline break-all inline-flex items-center gap-1">
+                            class="text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:underline break-all inline-flex items-center gap-1">
                            ${escapeHtml(m.url)}
-                           <svg class="w-3 h-3 flex-shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                          </a>`
-                      : '<span class="text-slate-400">-</span>'
+                      : '<span class="text-zinc-400">-</span>'
                   }
                 </td>
                 <td class="py-2.5 px-4 text-center">
                   ${
                     m.url
-                      ? `<button onclick="copyText('${escapeHtml(m.url)}')" title="Copy URL" 
-                                 class="p-1 rounded text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                      ? `<button onclick="copyUrlToClipboard(this, '${escapeHtml(m.url)}')" title="Copy URL" 
+                                 class="opacity-0 group-hover:opacity-100 focus:opacity-100 p-1 rounded text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 transition-all">
+                           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                          </button>`
                       : ''
                   }
@@ -573,11 +740,11 @@
       }
     }
 
-    elements.tableBody.innerHTML = rowsHtml;
+    el.tableBody.innerHTML = rowsHtml;
   }
 
   // -------------------------------------------------------------
-  // Pagination Rendering
+  // Pagination
   // -------------------------------------------------------------
   function renderPagination(totalCount) {
     const isAll = state.pageSize === 'all';
@@ -590,209 +757,334 @@
     const startIdx = totalCount === 0 ? 0 : (state.currentPage - 1) * pageSize + 1;
     const endIdx = isAll ? totalCount : Math.min(state.currentPage * pageSize, totalCount);
 
-    elements.pageStart.textContent = startIdx.toLocaleString();
-    elements.pageEnd.textContent = endIdx.toLocaleString();
-    elements.pageTotal.textContent = totalCount.toLocaleString();
+    el.pageStart.textContent = startIdx.toLocaleString();
+    el.pageEnd.textContent = endIdx.toLocaleString();
+    el.pageTotal.textContent = totalCount.toLocaleString();
 
     if (totalPages <= 1) {
-      elements.paginationButtons.innerHTML = '';
+      el.paginationButtons.innerHTML = '';
       return;
     }
 
-    let buttonsHtml = '';
+    let btnHtml = '';
 
-    // Prev Button
-    buttonsHtml += `
-      <button class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:pointer-events-none transition-colors" 
+    // Prev
+    btnHtml += `
+      <button class="px-2 py-1 rounded border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-30 disabled:pointer-events-none transition-colors" 
               data-page="${state.currentPage - 1}" ${state.currentPage === 1 ? 'disabled' : ''}>
         Prev
       </button>
     `;
 
-    // Page numbers with ellipsis
-    const maxButtons = 5;
+    // Pages
+    const maxBtns = 5;
     let startPage = Math.max(1, state.currentPage - 2);
-    let endPage = Math.min(totalPages, startPage + maxButtons - 1);
-    if (endPage - startPage + 1 < maxButtons) {
-      startPage = Math.max(1, endPage - maxButtons + 1);
+    let endPage = Math.min(totalPages, startPage + maxBtns - 1);
+    if (endPage - startPage + 1 < maxBtns) {
+      startPage = Math.max(1, endPage - maxBtns + 1);
     }
 
     if (startPage > 1) {
-      buttonsHtml += `<button class="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" data-page="1">1</button>`;
-      if (startPage > 2) buttonsHtml += `<span class="px-1 text-slate-400">...</span>`;
+      btnHtml += `<button class="w-7 h-7 rounded border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800" data-page="1">1</button>`;
+      if (startPage > 2) btnHtml += `<span class="px-1 text-zinc-400">…</span>`;
     }
 
     for (let p = startPage; p <= endPage; p++) {
-      const isActive = p === state.currentPage;
-      buttonsHtml += `
-        <button class="w-8 h-8 rounded-lg border transition-colors ${
-          isActive
-            ? 'bg-brand-600 text-white border-brand-600 font-semibold shadow-sm'
-            : 'border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
+      const active = p === state.currentPage;
+      btnHtml += `
+        <button class="w-7 h-7 rounded border transition-colors ${
+          active
+            ? 'bg-zinc-900 text-white border-zinc-900 dark:bg-zinc-100 dark:text-zinc-900 dark:border-zinc-100 font-semibold'
+            : 'border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400'
         }" data-page="${p}">${p}</button>
       `;
     }
 
     if (endPage < totalPages) {
-      if (endPage < totalPages - 1) buttonsHtml += `<span class="px-1 text-slate-400">...</span>`;
-      buttonsHtml += `<button class="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" data-page="${totalPages}">${totalPages}</button>`;
+      if (endPage < totalPages - 1) btnHtml += `<span class="px-1 text-zinc-400">…</span>`;
+      btnHtml += `<button class="w-7 h-7 rounded border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800" data-page="${totalPages}">${totalPages}</button>`;
     }
 
-    // Next Button
-    buttonsHtml += `
-      <button class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:pointer-events-none transition-colors" 
+    // Next
+    btnHtml += `
+      <button class="px-2 py-1 rounded border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-30 disabled:pointer-events-none transition-colors" 
               data-page="${state.currentPage + 1}" ${state.currentPage === totalPages ? 'disabled' : ''}>
         Next
       </button>
     `;
 
-    elements.paginationButtons.innerHTML = buttonsHtml;
+    el.paginationButtons.innerHTML = btnHtml;
 
-    elements.paginationButtons.querySelectorAll('button[data-page]').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const page = parseInt(btn.dataset.page, 10);
-        if (page && page !== state.currentPage) {
-          state.currentPage = page;
+    el.paginationButtons.querySelectorAll('button[data-page]').forEach((b) => {
+      b.addEventListener('click', () => {
+        const p = parseInt(b.dataset.page, 10);
+        if (p && p !== state.currentPage) {
+          state.currentPage = p;
           renderActiveTab();
-          elements.tableWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          el.tableWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       });
     });
   }
 
   // -------------------------------------------------------------
-  // Master Render View
+  // Data Export (CSV & JSON)
   // -------------------------------------------------------------
-  async function renderActiveTab() {
-    elements.loadingState.classList.remove('hidden');
-    elements.tableWrapper.classList.add('hidden');
-    elements.emptyState.classList.add('hidden');
+  function downloadFile(content, filename, type) {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast(`Exported ${filename}`);
+  }
 
-    const data = await loadData(state.activeTab);
-    elements.loadingState.classList.add('hidden');
+  function exportFilteredData(format) {
+    const items = getProcessedItems();
+    const timestamp = new Date().toISOString().slice(0, 10);
+    const baseName = `keiyoushi-${state.activeTab}-${timestamp}`;
 
-    if (!data || !data.results) {
-      elements.emptyState.classList.remove('hidden');
+    if (format === 'json') {
+      const jsonContent = JSON.stringify(items, null, 2);
+      downloadFile(jsonContent, `${baseName}.json`, 'application/json');
       return;
     }
 
-    updateGlobalStats();
-    updateTabBadges();
+    // CSV format
+    let csvRows = [];
+    if (state.activeTab === 'extensions') {
+      csvRows.push(['Status', 'Name', 'URL', 'Time', 'Notes', 'Subcategory']);
+      for (const it of items) {
+        csvRows.push([it.status, it.name, it.url, it.time || '', it.info || '', it.subcategory || '']);
+      }
+    } else if (state.activeTab === 'issues') {
+      csvRows.push(['Status', 'Issue', 'URL', 'Time', 'Labels', 'Info']);
+      for (const it of items) {
+        csvRows.push([it.status, `#${it.pr_number}`, it.url || '', it.time || '', it.labels || '', it.info || '']);
+      }
+    } else if (state.activeTab === 'map') {
+      csvRows.push(['Issue', 'Source', 'Title', 'Matched_Extension', 'Status', 'Score', 'URL']);
+      for (const it of items) {
+        if (!it.matches || it.matches.length === 0) {
+          csvRows.push([`#${it.number}`, it.source_name || '', it.title || '', '', 'No match', '', '']);
+        } else {
+          for (const m of it.matches) {
+            csvRows.push([`#${it.number}`, it.source_name || '', it.title || '', m.name, m.status, `${m.score}%`, m.url || '']);
+          }
+        }
+      }
+    }
 
-    // Render filter chips based on unfiltered raw data in active tab
+    const csvContent = csvRows
+      .map((row) =>
+        row
+          .map((cell) => {
+            const str = String(cell ?? '');
+            if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+              return `"${str.replace(/"/g, '""')}"`;
+            }
+            return str;
+          })
+          .join(',')
+      )
+      .join('\n');
+
+    downloadFile(csvContent, `${baseName}.csv`, 'text/csv;charset=utf-8;');
+  }
+
+  // -------------------------------------------------------------
+  // Master Render View
+  // -------------------------------------------------------------
+  async function renderActiveTab() {
+    el.loadingState.classList.remove('hidden');
+    el.tableWrapper.classList.add('hidden');
+    el.emptyState.classList.add('hidden');
+
+    const data = await loadData(state.activeTab);
+    el.loadingState.classList.add('hidden');
+
+    if (!data || !data.results) {
+      el.emptyState.classList.remove('hidden');
+      return;
+    }
+
+    updateHeroOverview();
+    updateTabBadges();
     renderFilterChips(data.results);
 
-    // Filtered data based on search & status chip
-    const filteredItems = getFilteredItems();
+    const filtered = getProcessedItems();
 
-    if (filteredItems.length === 0) {
-      elements.emptyState.classList.remove('hidden');
-      elements.tableWrapper.classList.add('hidden');
+    if (filtered.length === 0) {
+      el.emptyState.classList.remove('hidden');
+      el.tableWrapper.classList.add('hidden');
       renderPagination(0);
       return;
     }
 
-    elements.emptyState.classList.add('hidden');
-    elements.tableWrapper.classList.remove('hidden');
+    el.emptyState.classList.add('hidden');
+    el.tableWrapper.classList.remove('hidden');
 
     renderTableHead();
 
-    // Paginate
     const isAll = state.pageSize === 'all';
-    const pageSize = isAll ? filteredItems.length : parseInt(state.pageSize, 10);
+    const pageSize = isAll ? filtered.length : parseInt(state.pageSize, 10);
     const startIdx = (state.currentPage - 1) * pageSize;
-    const pageItems = isAll ? filteredItems : filteredItems.slice(startIdx, startIdx + pageSize);
+    const pageItems = isAll ? filtered : filtered.slice(startIdx, startIdx + pageSize);
 
     renderTableRows(pageItems);
-    renderPagination(filteredItems.length);
+    renderPagination(filtered.length);
   }
 
   // -------------------------------------------------------------
-  // Events & Initialization
+  // Tab Switching Function
   // -------------------------------------------------------------
-  function setupEventListeners() {
-    // Tab switching
-    elements.tabBtns.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const tab = btn.dataset.tab;
-        if (tab === state.activeTab) return;
+  function switchTab(targetTab) {
+    if (state.activeTab === targetTab) return;
 
-        state.activeTab = tab;
-        state.filterStatus = 'all';
-        state.currentPage = 1;
+    state.activeTab = targetTab;
+    state.filterStatus = 'all';
+    state.currentPage = 1;
+    state.sortColumn = null;
+    state.sortDirection = 'asc';
 
-        elements.tabBtns.forEach((b) => {
-          b.classList.remove('border-brand-600', 'text-brand-600', 'dark:text-brand-400');
-          b.classList.add('border-transparent', 'text-slate-500', 'dark:text-slate-400');
-        });
-        btn.classList.add('border-brand-600', 'text-brand-600', 'dark:text-brand-400');
-        btn.classList.remove('border-transparent', 'text-slate-500', 'dark:text-slate-400');
-
-        renderActiveTab();
-      });
+    el.tabBtns.forEach((btn) => {
+      const isTarget = btn.dataset.tab === targetTab;
+      if (isTarget) {
+        btn.className =
+          'tab-btn px-3 py-1.5 rounded-lg flex items-center gap-2 transition-all bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-sm border border-zinc-200/60 dark:border-zinc-700/60';
+        const numBadge = btn.querySelector('span:first-child');
+        if (numBadge) {
+          numBadge.className =
+            'w-4 h-4 rounded text-[10px] font-mono flex items-center justify-center bg-zinc-100 dark:bg-zinc-700 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-600';
+        }
+      } else {
+        btn.className =
+          'tab-btn px-3 py-1.5 rounded-lg flex items-center gap-2 transition-all text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200';
+        const numBadge = btn.querySelector('span:first-child');
+        if (numBadge) {
+          numBadge.className =
+            'w-4 h-4 rounded text-[10px] font-mono flex items-center justify-center bg-zinc-200/60 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400';
+        }
+      }
     });
 
-    // Search input
-    let debounceTimer;
-    elements.searchInput.addEventListener('input', (e) => {
-      clearTimeout(debounceTimer);
+    renderActiveTab();
+  }
+
+  // -------------------------------------------------------------
+  // Events Setup
+  // -------------------------------------------------------------
+  function setupEvents() {
+    // Tab Clicks
+    el.tabBtns.forEach((btn) => {
+      btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
+
+    // Search Input
+    let timer;
+    el.searchInput.addEventListener('input', (e) => {
+      clearTimeout(timer);
       state.searchQuery = e.target.value;
       if (state.searchQuery) {
-        elements.clearSearchBtn.classList.remove('hidden');
+        el.clearSearchBtn.classList.remove('hidden');
       } else {
-        elements.clearSearchBtn.classList.add('hidden');
+        el.clearSearchBtn.classList.add('hidden');
       }
-      debounceTimer = setTimeout(() => {
+      timer = setTimeout(() => {
         state.currentPage = 1;
         renderActiveTab();
-      }, 150);
+      }, 120);
     });
 
-    elements.clearSearchBtn.addEventListener('click', () => {
-      elements.searchInput.value = '';
+    el.clearSearchBtn.addEventListener('click', () => {
+      el.searchInput.value = '';
       state.searchQuery = '';
-      elements.clearSearchBtn.classList.add('hidden');
+      el.clearSearchBtn.classList.add('hidden');
       state.currentPage = 1;
       renderActiveTab();
-      elements.searchInput.focus();
+      el.searchInput.focus();
     });
 
-    // Keyboard shortcut '/' to search
+    // Keyboard Shortcuts: 1, 2, 3, /, Esc, ⌘K
     window.addEventListener('keydown', (e) => {
-      if (e.key === '/' && document.activeElement !== elements.searchInput) {
+      const isInputActive = ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName);
+
+      if (!isInputActive) {
+        if (e.key === '1') {
+          e.preventDefault();
+          switchTab('extensions');
+        } else if (e.key === '2') {
+          e.preventDefault();
+          switchTab('issues');
+        } else if (e.key === '3') {
+          e.preventDefault();
+          switchTab('map');
+        }
+      }
+
+      if ((e.key === '/' || (e.key === 'k' && (e.metaKey || e.ctrlKey))) && !isInputActive) {
         e.preventDefault();
-        elements.searchInput.focus();
-      } else if (e.key === 'Escape' && document.activeElement === elements.searchInput) {
-        elements.searchInput.blur();
+        el.searchInput.focus();
+      } else if (e.key === 'Escape' && isInputActive) {
+        el.searchInput.value = '';
+        state.searchQuery = '';
+        el.clearSearchBtn.classList.add('hidden');
+        state.currentPage = 1;
+        renderActiveTab();
+        el.searchInput.blur();
       }
     });
 
-    // Page size
-    elements.pageSizeSelect.addEventListener('change', (e) => {
+    // Page Size Select
+    el.pageSizeSelect.addEventListener('change', (e) => {
       state.pageSize = e.target.value;
       state.currentPage = 1;
       renderActiveTab();
     });
 
-    // Reset filters button in empty state
-    elements.resetFiltersBtn.addEventListener('click', () => {
-      elements.searchInput.value = '';
+    // Reset button in empty state
+    el.resetFiltersBtn.addEventListener('click', () => {
+      el.searchInput.value = '';
       state.searchQuery = '';
       state.filterStatus = 'all';
-      elements.clearSearchBtn.classList.add('hidden');
+      el.clearSearchBtn.classList.add('hidden');
       state.currentPage = 1;
       renderActiveTab();
     });
+
+    // Export dropdown toggle
+    el.exportBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      el.exportMenu.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', () => {
+      el.exportMenu.classList.add('hidden');
+    });
+
+    el.exportCsvBtn.addEventListener('click', () => {
+      exportFilteredData('csv');
+      el.exportMenu.classList.add('hidden');
+    });
+
+    el.exportJsonBtn.addEventListener('click', () => {
+      exportFilteredData('json');
+      el.exportMenu.classList.add('hidden');
+    });
   }
 
-  // Init
+  // -------------------------------------------------------------
+  // Initial Boot
+  // -------------------------------------------------------------
   initTheme();
-  setupEventListeners();
+  setupEvents();
 
-  // Preload extensions data and render initially
   loadData('extensions').then(() => {
     renderActiveTab();
-    // Warm up the other tabs in the background
     loadData('issues');
     loadData('map');
   });
