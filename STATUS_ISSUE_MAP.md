@@ -1,7 +1,7 @@
 # Bug Issue → Extension Map
 
 Matched: 179 of 183 open bug issues\
-Timestamp: `2026-09-23T14:09:43+00:00`
+Timestamp: `2026-09-23T14:38:08+00:00`
 
 
 ## Exact match
@@ -215,7 +215,7 @@ Count: 15
 | [#13099](https://github.com/keiyoushi/extensions-source/issues/13099) Mangadex - Use Alternative Titles setting does not keep the alternative titles past the search result | MangaDex | ✅ | MangaDex `100%` | [https://mangadex.org](https://mangadex.org) |
 | ↳ [#13099] |  | ✅ | MangaDE `93%` | [https://mangade.io](https://mangade.io) |
 | [#11929](https://github.com/keiyoushi/extensions-source/issues/11929) GocTruyenTranhVui:  Token/ account gets frequently banned | Goc Truyen Tranh Vui | 🚧 | Goc Truyen Tranh Vui `100%` | [https://goctruyentranhvui41.com](https://goctruyentranhvui41.com) |
-| ↳ [#11929] |  | ✅ | GocTruyenTranh `title 90%` | [https://goctruyentranh.com](https://goctruyentranh.com) |
+| ↳ [#11929] |  | ⚠️ | GocTruyenTranh `title 90%` | [https://goctruyentranh.com](https://goctruyentranh.com) |
 | [#10737](https://github.com/keiyoushi/extensions-source/issues/10737) Arabs Hentai : Change the chapter display format | هنتاي العرب | 🛑 | هنتاي العرب `url` | [https://arabshentai.com](https://arabshentai.com) |
 | ↳ [#10737] |  | 🔀 | هنتاي العرب - نت `100%` | [https://arabhentai.net](https://arabhentai.net) |
 | [#9649](https://github.com/keiyoushi/extensions-source/issues/9649) MangaDex getting alt. English titles ONLY | MangaDex | ✅ | MangaDex `100%` | [https://mangadex.org](https://mangadex.org) |
