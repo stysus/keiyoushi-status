@@ -47,7 +47,7 @@ from generated import Index
 
 REPO_INDEX_URL = "https://raw.githubusercontent.com/keiyoushi/extensions/repo/index.pb"
 TABLE_COLUMNS = ["Status", "Name", "URL", "Time", "Info"]
-SITES_REPORT_SECTIONS = [s for s in REPORT_SECTIONS if s[1] != Status.NOT_FOUND]
+SITES_REPORT_SECTIONS = REPORT_SECTIONS
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)

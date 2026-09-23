@@ -247,6 +247,9 @@ class Status(StrEnum):
     WARNING = "⚠️"
     CF_BLOCK = "🛑"
     CF_IUAM = "🚧"
+    WAF = "🛡️"
+    RATE_LIMITED = "⏳"
+    DNS_ERROR = "🔌"
     REDIRECT = "🔀"
     PARKED = "🅿️"
     NOT_FOUND = "🔍"
@@ -258,11 +261,14 @@ REPORT_SECTIONS: list[tuple[str, Status]] = [
     ("Redirects", Status.REDIRECT),
     ("Cloudflare IUAM", Status.CF_IUAM),
     ("Cloudflare Blocked", Status.CF_BLOCK),
+    ("WAF / DDoS-Guard", Status.WAF),
+    ("Rate Limited", Status.RATE_LIMITED),
+    ("DNS Errors", Status.DNS_ERROR),
     ("Placeholder", Status.PLACEHOLDER),
     ("Parked Domains", Status.PARKED),
+    ("Not Found", Status.NOT_FOUND),
     ("Warnings", Status.WARNING),
     ("Errors", Status.ERROR),
-    ("Not Found", Status.NOT_FOUND),
 ]
 
 PARKED_DOMAINS = [
@@ -452,34 +458,89 @@ async def check_url_generic(
             parked_signals.extend(check_parked_redirect(resp.url))
 
         title = soup.title.string.strip() if soup.title and soup.title.string else ""
+        title_lower = title.lower()
+        html_lower = html.lower()
+        server_header = resp.headers.get("server", "").lower()
 
+        # 1. Cloudflare Challenges & Blocks
         if not redirected:
             if title == "Just a moment...":
                 infos = []
                 return result(Status.CF_IUAM)
-            if title == "Attention Required! | Cloudflare":
+            if title == "Attention Required! | Cloudflare" or "attention required! | cloudflare" in title_lower:
                 infos = []
                 return result(Status.CF_BLOCK)
 
+        # 2. Third-Party WAF / DDoS-Guard
+        if (
+            "ddos-guard" in server_header
+            or "ddos-guard" in title_lower
+            or "ddos protection by ddos-guard" in html_lower
+            or "checking your browser before accessing" in html_lower
+        ):
+            return result(Status.WAF, subcategory="DDoS-Guard")
+        if "security check" in title_lower or "challenge validation" in title_lower:
+            return result(Status.WAF, subcategory="WAF Challenge")
+
+        # 3. Rate Limiting (HTTP 429 / Error 1015)
+        if resp.status == HTTPStatus.TOO_MANY_REQUESTS or "rate limit" in title_lower or "error 1015" in title_lower:
+            return result(Status.RATE_LIMITED, subcategory="HTTP 429" if resp.status == 429 else "Rate Limited")
+
+        # 4. HTTP 404 (Not Found)
+        if resp.status == HTTPStatus.NOT_FOUND:
+            return result(Status.NOT_FOUND, subcategory="HTTP 404")
+
+        # 5. Placeholders & Parked Domains
         if check_placeholder_content(title, html):
             return result(Status.PLACEHOLDER)
 
         parked_signals.extend(check_parked_content(title, html))
-
         if parked_signals:
             return result(Status.PARKED)
+
+        # 6. Redirects
         if redirected:
             subcategory = "Same Authority" if is_same_authority(url, str(resp.url)) else ""
             return result(Status.REDIRECT, subcategory)
+
+        # 7. Operational (HTTP 200 OK)
         if resp.status == HTTPStatus.OK:
             return result(Status.OK, subcategory="With Notes" if infos else "")
 
+        # 8. Warnings with enriched subcategories
         infos.append(f"HTTP {resp.status}: {title}")
-        return result(Status.WARNING)
+        if resp.status in (520, 521, 522, 523, 524, 525, 526):
+            cf_subcat_map = {
+                520: "Cloudflare 520 (Unknown Error)",
+                521: "Cloudflare 521 (Server Down)",
+                522: "Cloudflare 522 (Connection Timed Out)",
+                523: "Cloudflare 523 (Origin Unreachable)",
+                524: "Cloudflare 524 (Timeout)",
+                525: "Cloudflare 525 (SSL Handshake Failed)",
+                526: "Cloudflare 526 (Invalid SSL)",
+            }
+            subcategory = cf_subcat_map.get(resp.status, f"Cloudflare {resp.status}")
+        elif 500 <= resp.status < 600:
+            subcategory = f"Server Error ({resp.status})"
+        elif resp.status == HTTPStatus.FORBIDDEN:
+            subcategory = "Forbidden (403)"
+        else:
+            subcategory = f"HTTP {resp.status}"
+
+        return result(Status.WARNING, subcategory=subcategory)
 
     except Exception as e:
         if msg := str(e):
             infos.append(msg)
+        # Classify DNS & Connection Errors
+        if isinstance(e, (aiohttp.ClientConnectorDNSError, socket.gaierror)) or "DNS lookup failed" in str(e):
+            return result(Status.DNS_ERROR, subcategory="DNS Failure")
+        if isinstance(e, (aiohttp.ClientConnectorSSLError, aiohttp.ClientConnectorCertificateError, ssl.SSLError)):
+            return result(Status.ERROR, subcategory="SSL Error")
+        if isinstance(e, (asyncio.TimeoutError, TimeoutError)) or "timeout" in str(e).lower():
+            return result(Status.ERROR, subcategory="Timeout")
+        if isinstance(e, aiohttp.ClientConnectorError):
+            return result(Status.ERROR, subcategory="Connection Failed")
         return result(Status.ERROR, subcategory=type(e).__name__)
 
 

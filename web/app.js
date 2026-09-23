@@ -79,7 +79,7 @@ function updateHeroOverview() {
     const s = item.status;
     if (s === '✅') ok++;
     else if (s === '🔀') redirect++;
-    else if (s === '🚧') iuam++;
+    else if (s === '🚧' || s === '🛡️') iuam++;
     else if (s === '🛑') block++;
     else error++;
   }
