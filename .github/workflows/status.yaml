@@ -53,7 +53,7 @@ jobs:
         id: filter
         if: github.event_name == 'push'
         with:
-          filters:
+          filters: |
             scripts:
               - '.github/scripts/**'
               - '.github/workflows/status.yaml'
