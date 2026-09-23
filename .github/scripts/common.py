@@ -37,7 +37,6 @@ psl = PublicSuffixList()
 TIMEOUT_TOTAL_SECONDS = 45
 TIMEOUT_CONNECT_SECONDS = 15
 TIMEOUT_SOCK_READ_SECONDS = 30
-TIMEOUT_SECONDS = TIMEOUT_TOTAL_SECONDS
 MAX_CONCURRENT = 80
 PATTERN_WWSUB = re.compile(r"^ww\d+\.")
 MIN_NODES_WARN = 20
@@ -91,9 +90,6 @@ DNS_NAMESERVERS_GLOBAL = [
     "https://private.canadianshield.cira.ca/dns-query",
     "https://wikimedia-dns.org/dns-query",
 ]
-
-# Backward-compatibility alias
-DNS_NAMESERVERS = DNS_NAMESERVERS_GLOBAL
 
 DNS_TLDS_RU = (".ru", ".su", ".by", ".kz")
 DNS_TLDS_ZH = (".cn", ".top", ".wang", ".xin", ".site")
@@ -154,7 +150,7 @@ class _PersistentDoHNameserver(dns.nameserver.DoHNameserver):
     async def async_query(
         self,
         request: dns.message.QueryMessage,
-        timeout: float,  # noqa: ASYNC109 - signature must match Nameserver.async_query
+        timeout: float,  # signature must match Nameserver.async_query
         source: str | None,
         source_port: int,
         max_size: bool,  # noqa: ARG002 - unused, required by Nameserver.async_query signature
@@ -324,21 +320,15 @@ class Status(StrEnum):
     PLACEHOLDER = "🪧"
 
 
-REPORT_SECTIONS: list[tuple[str, Status]] = [
-    ("OK", Status.OK),
-    ("Redirects", Status.REDIRECT),
-    ("Cloudflare IUAM", Status.CF_IUAM),
-    ("Cloudflare Blocked", Status.CF_BLOCK),
-    ("WAF / DDoS-Guard", Status.WAF),
-    ("Rate Limited", Status.RATE_LIMITED),
-    ("DNS Errors", Status.DNS_ERROR),
-    ("Placeholder", Status.PLACEHOLDER),
-    ("Parked Domains", Status.PARKED),
-    ("Not Found", Status.NOT_FOUND),
-    ("Warnings", Status.WARNING),
-    ("Errors", Status.ERROR),
-]
-
+BINARY_CONTENT_PREFIXES = (
+    "image/",
+    "video/",
+    "audio/",
+    "application/zip",
+    "application/pdf",
+    "application/octet-stream",
+    "application/vnd.",
+)
 MAX_BODY_BYTES = 256 * 1024  # 256 KB safety limit
 META_REFRESH_RE = re.compile(
     r"""<meta[^>]+http-equiv=['"]?refresh['"]?[^>]+content=['"]?\d+\s*;\s*url=['"]?([^'">\s]+)""",
@@ -376,6 +366,7 @@ def _clean_error_title(title: str, status_code: int, subcategory: str) -> str:
         return ""
 
     return cleaned
+
 
 PARKED_DOMAINS = [
     "https://bulsis.net/",
@@ -573,6 +564,15 @@ async def _build_aia_ssl_context(url: str) -> ssl.SSLContext:
     )
 
 
+async def _read_response_html(resp: aiohttp.ClientResponse) -> str | None:
+    content_type = resp.content_type.lower()
+    if any(content_type.startswith(b) for b in BINARY_CONTENT_PREFIXES):
+        return None
+    raw_bytes = await resp.content.read(MAX_BODY_BYTES)
+    encoding = resp.charset or "utf-8"
+    return raw_bytes.decode(encoding, errors="replace")
+
+
 async def check_url_generic(
     session: aiohttp.ClientSession,
     url: str,
@@ -592,31 +592,19 @@ async def check_url_generic(
     try:
         try:
             async with session.get(url) as resp:
-                content_type = resp.content_type.lower()
-                # Safety check: bypass parsing for non-HTML binaries
-                if any(content_type.startswith(b) for b in ("image/", "video/", "audio/", "application/zip", "application/pdf", "application/octet-stream", "application/vnd.")):
-                    infos.append(f"Non-HTML ({content_type})")
-                    if resp.status == HTTPStatus.OK:
-                        return result(Status.OK, subcategory=f"Binary ({content_type})")
-                    return result(Status.WARNING, subcategory=f"Binary {resp.status}")
-
-                raw_bytes = await resp.content.read(MAX_BODY_BYTES)
-                encoding = resp.charset or "utf-8"
-                html = raw_bytes.decode(encoding, errors="replace")
+                html = await _read_response_html(resp)
         except aiohttp.ClientConnectorCertificateError:
             # some servers omit intermediate certs; complete the chain like a browser would
             ssl_context = await _build_aia_ssl_context(url)
             async with session.get(url, ssl=ssl_context) as resp:
-                content_type = resp.content_type.lower()
-                if any(content_type.startswith(b) for b in ("image/", "video/", "audio/", "application/zip", "application/pdf", "application/octet-stream", "application/vnd.")):
-                    infos.append(f"Non-HTML ({content_type})")
-                    if resp.status == HTTPStatus.OK:
-                        return result(Status.OK, subcategory=f"Binary ({content_type})")
-                    return result(Status.WARNING, subcategory=f"Binary {resp.status}")
+                html = await _read_response_html(resp)
 
-                raw_bytes = await resp.content.read(MAX_BODY_BYTES)
-                encoding = resp.charset or "utf-8"
-                html = raw_bytes.decode(encoding, errors="replace")
+        if html is None:
+            content_type = resp.content_type.lower()
+            infos.append(f"Non-HTML ({content_type})")
+            if resp.status == HTTPStatus.OK:
+                return result(Status.OK, subcategory=f"Binary ({content_type})")
+            return result(Status.WARNING, subcategory=f"Binary {resp.status}")
 
         soup = BeautifulSoup(html, "lxml")
 
@@ -654,12 +642,15 @@ async def check_url_generic(
         # 1. Cloudflare Challenges & Blocks
         if not redirected:
             if (
-                title in ("Just a moment...", "Checking your browser...", "Verify you are human")
+                title in {"Just a moment...", "Checking your browser...", "Verify you are human"}
                 or "challenges.cloudflare.com" in html_lower
                 or "cf-turnstile" in html_lower
                 or "turnstile-wrapper" in html_lower
                 or "cf-browser-verification" in html_lower
-                or ("ray id:" in html_lower and ("verifying you are human" in html_lower or "enable javascript and cookies" in html_lower))
+                or (
+                    "ray id:" in html_lower
+                    and ("verifying you are human" in html_lower or "enable javascript and cookies" in html_lower)
+                )
             ):
                 infos = []
                 return result(Status.CF_IUAM)

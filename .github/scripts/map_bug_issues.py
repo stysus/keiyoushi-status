@@ -78,10 +78,7 @@ class StatusEntry:
 class Match:
     entry: StatusEntry
     score: float
-    methods: tuple[
-        str,
-        ...,
-    ]  # "url" | "gh:body→extName" | "gh:title→extName" | "gh:body→kt:name" | "gh:body→kt:factory" | "gh:body→kt:class" | "gh:body→kt:dir"
+    methods: tuple[str, ...]  # Match methods: url, gh:body->extName, etc.
 
 
 @dataclass
@@ -231,7 +228,8 @@ def match_issue(
         *((p, "gh:body→extName") for p in source_parts),
         *((n, "gh:title→extName") for n in title_names),
     ]
-    # Look up by exact name, extClass, or dir slug (slug strips spaces/hyphens for e.g. "Spectral Scan" → "spectralscan")
+    # Look up by exact name, extClass, or dir slug
+    # (slug strips spaces/hyphens for e.g. "Spectral Scan" → "spectralscan")
     slug = SLUG_NORM_RE.sub("", source_name.lower())
     kt_entries = ext_db.get(source_name.lower(), set()) | ext_db.get(slug, set())
     # For pkg-style IDs (e.g. "Fr.softepsilonscan"), also look up the suffix after the dot
@@ -328,10 +326,11 @@ def main() -> None:
         )
 
     results.sort(key=lambda r: -r.number)
+    matched = sum(1 for r in results if r.matches)
 
     json_data = {
         "total": len(results),
-        "matched": sum(1 for r in results if r.matches),
+        "matched": matched,
         "timestamp": datetime.now(tz=timezone.utc).isoformat(timespec="seconds"),
         "results": [
             {
@@ -355,7 +354,6 @@ def main() -> None:
     OUTPUT_JSON.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_JSON.write_text(json.dumps(json_data, indent=2, ensure_ascii=False), encoding="utf-8")
 
-    matched = sum(1 for r in results if r.matches)
     print(f"Total: {len(results)} | Matched: {matched} | No match: {len(results) - matched}")
 
 

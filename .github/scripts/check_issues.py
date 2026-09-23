@@ -8,7 +8,6 @@
 #   "beautifulsoup4[lxml]",
 #   "dnspython[doh,idna]",
 #   "publicsuffixlist",
-#   "pygithub",
 #   "ua-generator",
 #   "yarl",
 # ]
@@ -210,7 +209,7 @@ def log_result(result: CheckResult, pr: PrUrl) -> None:
 
 
 async def main() -> None:
-    issues = list(fetch_issues())
+    issues = fetch_issues()
     pr_urls = extract_pr_urls(issues)
     log.info("Checking %d URLs from %d issues", len(pr_urls), len(issues))
 
