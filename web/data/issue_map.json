@@ -1,7 +1,7 @@
 {
   "total": 183,
   "matched": 179,
-  "timestamp": "2026-09-23T16:03:30+00:00",
+  "timestamp": "2026-09-23T16:37:17+00:00",
   "results": [
     {
       "number": 19296,
@@ -200,7 +200,7 @@
           ]
         },
         {
-          "status": "🛑",
+          "status": "🚧",
           "name": "Kuroi Manga",
           "url": "https://kuroimanga.site",
           "score": 90.0,
@@ -993,7 +993,7 @@
       "source_name": "Manga Drama",
       "matches": [
         {
-          "status": "⚠️",
+          "status": "✅",
           "name": "Manga Drama",
           "url": "https://mangadrama.com",
           "score": 100.0,
@@ -1058,7 +1058,7 @@
       "source_name": "Manhastro",
       "matches": [
         {
-          "status": "✅",
+          "status": "🚧",
           "name": "Manhastro",
           "url": "https://manhastro.net",
           "score": 100.0,
@@ -1189,7 +1189,7 @@
       "source_name": "Naver Webtoon Best Challenge",
       "matches": [
         {
-          "status": "✅",
+          "status": "🔀",
           "name": "Naver Webtoon Best Challenge",
           "url": "https://comic.naver.com",
           "score": 100.0,
@@ -1536,7 +1536,7 @@
       "source_name": "Japscan",
       "matches": [
         {
-          "status": "⚠️",
+          "status": "🛑",
           "name": "Japscan",
           "url": "https://www.japscan.foo/mangas/?sort=popular&p=1",
           "score": 100.0,
@@ -1552,7 +1552,7 @@
       "source_name": "Hades Scans",
       "matches": [
         {
-          "status": "✅",
+          "status": "🪧",
           "name": "Hades Scans",
           "url": "https://hadesscans.com",
           "score": 100.0,
@@ -3036,7 +3036,7 @@
       "source_name": "MyReadingManga",
       "matches": [
         {
-          "status": "⚠️",
+          "status": "🚧",
           "name": "MyReadingManga",
           "url": "https://myreadingmanga.info",
           "score": 100.0,
@@ -3136,7 +3136,7 @@
       "source_name": "MyReadingManga",
       "matches": [
         {
-          "status": "⚠️",
+          "status": "🚧",
           "name": "MyReadingManga",
           "url": "https://myreadingmanga.info",
           "score": 100.0,
