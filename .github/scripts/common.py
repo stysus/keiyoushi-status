@@ -38,7 +38,10 @@ log = logging.getLogger(__name__)
 logging.getLogger("httpx").setLevel(logging.WARNING)  # silence per-request DoH logs
 psl = PublicSuffixList()
 
-TIMEOUT_SECONDS = 5 * 60
+TIMEOUT_TOTAL_SECONDS = 45
+TIMEOUT_CONNECT_SECONDS = 15
+TIMEOUT_SOCK_READ_SECONDS = 30
+TIMEOUT_SECONDS = TIMEOUT_TOTAL_SECONDS
 MAX_CONCURRENT = 80
 PATTERN_WWSUB = re.compile(r"^ww\d+\.")
 MIN_NODES_WARN = 20

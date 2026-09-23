@@ -41,9 +41,10 @@ permissions:
   id-token: write
 
 jobs:
-  status:
+  detect:
     runs-on: ubuntu-latest
     outputs:
+      should_scrape: ${{ steps.flags.outputs.should_scrape }}
       should_deploy: ${{ steps.flags.outputs.should_deploy }}
     steps:
       - uses: actions/checkout@v6
@@ -85,16 +86,92 @@ jobs:
           echo "should_deploy=$SHOULD_DEPLOY" >> "$GITHUB_OUTPUT"
           echo "Determined flags: should_scrape=$SHOULD_SCRAPE, should_deploy=$SHOULD_DEPLOY"
 
+  scrape:
+    needs: detect
+    if: needs.detect.outputs.should_scrape == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [extensions, issues]
+    steps:
+      - uses: actions/checkout@v6
+
       - name: Setup uv with dependency caching
         uses: astral-sh/setup-uv@v7
-        if: steps.flags.outputs.should_scrape == 'true'
+        with:
+          enable-cache: true
+          cache-dependency-glob: '.github/scripts/*.py'
+
+      - name: Run extensions status check
+        if: matrix.target == 'extensions'
+        run: .github/scripts/check_extensions.py
+
+      - name: Run issues status check
+        if: matrix.target == 'issues'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: .github/scripts/check_issues.py
+
+      - name: Upload extensions artifacts
+        if: matrix.target == 'extensions'
+        uses: actions/upload-artifact@v4
+        with:
+          name: extensions-output
+          path: |
+            STATUS.md
+            web/data/extensions.json
+          retention-days: 1
+          if-no-files-found: error
+
+      - name: Upload issues artifacts
+        if: matrix.target == 'issues'
+        uses: actions/upload-artifact@v4
+        with:
+          name: issues-output
+          path: |
+            STATUS_ISSUE.md
+            web/data/issues.json
+          retention-days: 1
+          if-no-files-found: error
+
+  process:
+    needs: [detect, scrape]
+    if: always() && (needs.detect.outputs.should_scrape == 'true' || needs.detect.outputs.should_deploy == 'true')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Verify scrape matrix success
+        if: needs.detect.outputs.should_scrape == 'true'
+        run: |
+          if [ "${{ needs.scrape.result }}" != "success" ]; then
+            echo "Scrape job failed or was cancelled."
+            exit 1
+          fi
+
+      - name: Download extensions artifacts
+        if: needs.detect.outputs.should_scrape == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: extensions-output
+
+      - name: Download issues artifacts
+        if: needs.detect.outputs.should_scrape == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: issues-output
+
+      - name: Setup uv with dependency caching
+        if: needs.detect.outputs.should_scrape == 'true'
+        uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
           cache-dependency-glob: '.github/scripts/*.py'
 
       - name: Checkout extensions source
+        if: needs.detect.outputs.should_scrape == 'true'
         uses: actions/checkout@v6
-        if: steps.flags.outputs.should_scrape == 'true'
         with:
           repository: keiyoushi/extensions-source
           path: extensions-source
@@ -102,43 +179,36 @@ jobs:
           filter: blob:none
           sparse-checkout: src
 
-      - name: Run status and mapping scripts
-        if: steps.flags.outputs.should_scrape == 'true'
+      - name: Run map bug issues script
+        if: needs.detect.outputs.should_scrape == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-
-          .github/scripts/check_extensions.py &
-          .github/scripts/check_issues.py &
-          wait
-
-          .github/scripts/map_bug_issues.py
+        run: .github/scripts/map_bug_issues.py
 
       - name: Commit updated status files
+        if: needs.detect.outputs.should_scrape == 'true'
         uses: stefanzweifel/git-auto-commit-action@v7
-        if: steps.flags.outputs.should_scrape == 'true'
         with:
           commit_message: 'chore: update extensions, issues, and bug issue map'
           file_pattern: '*.md web/data/*.json'
 
       - name: Setup Pages
-        if: steps.flags.outputs.should_deploy == 'true'
+        if: needs.detect.outputs.should_deploy == 'true'
         uses: actions/configure-pages@v5
 
       - name: Upload Pages Artifact
-        if: steps.flags.outputs.should_deploy == 'true'
+        if: needs.detect.outputs.should_deploy == 'true'
         uses: actions/upload-pages-artifact@v3
         with:
           path: web/
 
   deploy:
-    if: needs.status.outputs.should_deploy == 'true'
+    needs: [detect, process]
+    if: needs.detect.outputs.should_deploy == 'true'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: status
     steps:
       - name: Deploy to GitHub Pages
         id: deployment

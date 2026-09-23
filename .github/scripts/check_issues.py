@@ -34,7 +34,9 @@ from anyio import Path
 from common import (
     REPORT_SECTIONS,
     TIME_PRECISION_CUTOFF_SECONDS,
-    TIMEOUT_SECONDS,
+    TIMEOUT_CONNECT_SECONDS,
+    TIMEOUT_SOCK_READ_SECONDS,
+    TIMEOUT_TOTAL_SECONDS,
     Status,
     check_all_generic,
     check_url_generic,
@@ -225,7 +227,11 @@ async def main() -> None:
     headers = generate_headers(seed)
 
     async with aiohttp.ClientSession(
-        timeout=aiohttp.ClientTimeout(total=TIMEOUT_SECONDS),
+        timeout=aiohttp.ClientTimeout(
+            total=TIMEOUT_TOTAL_SECONDS,
+            connect=TIMEOUT_CONNECT_SECONDS,
+            sock_read=TIMEOUT_SOCK_READ_SECONDS,
+        ),
         headers=headers,
         connector=create_connector(),
     ) as session:
