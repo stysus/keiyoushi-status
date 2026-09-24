@@ -1,7 +1,7 @@
 {
   "total": 185,
   "matched": 180,
-  "timestamp": "2026-09-24T02:44:30+00:00",
+  "timestamp": "2026-09-24T03:07:20+00:00",
   "results": [
     {
       "number": 19313,
@@ -1527,7 +1527,7 @@
           ]
         },
         {
-          "status": "❌",
+          "status": "🛡️",
           "name": "AllPornComic.io",
           "url": "https://allporncomic.io",
           "score": 90.3,
@@ -2114,7 +2114,7 @@
       "source_name": "Stray Fansub",
       "matches": [
         {
-          "status": "✅",
+          "status": "❌",
           "name": "Stray Fansub",
           "url": "https://strayfansub.net",
           "score": 100.0,
@@ -2237,7 +2237,7 @@
       "source_name": "漫画人",
       "matches": [
         {
-          "status": "❌",
+          "status": "✅",
           "name": "漫画人",
           "url": "http://mangaapi.manhuaren.com",
           "score": 100.0,
@@ -2394,7 +2394,7 @@
       "source_name": "Saturday Morning Breakfast Comics",
       "matches": [
         {
-          "status": "✅",
+          "status": "🔀",
           "name": "Saturday Morning Breakfast Comics",
           "url": "https://smbc-comics.com",
           "score": 100.0,
@@ -2627,7 +2627,7 @@
       "source_name": "NamiComi",
       "matches": [
         {
-          "status": "✅",
+          "status": "❌",
           "name": "NamiComi",
           "url": "https://namicomi.com",
           "score": 100.0,
