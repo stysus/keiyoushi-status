@@ -1,8 +1,25 @@
 {
-  "total": 184,
-  "matched": 179,
-  "timestamp": "2026-09-23T18:26:29+00:00",
+  "total": 185,
+  "matched": 180,
+  "timestamp": "2026-09-24T02:12:18+00:00",
   "results": [
+    {
+      "number": 19313,
+      "title": "Olympus Scanlation: incorrect series URLs",
+      "source_name": "Olympus Scanlation",
+      "matches": [
+        {
+          "status": "✅",
+          "name": "Olympus Scanlation",
+          "url": "https://olympusxyz.com",
+          "score": 100.0,
+          "methods": [
+            "url",
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
     {
       "number": 19311,
       "title": "NyxScans Novels in Series List",
