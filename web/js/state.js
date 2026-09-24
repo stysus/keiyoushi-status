@@ -29,7 +29,7 @@ export async function loadData(tab) {
   if (!endpoint) return null;
 
   try {
-    const res = await fetch(endpoint);
+    const res = await fetch(endpoint, { cache: 'no-cache' });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const json = await res.json();
     state.data[tab] = json;

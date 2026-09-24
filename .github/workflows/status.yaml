@@ -149,12 +149,14 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: extensions-output
+          path: web/data
 
       - name: Download issues artifacts
         if: needs.detect.outputs.should_scrape == 'true'
         uses: actions/download-artifact@v4
         with:
           name: issues-output
+          path: web/data
 
       - name: Setup uv with dependency caching
         if: needs.detect.outputs.should_scrape == 'true'
