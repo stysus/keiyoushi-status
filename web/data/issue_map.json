@@ -1,25 +1,8 @@
 {
-  "total": 185,
-  "matched": 180,
-  "timestamp": "2026-09-24T03:07:20+00:00",
+  "total": 181,
+  "matched": 176,
+  "timestamp": "2026-09-24T12:55:14+00:00",
   "results": [
-    {
-      "number": 19313,
-      "title": "Olympus Scanlation: incorrect series URLs",
-      "source_name": "Olympus Scanlation",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "Olympus Scanlation",
-          "url": "https://olympusxyz.com",
-          "score": 100.0,
-          "methods": [
-            "url",
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
     {
       "number": 19311,
       "title": "NyxScans Novels in Series List",
@@ -29,22 +12,6 @@
     {
       "number": 19296,
       "title": "LeerCapitulo: HTTP 404 error",
-      "source_name": "LeerCapitulo",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "LeerCapitulo",
-          "url": "https://www.leercapitulo.co",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19282,
-      "title": "[ES] LeerCapitulo: Attempt to invoke virtual method / NoChaptersException",
       "source_name": "LeerCapitulo",
       "matches": [
         {
@@ -100,22 +67,6 @@
           "status": "✅",
           "name": "Niceoppai",
           "url": "https://www.niceoppai.net",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19241,
-      "title": "[Ikigai] Cloudflare blocks chapter loading",
-      "source_name": "Ikigai",
-      "matches": [
-        {
-          "status": "🚧",
-          "name": "Ikigai Mangas",
-          "url": "https://visorikigai.gettocaboca.com",
           "score": 100.0,
           "methods": [
             "gh:body→extName"
@@ -273,7 +224,7 @@
       "source_name": "Manhwaz",
       "matches": [
         {
-          "status": "❌",
+          "status": "🔌",
           "name": "ManhwaZ",
           "url": "https://manhwaz.com",
           "score": 100.0,
@@ -1171,7 +1122,7 @@
           ]
         },
         {
-          "status": "✅",
+          "status": "🚧",
           "name": "Mangack",
           "url": "https://mangack.com",
           "score": 92.3,
@@ -1958,22 +1909,6 @@
       ]
     },
     {
-      "number": 16092,
-      "title": "Cerise Scan: `Attempt to invoke virtual method` error, new website URL (`loverstoon.net`)",
-      "source_name": "Cerise Scan",
-      "matches": [
-        {
-          "status": "❌",
-          "name": "Cerise Scan",
-          "url": "https://loverstoon.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 16048,
       "title": "Holotoon 404 not found on Mihon but still accessible from Webview",
       "source_name": "Holotoon",
@@ -2114,7 +2049,7 @@
       "source_name": "Stray Fansub",
       "matches": [
         {
-          "status": "❌",
+          "status": "✅",
           "name": "Stray Fansub",
           "url": "https://strayfansub.net",
           "score": 100.0,
@@ -2420,7 +2355,7 @@
           ]
         },
         {
-          "status": "✅",
+          "status": "⚠️",
           "name": "GocTruyenTranh",
           "url": "https://goctruyentranh.com",
           "score": 90.3,
@@ -2627,7 +2562,7 @@
       "source_name": "NamiComi",
       "matches": [
         {
-          "status": "❌",
+          "status": "✅",
           "name": "NamiComi",
           "url": "https://namicomi.com",
           "score": 100.0,
