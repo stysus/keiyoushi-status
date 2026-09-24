@@ -1,6 +1,19 @@
-// Keiyoushi Status Dashboard - Central State & Data Processing
+import { DATA_ENDPOINTS, STATUS_CONFIG, isOperationalSource } from './config.js';
 
-import { DATA_ENDPOINTS } from './config.js';
+const STATUS_RANK = {
+  '✅': 1,
+  '🔀': 2,
+  '🚧': 3,
+  '🛡️': 4,
+  '⏳': 5,
+  '⚠️': 6,
+  '🛑': 7,
+  '🔌': 8,
+  '🅿️': 9,
+  '🪧': 10,
+  '🔍': 11,
+  '❌': 12,
+};
 
 export const state = {
   activeTab: 'extensions', // 'extensions' | 'issues' | 'map'
@@ -66,21 +79,31 @@ export function getProcessedItems() {
   // 2. Query Search
   if (q) {
     if (state.activeTab === 'extensions') {
-      items = items.filter(
-        (item) =>
+      items = items.filter((item) => {
+        const statusLabel = STATUS_CONFIG[item.status]?.label?.toLowerCase() || '';
+        const isOp = isOperationalSource(item);
+        const matchesOpQuery = (q === 'operational' || q === 'online') && isOp;
+        return (
+          matchesOpQuery ||
           (item.name && item.name.toLowerCase().includes(q)) ||
           (item.url && item.url.toLowerCase().includes(q)) ||
           (item.info && item.info.toLowerCase().includes(q)) ||
-          (item.subcategory && item.subcategory.toLowerCase().includes(q))
-      );
+          (item.subcategory && item.subcategory.toLowerCase().includes(q)) ||
+          statusLabel.includes(q)
+        );
+      });
     } else if (state.activeTab === 'issues') {
-      items = items.filter(
-        (item) =>
+      items = items.filter((item) => {
+        const statusLabel = STATUS_CONFIG[item.status]?.label?.toLowerCase() || '';
+        return (
           (item.url && item.url.toLowerCase().includes(q)) ||
           String(item.pr_number).includes(q) ||
           (item.labels && item.labels.toLowerCase().includes(q)) ||
-          (item.info && item.info.toLowerCase().includes(q))
-      );
+          (item.info && item.info.toLowerCase().includes(q)) ||
+          (item.subcategory && item.subcategory.toLowerCase().includes(q)) ||
+          statusLabel.includes(q)
+        );
+      });
     } else if (state.activeTab === 'map') {
       items = items.filter(
         (item) =>
@@ -92,7 +115,8 @@ export function getProcessedItems() {
               (m) =>
                 (m.name && m.name.toLowerCase().includes(q)) ||
                 (m.url && m.url.toLowerCase().includes(q)) ||
-                (m.methods && m.methods.some((mth) => mth.toLowerCase().includes(q)))
+                (m.methods && m.methods.some((mth) => mth.toLowerCase().includes(q))) ||
+                (STATUS_CONFIG[m.status]?.label?.toLowerCase() || '').includes(q)
             ))
       );
     }
@@ -114,8 +138,8 @@ export function getProcessedItems() {
           valA = a.duration !== null && a.duration !== undefined ? a.duration : 9999;
           valB = b.duration !== null && b.duration !== undefined ? b.duration : 9999;
         } else if (col === 'status') {
-          valA = a.status || '';
-          valB = b.status || '';
+          valA = STATUS_RANK[a.status] || 99;
+          valB = STATUS_RANK[b.status] || 99;
         }
       } else if (state.activeTab === 'issues') {
         if (col === 'number') {
@@ -125,8 +149,8 @@ export function getProcessedItems() {
           valA = a.duration !== null && a.duration !== undefined ? a.duration : 9999;
           valB = b.duration !== null && b.duration !== undefined ? b.duration : 9999;
         } else if (col === 'status') {
-          valA = a.status || '';
-          valB = b.status || '';
+          valA = STATUS_RANK[a.status] || 99;
+          valB = STATUS_RANK[b.status] || 99;
         }
       } else if (state.activeTab === 'map') {
         if (col === 'number') {

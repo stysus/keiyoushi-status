@@ -22,3 +22,40 @@ export const DATA_ENDPOINTS = {
 };
 
 export const GITHUB_BASE_URL = 'https://github.com/keiyoushi/extensions-source';
+
+/**
+ * Checks whether an item represents a Same Authority redirect.
+ * @param {Object} item
+ * @returns {boolean}
+ */
+export function isSameAuthorityRedirect(item) {
+  if (!item || item.status !== '🔀') return false;
+  const sub = (item.subcategory || '').toLowerCase();
+  return sub.includes('same authority');
+}
+
+/**
+ * Checks whether a source is operationally accessible (Direct 200, Same-Authority, IUAM, or WAF).
+ * @param {Object} item
+ * @returns {boolean}
+ */
+export function isOperationalSource(item) {
+  if (!item) return false;
+  if (item.status === '✅') return true;
+  if (item.status === '🚧' || item.status === '🛡️') return true;
+  return isSameAuthorityRedirect(item);
+}
+
+/**
+ * Returns the operational tier category for an item.
+ * @param {Object} item
+ * @returns {'operational_pure'|'protection_challenge'|'degraded_notice'|'inaccessible_offline'}
+ */
+export function getTierCategory(item) {
+  if (!item) return 'inaccessible_offline';
+  const s = item.status;
+  if (s === '✅') return 'operational_pure';
+  if (s === '🚧' || s === '🛡️' || s === '🔀') return 'protection_challenge';
+  if (s === '⏳' || s === '⚠️') return 'degraded_notice';
+  return 'inaccessible_offline';
+}

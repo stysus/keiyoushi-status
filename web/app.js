@@ -1,11 +1,10 @@
-// Keiyoushi Status Dashboard - Main Application Controller (ESM)
-
 import { initTheme } from './js/theme.js';
 import { formatRelativeTime, debounce, copyTextToClipboard } from './js/utils.js';
 import { renderFilterChips, renderPaginationButtons, showToast } from './js/components.js';
 import { renderTableHead, renderTableRows } from './js/table.js';
 import { state, loadData, getProcessedItems, toggleSortColumn, resetStateFilters } from './js/state.js';
 import { exportFilteredData } from './js/export.js';
+import { getTierCategory } from './js/config.js';
 
 // DOM Elements Cache
 const el = {
@@ -18,17 +17,15 @@ const el = {
   heroStatusText: document.getElementById('heroStatusText'),
   lastUpdatedRelative: document.getElementById('lastUpdatedRelative'),
   barOk: document.getElementById('barOk'),
-  barRedirect: document.getElementById('barRedirect'),
-  barIuam: document.getElementById('barIuam'),
-  barBlock: document.getElementById('barBlock'),
-  barError: document.getElementById('barError'),
+  barChallenge: document.getElementById('barChallenge'),
+  barDegraded: document.getElementById('barDegraded'),
+  barOffline: document.getElementById('barOffline'),
   // Stats
   statTotal: document.getElementById('statTotal'),
   statOk: document.getElementById('statOk'),
-  statRedirect: document.getElementById('statRedirect'),
-  statIuam: document.getElementById('statIuam'),
-  statBlock: document.getElementById('statBlock'),
-  statError: document.getElementById('statError'),
+  statChallenge: document.getElementById('statChallenge'),
+  statDegraded: document.getElementById('statDegraded'),
+  statOffline: document.getElementById('statOffline'),
   // Tabs & Navigation
   tabBtns: document.querySelectorAll('.tab-btn'),
   tabCountExtensions: document.getElementById('tabCountExtensions'),
@@ -69,49 +66,46 @@ function updateHeroOverview() {
 
   const list = ext.results;
   const total = list.length;
-  let ok = 0;
-  let redirect = 0;
-  let iuam = 0;
-  let block = 0;
-  let error = 0;
+  let pureOk = 0;
+  let challenge = 0;
+  let degraded = 0;
+  let offline = 0;
 
   for (const item of list) {
-    const s = item.status;
-    if (s === '✅') ok++;
-    else if (s === '🔀') redirect++;
-    else if (s === '🚧' || s === '🛡️') iuam++;
-    else if (s === '🛑') block++;
-    else error++;
+    const tier = getTierCategory(item);
+    if (tier === 'operational_pure') pureOk++;
+    else if (tier === 'protection_challenge') challenge++;
+    else if (tier === 'degraded_notice') degraded++;
+    else offline++;
   }
 
   el.statTotal.textContent = total.toLocaleString();
-  el.statOk.textContent = ok.toLocaleString();
-  el.statRedirect.textContent = redirect.toLocaleString();
-  el.statIuam.textContent = iuam.toLocaleString();
-  el.statBlock.textContent = block.toLocaleString();
-  el.statError.textContent = error.toLocaleString();
+  el.statOk.textContent = pureOk.toLocaleString();
+  el.statChallenge.textContent = challenge.toLocaleString();
+  el.statDegraded.textContent = degraded.toLocaleString();
+  el.statOffline.textContent = offline.toLocaleString();
 
   // Percentages for status bar
-  const pOk = (ok / total) * 100;
-  const pRedirect = (redirect / total) * 100;
-  const pIuam = (iuam / total) * 100;
-  const pBlock = (block / total) * 100;
-  const pError = (error / total) * 100;
+  const pOk = total > 0 ? (pureOk / total) * 100 : 0;
+  const pChallenge = total > 0 ? (challenge / total) * 100 : 0;
+  const pDegraded = total > 0 ? (degraded / total) * 100 : 0;
+  const pOffline = total > 0 ? (offline / total) * 100 : 0;
 
   el.barOk.style.width = `${pOk}%`;
-  el.barRedirect.style.width = `${pRedirect}%`;
-  el.barIuam.style.width = `${pIuam}%`;
-  el.barBlock.style.width = `${pBlock}%`;
-  el.barError.style.width = `${pError}%`;
+  el.barChallenge.style.width = `${pChallenge}%`;
+  el.barDegraded.style.width = `${pDegraded}%`;
+  el.barOffline.style.width = `${pOffline}%`;
 
-  // Headline
-  const percentage = pOk.toFixed(1);
+  // Comprehensive Operational Headline (Pure OK + Challenge/WAF/Same-Auth)
+  const totalOperational = pureOk + challenge;
+  const pOperational = total > 0 ? (totalOperational / total) * 100 : 0;
+  const percentage = pOperational.toFixed(1);
   el.heroStatusText.innerHTML = `<span>${percentage}% Sources Operational</span>`;
 
-  if (pOk >= 90) {
+  if (pOperational >= 90) {
     el.heroPulse.className = 'animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75';
     el.heroDot.className = 'relative inline-flex rounded-full h-3 w-3 bg-emerald-500';
-  } else if (pOk >= 75) {
+  } else if (pOperational >= 75) {
     el.heroPulse.className = 'animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75';
     el.heroDot.className = 'relative inline-flex rounded-full h-3 w-3 bg-amber-500';
   } else {

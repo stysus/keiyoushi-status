@@ -150,19 +150,18 @@
         </div>
       </div>
 
-      <!-- Multi-segment Proportion Bar -->
+      <!-- Multi-segment Proportion Bar (4 Tiers) -->
       <div class="space-y-1.5">
         <div class="h-2 w-full rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden flex" id="proportionBar">
-          <div id="barOk" class="bg-emerald-500 h-full transition-all duration-500" style="width: 0%" title="Online (OK)"></div>
-          <div id="barRedirect" class="bg-blue-500 h-full transition-all duration-500" style="width: 0%" title="Redirects"></div>
-          <div id="barIuam" class="bg-amber-500 h-full transition-all duration-500" style="width: 0%" title="Cloudflare IUAM"></div>
-          <div id="barBlock" class="bg-rose-500 h-full transition-all duration-500" style="width: 0%" title="Cloudflare Blocked"></div>
-          <div id="barError" class="bg-red-600 h-full transition-all duration-500" style="width: 0%" title="Errors"></div>
+          <div id="barOk" class="bg-emerald-500 h-full transition-all duration-500" style="width: 0%" title="Operational (Pure 200 OK)"></div>
+          <div id="barChallenge" class="bg-amber-500 h-full transition-all duration-500" style="width: 0%" title="Protection / Challenge (IUAM, WAF, Redirects)"></div>
+          <div id="barDegraded" class="bg-orange-500 h-full transition-all duration-500" style="width: 0%" title="Degraded / Notice (Rate Limited, Warnings)"></div>
+          <div id="barOffline" class="bg-rose-500 h-full transition-all duration-500" style="width: 0%" title="Inaccessible / Offline"></div>
         </div>
       </div>
 
-      <!-- Inline Metrics Strip (High Contrast) -->
-      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 pt-1 font-mono text-xs">
+      <!-- Inline Metrics Strip (High Contrast 4-Tier Breakdown) -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 pt-1 font-mono text-xs">
         <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 shadow-sm">
           <div class="text-zinc-600 dark:text-zinc-400 text-xs font-semibold tracking-tight">TOTAL MONITORED</div>
           <div class="text-sm font-bold text-zinc-950 dark:text-white mt-0.5 tabular-nums" id="statTotal">-</div>
@@ -174,28 +173,22 @@
           <div class="text-sm font-bold text-zinc-950 dark:text-white mt-0.5 tabular-nums" id="statOk">-</div>
         </div>
         <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 shadow-sm">
-          <div class="text-blue-700 dark:text-blue-400 text-xs font-semibold tracking-tight flex items-center gap-1">
-            <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> REDIRECTS
+          <div class="text-amber-800 dark:text-amber-400 text-xs font-semibold tracking-tight flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> CHALLENGE / WAF
           </div>
-          <div class="text-sm font-bold text-zinc-950 dark:text-white mt-0.5 tabular-nums" id="statRedirect">-</div>
+          <div class="text-sm font-bold text-zinc-950 dark:text-white mt-0.5 tabular-nums" id="statChallenge">-</div>
         </div>
         <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 shadow-sm">
-          <div class="text-amber-800 dark:text-amber-400 text-xs font-semibold tracking-tight flex items-center gap-1">
-            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> CF IUAM
+          <div class="text-orange-800 dark:text-orange-400 text-xs font-semibold tracking-tight flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> DEGRADED / NOTICE
           </div>
-          <div class="text-sm font-bold text-zinc-950 dark:text-white mt-0.5 tabular-nums" id="statIuam">-</div>
+          <div class="text-sm font-bold text-zinc-950 dark:text-white mt-0.5 tabular-nums" id="statDegraded">-</div>
         </div>
         <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 shadow-sm">
           <div class="text-rose-700 dark:text-rose-400 text-xs font-semibold tracking-tight flex items-center gap-1">
-            <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> CF BLOCKED
+            <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> INACCESSIBLE
           </div>
-          <div class="text-sm font-bold text-zinc-950 dark:text-white mt-0.5 tabular-nums" id="statBlock">-</div>
-        </div>
-        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 shadow-sm">
-          <div class="text-red-700 dark:text-red-400 text-xs font-semibold tracking-tight flex items-center gap-1">
-            <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> FAILED / OTHER
-          </div>
-          <div class="text-sm font-bold text-zinc-950 dark:text-white mt-0.5 tabular-nums" id="statError">-</div>
+          <div class="text-sm font-bold text-zinc-950 dark:text-white mt-0.5 tabular-nums" id="statOffline">-</div>
         </div>
       </div>
     </div>

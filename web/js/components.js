@@ -26,6 +26,62 @@ export function renderStatusPill(statusEmoji) {
 }
 
 /**
+ * Renders the primary status cell with operational state and condition sub-badge.
+ * @param {Object|string} itemOrEmoji
+ * @returns {string}
+ */
+export function renderStatusCell(itemOrEmoji) {
+  if (!itemOrEmoji) return renderStatusPill('🔍');
+  if (typeof itemOrEmoji === 'string') return renderStatusPill(itemOrEmoji);
+
+  const status = itemOrEmoji.status;
+  const subcategory = (itemOrEmoji.subcategory || '').toLowerCase();
+  const isSameAuth = status === '🔀' && subcategory.includes('same authority');
+
+  if (status === '✅') {
+    return renderStatusPill('✅');
+  }
+
+  if (isSameAuth) {
+    return `
+      <div class="inline-flex flex-col items-start gap-1">
+        ${renderStatusPill('✅')}
+        <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-mono bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/20 font-medium">
+          <span class="w-1 h-1 rounded-full bg-blue-500"></span>
+          <span>Redirect</span>
+        </span>
+      </div>
+    `;
+  }
+
+  if (status === '🚧') {
+    return `
+      <div class="inline-flex flex-col items-start gap-1">
+        ${renderStatusPill('✅')}
+        <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-mono bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/20 font-medium">
+          <span class="w-1 h-1 rounded-full bg-amber-500"></span>
+          <span>IUAM</span>
+        </span>
+      </div>
+    `;
+  }
+
+  if (status === '🛡️') {
+    return `
+      <div class="inline-flex flex-col items-start gap-1">
+        ${renderStatusPill('✅')}
+        <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-mono bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border border-indigo-500/20 font-medium">
+          <span class="w-1 h-1 rounded-full bg-indigo-500"></span>
+          <span>WAF</span>
+        </span>
+      </div>
+    `;
+  }
+
+  return renderStatusPill(status);
+}
+
+/**
  * Renders a standardized badge (subcategory, label, score, method).
  * @param {string} text
  * @param {'neutral'|'score'|'method'} [variant='neutral']

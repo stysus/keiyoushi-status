@@ -1,8 +1,6 @@
-// Keiyoushi Status Dashboard - Table View & Rows Renderer
-
 import { GITHUB_BASE_URL } from './config.js';
 import { escapeHtml } from './utils.js';
-import { renderStatusPill, renderBadge, renderCopyButton } from './components.js';
+import { renderStatusPill, renderStatusCell, renderBadge, renderCopyButton } from './components.js';
 
 /**
  * Generates the sorting indicator arrow.
@@ -160,7 +158,7 @@ export function renderTableRows(items, activeTab) {
 
       rowsHtml += `
         <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-850/60 transition-colors group">
-          <td class="py-2.5 px-4 whitespace-nowrap">${renderStatusPill(item.status)}</td>
+          <td class="py-2.5 px-4 whitespace-nowrap">${renderStatusCell(item)}</td>
           <td class="py-2.5 px-4 font-medium text-zinc-950 dark:text-white whitespace-nowrap">
             ${escapeHtml(item.name)}
           </td>
@@ -194,7 +192,7 @@ export function renderTableRows(items, activeTab) {
 
       rowsHtml += `
         <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-850/60 transition-colors group">
-          <td class="py-2.5 px-4 whitespace-nowrap">${renderStatusPill(item.status)}</td>
+          <td class="py-2.5 px-4 whitespace-nowrap">${renderStatusCell(item)}</td>
           <td class="py-2.5 px-4 whitespace-nowrap font-mono text-xs">
             <a href="${ghIssueUrl}" target="_blank" rel="noopener noreferrer" 
                class="font-semibold text-zinc-800 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white hover:underline">
@@ -269,7 +267,7 @@ export function renderTableRows(items, activeTab) {
               <td class="py-2.5 px-4 text-zinc-700 dark:text-zinc-300 font-medium whitespace-nowrap">
                 ${idx === 0 ? escapeHtml(item.source_name || '-') : ''}
               </td>
-              <td class="py-2.5 px-4 whitespace-nowrap">${renderStatusPill(m.status)}</td>
+              <td class="py-2.5 px-4 whitespace-nowrap">${renderStatusCell(m)}</td>
               <td class="py-2.5 px-4 font-semibold text-zinc-950 dark:text-white whitespace-nowrap">
                 ${escapeHtml(m.name)}${scoreBadge}
                 <div class="mt-0.5">${methodsBadge}</div>
