@@ -1,7 +1,7 @@
 {
   "total": 185,
   "matched": 180,
-  "timestamp": "2026-09-24T02:12:18+00:00",
+  "timestamp": "2026-09-24T02:21:02+00:00",
   "results": [
     {
       "number": 19313,
@@ -1700,7 +1700,7 @@
       "source_name": "Ortega Scans",
       "matches": [
         {
-          "status": "⚠️",
+          "status": "🔀",
           "name": "Ortega Scans",
           "url": "https://ortegascans.fr",
           "score": 100.0,
@@ -2518,7 +2518,7 @@
       "source_name": "MangaTuk",
       "matches": [
         {
-          "status": "⚠️",
+          "status": "✅",
           "name": "MangaTuk",
           "url": "https://mangatuk.com",
           "score": 100.0,
