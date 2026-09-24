@@ -45,6 +45,8 @@ jobs:
     outputs:
       should_scrape: ${{ steps.flags.outputs.should_scrape }}
       should_deploy: ${{ steps.flags.outputs.should_deploy }}
+      extensions_shards: ${{ steps.shards.outputs.shards }}
+      total_shards: ${{ steps.shards.outputs.total_shards }}
     steps:
       - uses: actions/checkout@v6
 
@@ -84,14 +86,30 @@ jobs:
           echo "should_deploy=$SHOULD_DEPLOY" >> "$GITHUB_OUTPUT"
           echo "Determined flags: should_scrape=$SHOULD_SCRAPE, should_deploy=$SHOULD_DEPLOY"
 
-  scrape:
+      - name: Setup uv for shard calculation
+        if: steps.flags.outputs.should_scrape == 'true'
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          cache-dependency-glob: '.github/scripts/*.py'
+
+      - name: Calculate extensions matrix shards
+        id: shards
+        if: steps.flags.outputs.should_scrape == 'true'
+        run: |
+          SHARDS_JSON=$(.github/scripts/check_extensions.py --get-shards 100 2>/dev/null)
+          echo "shards=$(echo "$SHARDS_JSON" | jq -c '.shards')" >> "$GITHUB_OUTPUT"
+          echo "total_shards=$(echo "$SHARDS_JSON" | jq -r '.total_shards')" >> "$GITHUB_OUTPUT"
+          echo "Generated shards: $SHARDS_JSON"
+
+  scrape-extensions:
     needs: detect
     if: needs.detect.outputs.should_scrape == 'true'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        target: [extensions, issues]
+        shard: ${{ fromJson(needs.detect.outputs.extensions_shards) }}
     steps:
       - uses: actions/checkout@v6
 
@@ -101,27 +119,39 @@ jobs:
           enable-cache: true
           cache-dependency-glob: '.github/scripts/*.py'
 
-      - name: Run extensions status check
-        if: matrix.target == 'extensions'
+      - name: Run extensions status check shard
+        env:
+          SHARD_INDEX: ${{ matrix.shard }}
+          TOTAL_SHARDS: ${{ needs.detect.outputs.total_shards }}
         run: .github/scripts/check_extensions.py
 
+      - name: Upload extensions shard artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: extensions-shard-${{ matrix.shard }}
+          path: web/data/extensions_shard_${{ matrix.shard }}.json
+          retention-days: 1
+          if-no-files-found: error
+
+  scrape-issues:
+    needs: detect
+    if: needs.detect.outputs.should_scrape == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup uv with dependency caching
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          cache-dependency-glob: '.github/scripts/*.py'
+
       - name: Run issues status check
-        if: matrix.target == 'issues'
         env:
           GH_TOKEN: ${{ github.token }}
         run: .github/scripts/check_issues.py
 
-      - name: Upload extensions artifacts
-        if: matrix.target == 'extensions'
-        uses: actions/upload-artifact@v4
-        with:
-          name: extensions-output
-          path: web/data/extensions.json
-          retention-days: 1
-          if-no-files-found: error
-
       - name: Upload issues artifacts
-        if: matrix.target == 'issues'
         uses: actions/upload-artifact@v4
         with:
           name: issues-output
@@ -130,26 +160,27 @@ jobs:
           if-no-files-found: error
 
   process:
-    needs: [detect, scrape]
+    needs: [detect, scrape-extensions, scrape-issues]
     if: always() && (needs.detect.outputs.should_scrape == 'true' || needs.detect.outputs.should_deploy == 'true')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
 
-      - name: Verify scrape matrix success
+      - name: Verify scrape jobs success
         if: needs.detect.outputs.should_scrape == 'true'
         run: |
-          if [ "${{ needs.scrape.result }}" != "success" ]; then
-            echo "Scrape job failed or was cancelled."
+          if [ "${{ needs.scrape-extensions.result }}" != "success" ] || [ "${{ needs.scrape-issues.result }}" != "success" ]; then
+            echo "Scrape jobs failed or were cancelled."
             exit 1
           fi
 
-      - name: Download extensions artifacts
+      - name: Download all extensions shards
         if: needs.detect.outputs.should_scrape == 'true'
         uses: actions/download-artifact@v4
         with:
-          name: extensions-output
-          path: web/data
+          pattern: extensions-shard-*
+          path: web/data/shards
+          merge-multiple: true
 
       - name: Download issues artifacts
         if: needs.detect.outputs.should_scrape == 'true'
@@ -164,6 +195,10 @@ jobs:
         with:
           enable-cache: true
           cache-dependency-glob: '.github/scripts/*.py'
+
+      - name: Merge extensions shards
+        if: needs.detect.outputs.should_scrape == 'true'
+        run: .github/scripts/check_extensions.py --merge
 
       - name: Checkout extensions source
         if: needs.detect.outputs.should_scrape == 'true'
