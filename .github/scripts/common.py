@@ -153,8 +153,8 @@ class _PersistentDoHNameserver(dns.nameserver.DoHNameserver):
         timeout: float,  # signature must match Nameserver.async_query
         source: str | None,
         source_port: int,
-        max_size: bool,  # noqa: ARG002 - unused, required by Nameserver.async_query signature
-        backend: dns.asyncbackend.Backend,  # noqa: ARG002 - unused, required by Nameserver.async_query signature
+        max_size: bool,  # unused, required by Nameserver.async_query signature
+        backend: dns.asyncbackend.Backend,  # unused, required by Nameserver.async_query signature
         one_rr_per_rrset: bool = False,
         ignore_trailing: bool = False,
     ) -> dns.message.Message:
@@ -295,6 +295,15 @@ class DNSPythonResolver(AbstractResolver):
             await client.aclose()
 
 
+class _DoHTCPConnector(aiohttp.TCPConnector):
+    """TCPConnector that properly closes custom DoH resolver clients on close()."""
+
+    async def close(self, *, abort_ssl: bool = False) -> None:
+        if self._resolver is not None:
+            await self._resolver.close()
+        await super().close(abort_ssl=abort_ssl)
+
+
 def create_connector() -> aiohttp.TCPConnector:
     resolver = DNSPythonResolver(
         DNS_NAMESERVERS_GLOBAL,
@@ -302,7 +311,7 @@ def create_connector() -> aiohttp.TCPConnector:
         zh_nameservers=DNS_NAMESERVERS_ZH,
         jp_nameservers=DNS_NAMESERVERS_JP,
     )
-    return aiohttp.TCPConnector(resolver=resolver)
+    return _DoHTCPConnector(resolver=resolver)
 
 
 class Status(StrEnum):
@@ -330,10 +339,7 @@ BINARY_CONTENT_PREFIXES = (
     "application/vnd.",
 )
 MAX_BODY_BYTES = 256 * 1024  # 256 KB safety limit
-META_REFRESH_RE = re.compile(
-    r"""<meta[^>]+http-equiv=['"]?refresh['"]?[^>]+content=['"]?\d+\s*;\s*url=['"]?([^'">\s]+)""",
-    re.IGNORECASE,
-)
+META_REFRESH_CONTENT_RE = re.compile(r"url=['\"]?([^'\";\s]+)", re.IGNORECASE)
 WINDOW_LOCATION_RE = re.compile(
     r"""(?:window|self|top)\.location(?:\.href\s*=\s*|\s*=\s*|\.replace\s*\(\s*)['"](https?://[^'"]+)['"]""",
     re.IGNORECASE,
@@ -362,7 +368,7 @@ def _clean_error_title(title: str, status_code: int, subcategory: str) -> str:
     if cleaned_lower in subcat_lower:
         return ""
 
-    if cleaned_lower in (str(status_code), f"http {status_code}"):
+    if cleaned_lower in {str(status_code), f"http {status_code}"}:
         return ""
 
     return cleaned
@@ -621,9 +627,13 @@ async def check_url_generic(
         server_header = resp.headers.get("server", "").lower()
 
         # HTML Meta Refresh & JS Redirect Detection
-        meta_refresh_match = META_REFRESH_RE.search(html[:4096])
-        if meta_refresh_match:
-            target = meta_refresh_match.group(1).strip()
+        meta_refresh = soup.find("meta", attrs={"http-equiv": re.compile(r"^refresh$", re.IGNORECASE)})
+        if (
+            meta_refresh
+            and (content_val := meta_refresh.get("content"))
+            and (m := META_REFRESH_CONTENT_RE.search(content_val))
+        ):
+            target = m.group(1).strip()
             if not target.startswith(("http://", "https://")):
                 target = str(URL(url).join(URL(target)))
             if target != url:
@@ -631,7 +641,7 @@ async def check_url_generic(
                 subcat = "Same Authority (Meta)" if is_same_authority(url, target) else "Meta Refresh"
                 return result(Status.REDIRECT, subcat)
 
-        js_redirect_match = WINDOW_LOCATION_RE.search(html[:4096])
+        js_redirect_match = WINDOW_LOCATION_RE.search(html[:65536])
         if js_redirect_match:
             target = js_redirect_match.group(1).strip()
             if target != url:
@@ -741,7 +751,7 @@ async def check_url_generic(
             return result(Status.OK, subcategory="With Notes" if infos else "")
 
         # 9. Warnings with enriched subcategories
-        if resp.status in (520, 521, 522, 523, 524, 525, 526):
+        if resp.status in {520, 521, 522, 523, 524, 525, 526}:
             cf_subcat_map = {
                 520: "Cloudflare 520 (Unknown Error)",
                 521: "Cloudflare 521 (Server Down)",

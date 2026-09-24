@@ -21,7 +21,7 @@ import json
 import logging
 import random
 import re
-import subprocess  # noqa: S404
+import subprocess
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from operator import attrgetter
@@ -168,7 +168,7 @@ def fetch_issues() -> list[dict]:
             "--json",
             "body,labels,number",
         ]
-        for issue in json.loads(subprocess.run(cmd, capture_output=True, text=True, check=True).stdout):  # noqa: S603
+        for issue in json.loads(subprocess.run(cmd, capture_output=True, text=True, check=True).stdout):
             if issue["number"] not in seen:
                 issue["label"] = ", ".join(lbl["name"] for lbl in issue["labels"] if lbl["name"] in LABELS)
                 seen[issue["number"]] = issue
@@ -179,7 +179,7 @@ def extract_pr_urls(issues: list[dict]) -> list[PrUrl]:
     pr_urls: list[PrUrl] = []
     for issue in issues:
         number = issue["number"]
-        body = issue["body"]
+        body = issue.get("body") or ""
         label = issue.get("label", "")
         section = extract_source_link_section(body)
         urls, is_bare = extract_urls(section)

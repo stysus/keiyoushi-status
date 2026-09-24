@@ -72,11 +72,19 @@ export function renderCopyButton(url) {
 export function renderFilterChips(items, currentFilter, activeTab) {
   const counts = { all: items.length };
   for (const item of items) {
-    let status = item.status;
     if (activeTab === 'map') {
-      status = item.matches && item.matches.length > 0 ? item.matches[0].status : '🔍';
+      if (!item.matches || item.matches.length === 0) {
+        counts['🔍'] = (counts['🔍'] || 0) + 1;
+      } else {
+        const statuses = new Set(item.matches.map((m) => m.status));
+        for (const s of statuses) {
+          counts[s] = (counts[s] || 0) + 1;
+        }
+      }
+    } else {
+      const status = item.status;
+      counts[status] = (counts[status] || 0) + 1;
     }
-    counts[status] = (counts[status] || 0) + 1;
   }
 
   let chipsHtml = `

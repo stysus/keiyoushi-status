@@ -46,19 +46,21 @@ export function exportFilteredData(activeTab, items, format, onSuccess) {
     }
   }
 
-  const csvContent = csvRows
-    .map((row) =>
-      row
-        .map((cell) => {
-          const str = String(cell ?? '');
-          if (str.includes(',') || str.includes('"') || str.includes('\n')) {
-            return `"${str.replace(/"/g, '""')}"`;
-          }
-          return str;
-        })
-        .join(',')
-    )
-    .join('\n');
+  const csvContent =
+    '\uFEFF' +
+    csvRows
+      .map((row) =>
+        row
+          .map((cell) => {
+            const str = String(cell ?? '');
+            if (/[,"\r\n]/.test(str)) {
+              return `"${str.replace(/"/g, '""')}"`;
+            }
+            return str;
+          })
+          .join(',')
+      )
+      .join('\r\n');
 
   const fileName = `${baseName}.csv`;
   downloadFile(csvContent, fileName, 'text/csv;charset=utf-8;');
