@@ -1,8 +1,25 @@
 {
-  "total": 183,
-  "matched": 178,
-  "timestamp": "2026-09-24T18:34:42+00:00",
+  "total": 184,
+  "matched": 179,
+  "timestamp": "2026-09-25T05:08:20+00:00",
   "results": [
+    {
+      "number": 19341,
+      "title": "jcomic souce has a exception",
+      "source_name": "JComic",
+      "matches": [
+        {
+          "status": "✅",
+          "name": "JComic",
+          "url": "https://jcomic.net",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
     {
       "number": 19331,
       "title": "Ikigaimangas Cover art  bug",
@@ -2363,7 +2380,7 @@
       "source_name": "Saturday Morning Breakfast Comics",
       "matches": [
         {
-          "status": "🔀",
+          "status": "✅",
           "name": "Saturday Morning Breakfast Comics",
           "url": "https://smbc-comics.com",
           "score": 100.0,
