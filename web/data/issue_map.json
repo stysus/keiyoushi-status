@@ -1,8 +1,101 @@
 {
-  "total": 184,
-  "matched": 179,
-  "timestamp": "2026-09-25T05:08:20+00:00",
+  "total": 178,
+  "matched": 173,
+  "timestamp": "2026-09-25T20:10:15+00:00",
   "results": [
+    {
+      "number": 19357,
+      "title": "Shademanga does not display works marked [+18]",
+      "source_name": "Shadow Manga",
+      "matches": [
+        {
+          "status": "🚧",
+          "name": "Shadow Manga",
+          "url": "https://shademanga.com",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19350,
+      "title": "Can't open a read a single Manhwa at Manhwa18.cc at recent update",
+      "source_name": "Manhwa18.cc",
+      "matches": [
+        {
+          "status": "✅",
+          "name": "Manhwa18.cc",
+          "url": "https://manhwa18.cc",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19346,
+      "title": "Extension-MangaHub",
+      "source_name": "MangaHub",
+      "matches": [
+        {
+          "status": "🚧",
+          "name": "MangaHub",
+          "url": "https://mangahub.io",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        },
+        {
+          "status": "✅",
+          "name": "Mangahub",
+          "url": "https://mangahub.ru",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19343,
+      "title": "Manhwa18.cc: `Missing Madara post ID` error",
+      "source_name": "Manhwa18.cc",
+      "matches": [
+        {
+          "status": "✅",
+          "name": "Manhwa18.cc",
+          "url": "https://manhwa18.cc",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19342,
+      "title": "Dilar extension redirects all manga to One Piece",
+      "source_name": "Dilar",
+      "matches": [
+        {
+          "status": "🚧",
+          "name": "Dilar",
+          "url": "https://dilar.tube",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
     {
       "number": 19341,
       "title": "jcomic souce has a exception",
@@ -115,7 +208,7 @@
       "source_name": "Niceoppai",
       "matches": [
         {
-          "status": "✅",
+          "status": "⚠️",
           "name": "Niceoppai",
           "url": "https://www.niceoppai.net",
           "score": 100.0,
@@ -231,23 +324,6 @@
           "score": 90.0,
           "methods": [
             "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19178,
-      "title": "Temple Scan (EN): `Attempt to invoke virtual method` error",
-      "source_name": "Temple Scan",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "Temple Scan",
-          "url": "https://aedexnox.akan01.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
           ]
         }
       ]
@@ -401,23 +477,6 @@
       ]
     },
     {
-      "number": 19075,
-      "title": "Astral Scans change the domain",
-      "source_name": "Astral Scans",
-      "matches": [
-        {
-          "status": "🔌",
-          "name": "Astral Scans",
-          "url": "https://astralscans.top",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 19074,
       "title": "Submanhwa: `HTTP 403` error on chapter images",
       "source_name": "submanhwa",
@@ -498,22 +557,6 @@
           "status": "🛑",
           "name": "The Blank",
           "url": "https://theblank.net",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 18856,
-      "title": "[Temple Scan ] Chapters 404",
-      "source_name": "Temple Scan",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "Temple Scan",
-          "url": "https://aedexnox.akan01.com",
           "score": 100.0,
           "methods": [
             "gh:body→extName"
@@ -683,22 +726,6 @@
       ]
     },
     {
-      "number": 18636,
-      "title": "MangaDass only showing first page of titles, not searchable or filterable",
-      "source_name": "Manga Dass",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "Manga Dass",
-          "url": "https://mangadass.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 18634,
       "title": "CAPTCHA problem",
       "source_name": "Lycan toons",
@@ -793,22 +820,6 @@
           "score": 100.0,
           "methods": [
             "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 18458,
-      "title": "Mangas no Sekai: `HTTP 429` error with chapters, increase chapter rate-limit",
-      "source_name": "es.mangasnosekai",
-      "matches": [
-        {
-          "status": "🚧",
-          "name": "Mangas No Sekai",
-          "url": "https://mangasnosekai.com",
-          "score": 100.0,
-          "methods": [
-            "gh:title→extName"
           ]
         }
       ]
@@ -959,22 +970,6 @@
           "methods": [
             "gh:body→extName",
             "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 18221,
-      "title": "Colorcito Scan: New website URL (`coloresito.site`)",
-      "source_name": "Colorcito Scan",
-      "matches": [
-        {
-          "status": "🔌",
-          "name": "Colorcito Scan",
-          "url": "https://colorcitoscan.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
           ]
         }
       ]
@@ -1439,22 +1434,6 @@
       ]
     },
     {
-      "number": 17752,
-      "title": "Hentai4Free: `No chapters found`, `HTTP 400` error (Switch to homepage results for Browse, require text for filter search)",
-      "source_name": "Hentai4Free",
-      "matches": [
-        {
-          "status": "🚧",
-          "name": "Hentai4Free",
-          "url": "https://hentai4free.net",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 17722,
       "title": "Falco Scan: `HTTP 503`, `No pages found` error",
       "source_name": "Falco Scan",
@@ -1529,7 +1508,7 @@
           ]
         },
         {
-          "status": "🛡️",
+          "status": "✅",
           "name": "AllPornComic.io",
           "url": "https://allporncomic.io",
           "score": 90.3,
@@ -1764,22 +1743,6 @@
       ]
     },
     {
-      "number": 16931,
-      "title": "Gracefully handle 're-indexed' chapters",
-      "source_name": "Comix",
-      "matches": [
-        {
-          "status": "🚧",
-          "name": "Comix",
-          "url": "https://comix.to",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 16928,
       "title": "The mangbz plugin is not working properly.",
       "source_name": "Mangabz",
@@ -2001,22 +1964,6 @@
           "status": "🔀",
           "name": "MikoRoku",
           "url": "https://www.mikoroku.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 15762,
-      "title": "MangaIsekaiThai: The image couldn't be loaded and display scrambled in WebView (Panel misplacement)",
-      "source_name": "MangaIsekaiThai",
-      "matches": [
-        {
-          "status": "⚠️",
-          "name": "MangaIsekaiThai",
-          "url": "https://www.mangaisekaithai.net",
           "score": 100.0,
           "methods": [
             "gh:body→extName"
@@ -2380,7 +2327,7 @@
       "source_name": "Saturday Morning Breakfast Comics",
       "matches": [
         {
-          "status": "✅",
+          "status": "🔀",
           "name": "Saturday Morning Breakfast Comics",
           "url": "https://smbc-comics.com",
           "score": 100.0,
@@ -2425,22 +2372,6 @@
           "status": "✅",
           "name": "PandaChaika",
           "url": "https://panda.chaika.moe",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 11771,
-      "title": "Codex Zero: `No chapters found` / `HTTP 403` error",
-      "source_name": "Codex Zero",
-      "matches": [
-        {
-          "status": "❌",
-          "name": "Codex Zero",
-          "url": "https://codex.readkisho.me",
           "score": 100.0,
           "methods": [
             "gh:body→extName"
@@ -2646,25 +2577,9 @@
       "source_name": "YaoiChan",
       "matches": [
         {
-          "status": "❌",
+          "status": "🔀",
           "name": "YaoiChan",
           "url": "https://yaoi-chan.me",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 10180,
-      "title": "Manhwa18.cc: `No results found` on Latest, handle all `raw` entries on page 1",
-      "source_name": "Manhwa18.cc",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "Manhwa18.cc",
-          "url": "https://manhwa18.cc",
           "score": 100.0,
           "methods": [
             "gh:body→extName"
