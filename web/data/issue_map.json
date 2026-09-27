@@ -1,15 +1,97 @@
 {
-  "total": 180,
-  "matched": 175,
-  "timestamp": "2026-09-26T08:49:51+00:00",
+  "total": 176,
+  "matched": 171,
+  "timestamp": "2026-09-27T08:36:37+00:00",
   "results": [
+    {
+      "number": 19432,
+      "title": "Manwha18.cc is not showing the right latest List",
+      "source_name": "Manwha18.cc",
+      "matches": [
+        {
+          "status": "✅",
+          "name": "Manhwa18.cc",
+          "url": "https://manhwa18.cc",
+          "score": 90.9,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19425,
+      "title": "Problem with the ikigai extension",
+      "source_name": "Ikigai Mangas",
+      "matches": [
+        {
+          "status": "🚧",
+          "name": "Ikigai Mangas",
+          "url": "https://visorikigai.gettocaboca.com",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19424,
+      "title": "Tapas: null pointer exception for specific entries",
+      "source_name": "Tapas",
+      "matches": [
+        {
+          "status": "✅",
+          "name": "Tapas",
+          "url": "https://tapas.io",
+          "score": 100.0,
+          "methods": [
+            "url",
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19421,
+      "title": "Manga Ball: `CSRF token not found` error",
+      "source_name": "Mangaball",
+      "matches": [
+        {
+          "status": "🔀",
+          "name": "Manga Ball",
+          "url": "https://mangaball.net",
+          "score": 100.0,
+          "methods": [
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19392,
+      "title": "Fonte Taimu Mangas não está funcionando",
+      "source_name": "Taimu Mangas",
+      "matches": [
+        {
+          "status": "🛑",
+          "name": "Taimu Mangas",
+          "url": "https://beta.taimumangas.com",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
     {
       "number": 19376,
       "title": "Catoons change domain url site",
       "source_name": "Catoons 1.4.",
       "matches": [
         {
-          "status": "⚠️",
+          "status": "🔀",
           "name": "Catoons",
           "url": "https://newcat1.xyz",
           "score": 100.0,
@@ -54,66 +136,6 @@
       ]
     },
     {
-      "number": 19350,
-      "title": "Can't open a read a single Manhwa at Manhwa18.cc at recent update",
-      "source_name": "Manhwa18.cc",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "Manhwa18.cc",
-          "url": "https://manhwa18.cc",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19346,
-      "title": "Extension-MangaHub",
-      "source_name": "MangaHub",
-      "matches": [
-        {
-          "status": "🚧",
-          "name": "MangaHub",
-          "url": "https://mangahub.io",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        },
-        {
-          "status": "✅",
-          "name": "Mangahub",
-          "url": "https://mangahub.ru",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19343,
-      "title": "Manhwa18.cc: `Missing Madara post ID` error",
-      "source_name": "Manhwa18.cc",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "Manhwa18.cc",
-          "url": "https://manhwa18.cc",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 19342,
       "title": "Dilar extension redirects all manga to One Piece",
       "source_name": "Dilar",
@@ -131,77 +153,10 @@
       ]
     },
     {
-      "number": 19341,
-      "title": "jcomic souce has a exception",
-      "source_name": "JComic",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "JComic",
-          "url": "https://jcomic.net",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19331,
-      "title": "Ikigaimangas Cover art  bug",
-      "source_name": "Ikigaimanga",
-      "matches": [
-        {
-          "status": "🚧",
-          "name": "Ikigai Mangas",
-          "url": "https://visorikigai.gettocaboca.com",
-          "score": 91.7,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19324,
-      "title": "Senkuro not fetching new chapters",
-      "source_name": "Senkuro",
-      "matches": [
-        {
-          "status": "🛡️",
-          "name": "Senkuro",
-          "url": "https://senkuro.me",
-          "score": 100.0,
-          "methods": [
-            "url",
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 19311,
       "title": "NyxScans Novels in Series List",
       "source_name": "NyxScans Novels in Series List",
       "matches": []
-    },
-    {
-      "number": 19296,
-      "title": "LeerCapitulo: HTTP 404 error",
-      "source_name": "LeerCapitulo",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "LeerCapitulo",
-          "url": "https://www.leercapitulo.co",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
     },
     {
       "number": 19259,
@@ -413,22 +368,6 @@
       ]
     },
     {
-      "number": 19134,
-      "title": "Extension dont load in the app",
-      "source_name": "LectorManga.lat",
-      "matches": [
-        {
-          "status": "🔀",
-          "name": "LectorManga.lat",
-          "url": "https://lectormangass.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 19127,
       "title": "Epsilon scan Attestation Refused",
       "source_name": "Epsilon Scan",
@@ -490,22 +429,6 @@
           "methods": [
             "gh:body→extName",
             "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19092,
-      "title": "Read Horimiya Online: `No chapters found` / website redesign",
-      "source_name": "Read Horimiya Online",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "Read Horimiya Online",
-          "url": "https://read-horimiya.online",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
           ]
         }
       ]
@@ -1160,7 +1083,7 @@
       "source_name": "Bakai",
       "matches": [
         {
-          "status": "🚧",
+          "status": "🔍",
           "name": "Bakai",
           "url": "https://bakai.org",
           "score": 100.0,
@@ -1358,7 +1281,7 @@
       "source_name": "Catoons",
       "matches": [
         {
-          "status": "⚠️",
+          "status": "🔀",
           "name": "Catoons",
           "url": "https://newcat1.xyz",
           "score": 100.0,
@@ -1699,7 +1622,7 @@
       "source_name": "PizzariaScan",
       "matches": [
         {
-          "status": "✅",
+          "status": "⚠️",
           "name": "PizzariaScan",
           "url": "https://pizzariacomics.com",
           "score": 100.0,
@@ -1731,9 +1654,9 @@
       "source_name": "Manga Crab",
       "matches": [
         {
-          "status": "🔀",
+          "status": "✅",
           "name": "Manga Crab",
-          "url": "https://mangacrab.org",
+          "url": "https://es.mangacrab.org",
           "score": 100.0,
           "methods": [
             "gh:body→extName",
