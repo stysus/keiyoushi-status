@@ -1,33 +1,34 @@
 {
-  "total": 176,
-  "matched": 171,
-  "timestamp": "2026-09-27T08:36:37+00:00",
+  "total": 174,
+  "matched": 169,
+  "timestamp": "2026-09-28T14:21:05+00:00",
   "results": [
     {
-      "number": 19432,
-      "title": "Manwha18.cc is not showing the right latest List",
-      "source_name": "Manwha18.cc",
+      "number": 19460,
+      "title": "Temple Scan \"no chapter/result found\"",
+      "source_name": "Temple Scan",
       "matches": [
         {
           "status": "✅",
-          "name": "Manhwa18.cc",
-          "url": "https://manhwa18.cc",
-          "score": 90.9,
+          "name": "Temple Scan",
+          "url": "https://aedexnox.akan01.com",
+          "score": 100.0,
           "methods": [
-            "gh:body→extName"
+            "gh:body→extName",
+            "gh:title→extName"
           ]
         }
       ]
     },
     {
-      "number": 19425,
-      "title": "Problem with the ikigai extension",
-      "source_name": "Ikigai Mangas",
+      "number": 19450,
+      "title": "Damconuong: no results found",
+      "source_name": "DamCoNuong",
       "matches": [
         {
-          "status": "🚧",
-          "name": "Ikigai Mangas",
-          "url": "https://visorikigai.gettocaboca.com",
+          "status": "✅",
+          "name": "DamCoNuong",
+          "url": "https://damconuong.name",
           "score": 100.0,
           "methods": [
             "gh:body→extName"
@@ -36,21 +37,42 @@
       ]
     },
     {
-      "number": 19424,
-      "title": "Tapas: null pointer exception for specific entries",
-      "source_name": "Tapas",
+      "number": 19447,
+      "title": "SACACHISPA: `HTTP 404` error",
+      "source_name": "Sacachispa",
       "matches": [
         {
           "status": "✅",
-          "name": "Tapas",
-          "url": "https://tapas.io",
+          "name": "SACACHISPA",
+          "url": "https://sacachispa.site",
           "score": 100.0,
           "methods": [
-            "url",
             "gh:body→extName"
           ]
         }
       ]
+    },
+    {
+      "number": 19446,
+      "title": "Comikey - Chapters fail to load with HTTP 400 due to malformed image URL",
+      "source_name": "Comikey",
+      "matches": [
+        {
+          "status": "✅",
+          "name": "Comikey",
+          "url": "https://comikey.com",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19441,
+      "title": "[wnacg] Images not loading after site update (Chapter system added)",
+      "source_name": "wnacg",
+      "matches": []
     },
     {
       "number": 19421,
@@ -94,23 +116,6 @@
           "status": "🔀",
           "name": "Catoons",
           "url": "https://newcat1.xyz",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19362,
-      "title": "Temple scan getting HTTP error 403",
-      "source_name": "Temple scan",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "Temple Scan",
-          "url": "https://aedexnox.akan01.com",
           "score": 100.0,
           "methods": [
             "gh:body→extName",
@@ -171,22 +176,6 @@
           "methods": [
             "gh:body→extName",
             "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19247,
-      "title": "Scythe Scans: Missing newer chapters",
-      "source_name": "Scythe Scans",
-      "matches": [
-        {
-          "status": "🚧",
-          "name": "Scythe Scans",
-          "url": "https://scythescans.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
           ]
         }
       ]
@@ -646,7 +635,7 @@
       "source_name": "1.4.35 rimu scan",
       "matches": [
         {
-          "status": "🔀",
+          "status": "🛑",
           "name": "Rimu Scans",
           "url": "https://rimuscan.fr",
           "score": 100.0,
@@ -761,22 +750,6 @@
           "score": 100.0,
           "methods": [
             "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 18528,
-      "title": "Dilar: `Unsupported encryption protocol version: #` error",
-      "source_name": "Dilar",
-      "matches": [
-        {
-          "status": "🚧",
-          "name": "Dilar",
-          "url": "https://dilar.tube",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
           ]
         }
       ]
@@ -970,7 +943,7 @@
       "source_name": "Manga Drama",
       "matches": [
         {
-          "status": "✅",
+          "status": "🚧",
           "name": "Manga Drama",
           "url": "https://mangadrama.com",
           "score": 100.0,
@@ -1622,7 +1595,7 @@
       "source_name": "PizzariaScan",
       "matches": [
         {
-          "status": "⚠️",
+          "status": "✅",
           "name": "PizzariaScan",
           "url": "https://pizzariacomics.com",
           "score": 100.0,
@@ -1932,7 +1905,17 @@
       "number": 15751,
       "title": "Tempest Scans (Turkish) New URL",
       "source_name": "Tempest Scans",
-      "matches": []
+      "matches": [
+        {
+          "status": "🚧",
+          "name": "JuraTempest",
+          "url": "https://juratempe.st",
+          "score": 100.0,
+          "methods": [
+            "url"
+          ]
+        }
+      ]
     },
     {
       "number": 15647,
@@ -2491,23 +2474,6 @@
           "score": 100.0,
           "methods": [
             "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 10395,
-      "title": "NamiComi can't access paid chapters (that user is subscribed to)",
-      "source_name": "NamiComi",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "NamiComi",
-          "url": "https://namicomi.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
           ]
         }
       ]
