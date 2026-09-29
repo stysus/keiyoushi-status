@@ -1,17 +1,33 @@
 {
-  "total": 174,
-  "matched": 169,
-  "timestamp": "2026-09-28T14:21:05+00:00",
+  "total": 152,
+  "matched": 150,
+  "timestamp": "2026-09-29T09:56:09+00:00",
   "results": [
     {
-      "number": 19460,
-      "title": "Temple Scan \"no chapter/result found\"",
-      "source_name": "Temple Scan",
+      "number": 19482,
+      "title": "Hot Comics - Error 403",
+      "source_name": "HotComics",
       "matches": [
         {
-          "status": "✅",
-          "name": "Temple Scan",
-          "url": "https://aedexnox.akan01.com",
+          "status": "🔀",
+          "name": "HotComics",
+          "url": "https://hotcomics.me",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19467,
+      "title": "URL change for Violet Scans",
+      "source_name": "Violet Scans",
+      "matches": [
+        {
+          "status": "🔀",
+          "name": "Violet Scans",
+          "url": "https://violetscans.org",
           "score": 100.0,
           "methods": [
             "gh:body→extName",
@@ -21,17 +37,18 @@
       ]
     },
     {
-      "number": 19450,
-      "title": "Damconuong: no results found",
-      "source_name": "DamCoNuong",
+      "number": 19465,
+      "title": "Domain Change Voratoon",
+      "source_name": "Voratoon",
       "matches": [
         {
-          "status": "✅",
-          "name": "DamCoNuong",
-          "url": "https://damconuong.name",
+          "status": "🔀",
+          "name": "VoraToon",
+          "url": "https://v2.voratoon.com",
           "score": 100.0,
           "methods": [
-            "gh:body→extName"
+            "gh:body→extName",
+            "gh:title→extName"
           ]
         }
       ]
@@ -69,28 +86,6 @@
       ]
     },
     {
-      "number": 19441,
-      "title": "[wnacg] Images not loading after site update (Chapter system added)",
-      "source_name": "wnacg",
-      "matches": []
-    },
-    {
-      "number": 19421,
-      "title": "Manga Ball: `CSRF token not found` error",
-      "source_name": "Mangaball",
-      "matches": [
-        {
-          "status": "🔀",
-          "name": "Manga Ball",
-          "url": "https://mangaball.net",
-          "score": 100.0,
-          "methods": [
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 19392,
       "title": "Fonte Taimu Mangas não está funcionando",
       "source_name": "Taimu Mangas",
@@ -99,23 +94,6 @@
           "status": "🛑",
           "name": "Taimu Mangas",
           "url": "https://beta.taimumangas.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19376,
-      "title": "Catoons change domain url site",
-      "source_name": "Catoons 1.4.",
-      "matches": [
-        {
-          "status": "🔀",
-          "name": "Catoons",
-          "url": "https://newcat1.xyz",
           "score": 100.0,
           "methods": [
             "gh:body→extName",
@@ -176,22 +154,6 @@
           "methods": [
             "gh:body→extName",
             "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19245,
-      "title": "Niceoppai: `No results found` error",
-      "source_name": "Niceoppai",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "Niceoppai",
-          "url": "https://www.niceoppai.net",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
           ]
         }
       ]
@@ -455,29 +417,6 @@
       ]
     },
     {
-      "number": 19057,
-      "title": "Arabs Hentai - No pages found when opening chapters",
-      "source_name": "Arabs Hentai",
-      "matches": []
-    },
-    {
-      "number": 19056,
-      "title": "Siren Scans (EN): `No results found` error, new website URL (`sirenscans.org`)",
-      "source_name": "Siren scans",
-      "matches": [
-        {
-          "status": "🔀",
-          "name": "Siren Scans",
-          "url": "https://sirenscans.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 19036,
       "title": "Manwa 1.4.14 needs to be updated please",
       "source_name": "Manwa",
@@ -541,12 +480,6 @@
           ]
         }
       ]
-    },
-    {
-      "number": 18806,
-      "title": "YellowNote extension can't load images. Neither cover or images",
-      "source_name": "YellowNote",
-      "matches": []
     },
     {
       "number": 18798,
@@ -954,22 +887,6 @@
       ]
     },
     {
-      "number": 18168,
-      "title": "Heaven Manga showing 404 on Sources browse, WebView working. Unexpected answer from page crashes Mihon",
-      "source_name": "HeavenManga",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "HeavenManga",
-          "url": "https://heavenmanga.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 18153,
       "title": "Athrea Scans: Paid chapters has incomplete pages, paid chapters isn't toggleable without logging in",
       "source_name": "Athrea Scans",
@@ -981,23 +898,6 @@
           "score": 100.0,
           "methods": [
             "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 18132,
-      "title": "Jeaz scans don't load content",
-      "source_name": "Jeaz Scans",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "Jeaz Scans",
-          "url": "https://lectorhub.j5z.xyz",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
           ]
         }
       ]
@@ -1254,9 +1154,9 @@
       "source_name": "Catoons",
       "matches": [
         {
-          "status": "🔀",
+          "status": "✅",
           "name": "Catoons",
-          "url": "https://newcat1.xyz",
+          "url": "https://cattoons.org",
           "score": 100.0,
           "methods": [
             "gh:body→extName"
@@ -1369,7 +1269,7 @@
       "source_name": "Falco Scan",
       "matches": [
         {
-          "status": "✅",
+          "status": "🚧",
           "name": "Falco Scan",
           "url": "https://falcoscan.net",
           "score": 100.0,
@@ -1553,7 +1453,7 @@
       "source_name": "Scan-Manga",
       "matches": [
         {
-          "status": "🚧",
+          "status": "🔍",
           "name": "Scan-Manga",
           "url": "https://m.scan-manga.com",
           "score": 100.0,
@@ -1713,23 +1613,6 @@
           "status": "✅",
           "name": "Fleur Blanche",
           "url": "https://fbsquadx.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 16747,
-      "title": "Gensura filters not working",
-      "source_name": "Gensura",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "Gensura",
-          "url": "https://gensura.net",
           "score": 100.0,
           "methods": [
             "gh:body→extName",
@@ -2163,39 +2046,6 @@
       ]
     },
     {
-      "number": 12964,
-      "title": "incomplete pages niadd",
-      "source_name": "Niadd",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "Niadd",
-          "url": "https://br.niadd.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 12916,
-      "title": "MangaGeko : Upload date and the latest.",
-      "source_name": "MangaGeko",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "MangaGeko",
-          "url": "https://www.mgeko.cc",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 12573,
       "title": "Tapas: Download Naming Scheme Changed",
       "source_name": "Tapas",
@@ -2228,23 +2078,6 @@
       ]
     },
     {
-      "number": 12550,
-      "title": "Buttsmithy NullPointer",
-      "source_name": "Buttsmithy",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "Buttsmithy",
-          "url": "https://incase.buttsmithy.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 11957,
       "title": "Jinman Tiantang: Strip (browse/text search results) chapter URL to match ID search results",
       "source_name": "禁漫天堂",
@@ -2257,23 +2090,6 @@
           "methods": [
             "gh:body→extName",
             "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 11945,
-      "title": "SMBC loads the wrong images for sequential chapters",
-      "source_name": "Saturday Morning Breakfast Comics",
-      "matches": [
-        {
-          "status": "🔀",
-          "name": "Saturday Morning Breakfast Comics",
-          "url": "https://smbc-comics.com",
-          "score": 100.0,
-          "methods": [
-            "url",
-            "gh:body→extName"
           ]
         }
       ]
@@ -2299,22 +2115,6 @@
           "score": 90.3,
           "methods": [
             "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 11818,
-      "title": "Chaika: \"null\" tags added to manga",
-      "source_name": "PandaChaika",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "PandaChaika",
-          "url": "https://panda.chaika.moe",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
           ]
         }
       ]
@@ -2420,49 +2220,6 @@
       ]
     },
     {
-      "number": 10793,
-      "title": "HentaiLib 403 error because of wrong API link",
-      "source_name": "HentaiLib",
-      "matches": [
-        {
-          "status": "🚧",
-          "name": "HentaiLib",
-          "url": "https://hentailib.me",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 10737,
-      "title": "Arabs Hentai : Change the chapter display format",
-      "source_name": "هنتاي العرب",
-      "matches": [
-        {
-          "status": "🛑",
-          "name": "هنتاي العرب",
-          "url": "https://arabshentai.com",
-          "score": 100.0,
-          "methods": [
-            "url",
-            "gh:body→extName"
-          ]
-        },
-        {
-          "status": "🔀",
-          "name": "هنتاي العرب - نت",
-          "url": "https://arabhentai.net",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 10693,
       "title": "再漫画有些漫画出现Bad position的错误代码",
       "source_name": "再漫画",
@@ -2474,55 +2231,6 @@
           "score": 100.0,
           "methods": [
             "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 10345,
-      "title": "Arabs Hentai: HTTP 403",
-      "source_name": "هنتاي العرب",
-      "matches": [
-        {
-          "status": "🛑",
-          "name": "هنتاي العرب",
-          "url": "https://arabshentai.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 10296,
-      "title": "YaoiChan: New URL",
-      "source_name": "YaoiChan",
-      "matches": [
-        {
-          "status": "❌",
-          "name": "YaoiChan",
-          "url": "https://yaoi-chan.me",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 10164,
-      "title": "myhentaigallery fails to grab covers",
-      "source_name": "MyHentaiGallery",
-      "matches": [
-        {
-          "status": "🚧",
-          "name": "MyHentaiGallery",
-          "url": "https://myhentaigallery.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
           ]
         }
       ]
@@ -2728,23 +2436,6 @@
       ]
     },
     {
-      "number": 8696,
-      "title": "HentaiLib ext fails to load chapters (HTTP 404)",
-      "source_name": "HentaiLib",
-      "matches": [
-        {
-          "status": "🚧",
-          "name": "HentaiLib",
-          "url": "https://hentailib.me",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 8545,
       "title": "LANraragi Random Not Working",
       "source_name": "LANraragi",
@@ -2878,23 +2569,6 @@
       ]
     },
     {
-      "number": 5493,
-      "title": "Exclude videos from MyReadingManga",
-      "source_name": "MyReadingManga",
-      "matches": [
-        {
-          "status": "🚧",
-          "name": "MyReadingManga",
-          "url": "https://myreadingmanga.info",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 5195,
       "title": "Pixiv users url changed",
       "source_name": "Pixiv",
@@ -2973,22 +2647,6 @@
           "methods": [
             "gh:body→extName",
             "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 1715,
-      "title": "MyReadingManga: App crashes when using filter",
-      "source_name": "MyReadingManga",
-      "matches": [
-        {
-          "status": "🚧",
-          "name": "MyReadingManga",
-          "url": "https://myreadingmanga.info",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
           ]
         }
       ]
