@@ -1,8 +1,40 @@
 {
-  "total": 152,
-  "matched": 150,
-  "timestamp": "2026-09-29T09:56:09+00:00",
+  "total": 150,
+  "matched": 148,
+  "timestamp": "2026-09-30T02:30:46+00:00",
   "results": [
+    {
+      "number": 19499,
+      "title": "Page didn't Load Automatically And Properly",
+      "source_name": "Artlapsa",
+      "matches": [
+        {
+          "status": "✅",
+          "name": "Art Lapsa",
+          "url": "https://artlapsa.com",
+          "score": 94.1,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19492,
+      "title": "Manga Ball: JsonDecodingException Unexpected JSON token",
+      "source_name": "Manga Ball",
+      "matches": [
+        {
+          "status": "🚧",
+          "name": "Manga Ball",
+          "url": "https://mangaball.com",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
     {
       "number": 19482,
       "title": "Hot Comics - Error 403",
@@ -771,23 +803,6 @@
       ]
     },
     {
-      "number": 18340,
-      "title": "jinmantiantang Unable to load GIF",
-      "source_name": "jinmantiantang",
-      "matches": [
-        {
-          "status": "🚧",
-          "name": "禁漫天堂",
-          "url": "https://18comic.vip",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 18304,
       "title": "Orcku Mangas Source error",
       "source_name": "Orcku Mangas ·",
@@ -1453,7 +1468,7 @@
       "source_name": "Scan-Manga",
       "matches": [
         {
-          "status": "🔍",
+          "status": "🚧",
           "name": "Scan-Manga",
           "url": "https://m.scan-manga.com",
           "score": 100.0,
@@ -2186,23 +2201,6 @@
       ]
     },
     {
-      "number": 10935,
-      "title": "Manga UP! extension doesn't recognise paid chapters",
-      "source_name": "Manga UP!",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "Manga UP!",
-          "url": "https://global.manga-up.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 10910,
       "title": "如漫画 / Rumanhua: `timeout` error, source is down",
       "source_name": "如漫画",
@@ -2479,31 +2477,6 @@
       ]
     },
     {
-      "number": 8140,
-      "title": "MangaBuddy / Mangareader cannot load images - pointing to non-existing URL",
-      "source_name": "Mangabuddy 1.4.20 / Mangareader",
-      "matches": [
-        {
-          "status": "🚧",
-          "name": "MangaReader.in",
-          "url": "https://mangareader.in",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        },
-        {
-          "status": "🚧",
-          "name": "MangaReader.site",
-          "url": "https://mangareader.site",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 7630,
       "title": "BlackToon: `No results found`, `The image could not be loaded` error",
       "source_name": "블랙툰",
@@ -2547,23 +2520,6 @@
           "score": 100.0,
           "methods": [
             "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 5836,
-      "title": "komga dont trust certification of Let's Encrypt",
-      "source_name": "Komga",
-      "matches": [
-        {
-          "status": "❌",
-          "name": "Komga",
-          "url": "https://127.0.0.1:25600",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
           ]
         }
       ]
