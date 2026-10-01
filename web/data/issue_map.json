@@ -1,18 +1,27 @@
 {
-  "total": 150,
-  "matched": 148,
-  "timestamp": "2026-09-30T02:30:46+00:00",
+  "total": 118,
+  "matched": 117,
+  "timestamp": "2026-10-01T14:48:12+00:00",
   "results": [
     {
-      "number": 19499,
-      "title": "Page didn't Load Automatically And Properly",
-      "source_name": "Artlapsa",
+      "number": 19552,
+      "title": "doesn't load a chapter",
+      "source_name": "Mangahub",
       "matches": [
         {
+          "status": "🚧",
+          "name": "MangaHub",
+          "url": "https://mangahub.io",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName"
+          ]
+        },
+        {
           "status": "✅",
-          "name": "Art Lapsa",
-          "url": "https://artlapsa.com",
-          "score": 94.1,
+          "name": "Mangahub",
+          "url": "https://mangahub.ru",
+          "score": 100.0,
           "methods": [
             "gh:body→extName"
           ]
@@ -20,17 +29,112 @@
       ]
     },
     {
-      "number": 19492,
-      "title": "Manga Ball: JsonDecodingException Unexpected JSON token",
-      "source_name": "Manga Ball",
+      "number": 19550,
+      "title": "Ego toons No Pages found",
+      "source_name": "Ego toons",
+      "matches": [
+        {
+          "status": "✅",
+          "name": "Ego Toons",
+          "url": "https://egotoons.com",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19549,
+      "title": "Temple Scan still displays error: IllegalStateException: Could not determine the site's RSC field-key salt",
+      "source_name": "Temple Scan",
+      "matches": [
+        {
+          "status": "✅",
+          "name": "Temple Scan",
+          "url": "https://aedexnox.akan01.com",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19542,
+      "title": "Elf Toon can't browse titles",
+      "source_name": "Elf Toon",
+      "matches": [
+        {
+          "status": "🔀",
+          "name": "Elf Toon",
+          "url": "https://elftoon.com",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19530,
+      "title": "Sushiscan.fr http error 504",
+      "source_name": "Sushiscan.fr",
+      "matches": [
+        {
+          "status": "✅",
+          "name": "Sushiscan.fr",
+          "url": "https://sushiscan.fr",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19510,
+      "title": "mangadex extension throws \"handshake failed\" in Mihon Nightly r7916 and above",
+      "source_name": "MangaDex",
+      "matches": [
+        {
+          "status": "✅",
+          "name": "MangaDex",
+          "url": "https://mangadex.org",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        },
+        {
+          "status": "✅",
+          "name": "MangaDE",
+          "url": "https://mangade.io",
+          "score": 93.3,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19508,
+      "title": "Lunar Manga sends only spam card instead of chapters",
+      "source_name": "Lunar Manga",
       "matches": [
         {
           "status": "🚧",
-          "name": "Manga Ball",
-          "url": "https://mangaball.com",
+          "name": "Lunar Manga",
+          "url": "https://lunarx.to",
           "score": 100.0,
           "methods": [
-            "gh:body→extName"
+            "gh:body→extName",
+            "gh:title→extName"
           ]
         }
       ]
@@ -52,56 +156,6 @@
       ]
     },
     {
-      "number": 19467,
-      "title": "URL change for Violet Scans",
-      "source_name": "Violet Scans",
-      "matches": [
-        {
-          "status": "🔀",
-          "name": "Violet Scans",
-          "url": "https://violetscans.org",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19465,
-      "title": "Domain Change Voratoon",
-      "source_name": "Voratoon",
-      "matches": [
-        {
-          "status": "🔀",
-          "name": "VoraToon",
-          "url": "https://v2.voratoon.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19447,
-      "title": "SACACHISPA: `HTTP 404` error",
-      "source_name": "Sacachispa",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "SACACHISPA",
-          "url": "https://sacachispa.site",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 19446,
       "title": "Comikey - Chapters fail to load with HTTP 400 due to malformed image URL",
       "source_name": "Comikey",
@@ -113,23 +167,6 @@
           "score": 100.0,
           "methods": [
             "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19392,
-      "title": "Fonte Taimu Mangas não está funcionando",
-      "source_name": "Taimu Mangas",
-      "matches": [
-        {
-          "status": "🛑",
-          "name": "Taimu Mangas",
-          "url": "https://beta.taimumangas.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
           ]
         }
       ]
@@ -186,63 +223,6 @@
           "methods": [
             "gh:body→extName",
             "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19237,
-      "title": "Codearcmangas not page found",
-      "source_name": "Codearcmangas",
-      "matches": []
-    },
-    {
-      "number": 19230,
-      "title": "Extensão \"lycan toons pt-br\" erro \"nenhuma página encontrada\"",
-      "source_name": "Lycan Toons",
-      "matches": [
-        {
-          "status": "🛑",
-          "name": "Lycan Toons",
-          "url": "https://lycantoons.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19214,
-      "title": "[Nekopost] Unable to read latest manga chapters due to Unexpected JSON token error",
-      "source_name": "Nekopost",
-      "matches": [
-        {
-          "status": "🛡️",
-          "name": "Nekopost",
-          "url": "https://www.nekopost.net",
-          "score": 100.0,
-          "methods": [
-            "url",
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19213,
-      "title": "[Nekopost] Manga covers fail to load in the extension but display correctly in WebView",
-      "source_name": "Nekopost",
-      "matches": [
-        {
-          "status": "🛡️",
-          "name": "Nekopost",
-          "url": "https://www.nekopost.net",
-          "score": 100.0,
-          "methods": [
-            "url",
-            "gh:body→extName"
           ]
         }
       ]
@@ -417,22 +397,6 @@
       ]
     },
     {
-      "number": 19074,
-      "title": "Submanhwa: `HTTP 403` error on chapter images",
-      "source_name": "submanhwa",
-      "matches": [
-        {
-          "status": "🚧",
-          "name": "Submanhwa",
-          "url": "https://submanhwa.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 19069,
       "title": "XXX Yaoi: `Attempt to invoke virtual method`, `Nenhuma página encontrada` error",
       "source_name": "XXX Yaoi",
@@ -498,22 +462,6 @@
       ]
     },
     {
-      "number": 18808,
-      "title": "快看漫画插件分辨率不对",
-      "source_name": "kuaikanmanhua",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "快看漫画",
-          "url": "https://www.kuaikanmanhua.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 18798,
       "title": "Topmanhua.fan unable to scrape the comic pages.",
       "source_name": "TopManhua.fan",
@@ -539,22 +487,6 @@
           "status": "🚧",
           "name": "Mangas.in",
           "url": "https://m440.in",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 18769,
-      "title": "Hachiraw: Cover images are not displayed",
-      "source_name": "Hachiraw",
-      "matches": [
-        {
-          "status": "🚧",
-          "name": "Hachiraw",
-          "url": "https://hachiraw.net",
           "score": 100.0,
           "methods": [
             "gh:body→extName"
@@ -625,29 +557,14 @@
       "source_name": "Catharsis  world",
       "matches": [
         {
-          "status": "🔀",
+          "status": "✅",
           "name": "Catharsis World",
-          "url": "https://catharsisworld.dig-it.info",
+          "url": "https://newcatharsis.dig-it.info",
           "score": 100.0,
           "methods": [
+            "url",
             "gh:body→extName",
             "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 18634,
-      "title": "CAPTCHA problem",
-      "source_name": "Lycan toons",
-      "matches": [
-        {
-          "status": "🛑",
-          "name": "Lycan Toons",
-          "url": "https://lycantoons.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
           ]
         }
       ]
@@ -753,23 +670,6 @@
       ]
     },
     {
-      "number": 18367,
-      "title": "LycanToons: HTTP Error 404",
-      "source_name": "Lycan Toons",
-      "matches": [
-        {
-          "status": "🛑",
-          "name": "Lycan Toons",
-          "url": "https://lycantoons.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 18362,
       "title": "Comichubfree not loading properly",
       "source_name": "Comichubfree",
@@ -798,56 +698,6 @@
           "score": 100.0,
           "methods": [
             "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 18304,
-      "title": "Orcku Mangas Source error",
-      "source_name": "Orcku Mangas ·",
-      "matches": [
-        {
-          "status": "🚧",
-          "name": "Orcku Mangas",
-          "url": "https://orckumangas.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 18252,
-      "title": "Manhuarm: `No results found` error",
-      "source_name": "Manhuarm",
-      "matches": [
-        {
-          "status": "🚧",
-          "name": "Manhuarm",
-          "url": "https://manhuarmtl.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 18223,
-      "title": "Yupmanga \" not a function\"",
-      "source_name": "Yupmanga",
-      "matches": [
-        {
-          "status": "🛑",
-          "name": "Yupmanga",
-          "url": "https://www.yupmanga.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
           ]
         }
       ]
@@ -886,22 +736,6 @@
       ]
     },
     {
-      "number": 18173,
-      "title": "Manga Drama: `No results found` error",
-      "source_name": "Manga Drama",
-      "matches": [
-        {
-          "status": "🚧",
-          "name": "Manga Drama",
-          "url": "https://mangadrama.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 18153,
       "title": "Athrea Scans: Paid chapters has incomplete pages, paid chapters isn't toggleable without logging in",
       "source_name": "Athrea Scans",
@@ -910,22 +744,6 @@
           "status": "🚧",
           "name": "Athrea Scans",
           "url": "https://athreascans.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 18087,
-      "title": "Manhastro: No results found",
-      "source_name": "Manhastro",
-      "matches": [
-        {
-          "status": "🚧",
-          "name": "Manhastro",
-          "url": "https://manhastro.net",
           "score": 100.0,
           "methods": [
             "gh:body→extName"
@@ -958,22 +776,6 @@
           "status": "🚧",
           "name": "Blackout Comics",
           "url": "https://blackoutcomics.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 18029,
-      "title": "Bakai: `No results found`, `Title URL not found` error",
-      "source_name": "Bakai",
-      "matches": [
-        {
-          "status": "🔍",
-          "name": "Bakai",
-          "url": "https://bakai.org",
           "score": 100.0,
           "methods": [
             "gh:body→extName"
@@ -1049,38 +851,6 @@
       ]
     },
     {
-      "number": 17937,
-      "title": "Error in overview (Naver Best Challenge)",
-      "source_name": "Naver Webtoon Best Challenge",
-      "matches": [
-        {
-          "status": "🔀",
-          "name": "Naver Webtoon Best Challenge",
-          "url": "https://comic.naver.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 17922,
-      "title": "Manhuarm: NullPointerException when clicking on any title",
-      "source_name": "Manhuarm",
-      "matches": [
-        {
-          "status": "🚧",
-          "name": "Manhuarm",
-          "url": "https://manhuarmtl.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 17912,
       "title": "No results found on RisenToons",
       "source_name": "Risentoons",
@@ -1089,23 +859,6 @@
           "status": "✅",
           "name": "Risentoons",
           "url": "https://risentoons.xyz",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 17911,
-      "title": "Manga Stop (MangasTop): `No results found` error",
-      "source_name": "Manga Stop",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "Manga Stop",
-          "url": "https://mangastop.net",
           "score": 100.0,
           "methods": [
             "gh:body→extName",
@@ -1172,38 +925,6 @@
           "status": "✅",
           "name": "Catoons",
           "url": "https://cattoons.org",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 17839,
-      "title": "Orcku Mangas: `Attempt to invoke virtual method ` error",
-      "source_name": "Orcku Mangas",
-      "matches": [
-        {
-          "status": "🚧",
-          "name": "Orcku Mangas",
-          "url": "https://orckumangas.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 17823,
-      "title": "Manga xiaosi路径变更",
-      "source_name": "Manga Xiao Si",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "Manga Xiao Si",
-          "url": "https://www.jjmhw2.top",
           "score": 100.0,
           "methods": [
             "gh:body→extName"
@@ -1279,40 +1000,6 @@
       ]
     },
     {
-      "number": 17722,
-      "title": "Falco Scan: `HTTP 503`, `No pages found` error",
-      "source_name": "Falco Scan",
-      "matches": [
-        {
-          "status": "🚧",
-          "name": "Falco Scan",
-          "url": "https://falcoscan.net",
-          "score": 100.0,
-          "methods": [
-            "url",
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 17713,
-      "title": "RNCALATION error",
-      "source_name": "Rncalation",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "Rncalation",
-          "url": "https://rncalation.online",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 17708,
       "title": "Omega Scans - Search issue",
       "source_name": "Omega Scans",
@@ -1380,22 +1067,6 @@
       ]
     },
     {
-      "number": 17479,
-      "title": "Japscan : error loading page",
-      "source_name": "Japscan",
-      "matches": [
-        {
-          "status": "🛑",
-          "name": "Japscan",
-          "url": "https://www.japscan.foo/mangas/?sort=popular&p=1",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 17476,
       "title": "Hades Scans: `No results found` on Latest /Popular/Search, `No chapters found` error",
       "source_name": "Hades Scans",
@@ -1407,57 +1078,6 @@
           "score": 100.0,
           "methods": [
             "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 17434,
-      "title": "늑대닷컴 / Wolf.com: `IndexOutOfBoundsException` error, switch baseUrl to `wftoon220.com` OR redesign to work with `wfwf422.com`",
-      "source_name": "Wolf",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "늑대닷컴 - 만화책",
-          "url": "https://wfwf414.com",
-          "score": 100.0,
-          "methods": [
-            "gh:title→extName"
-          ]
-        },
-        {
-          "status": "✅",
-          "name": "늑대닷컴 - 웹툰",
-          "url": "https://wfwf414.com",
-          "score": 100.0,
-          "methods": [
-            "gh:title→extName"
-          ]
-        },
-        {
-          "status": "✅",
-          "name": "늑대닷컴 - 포토툰",
-          "url": "https://wfwf414.com",
-          "score": 100.0,
-          "methods": [
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 17412,
-      "title": "Manwa: Update time is set to request time instead of manga update time",
-      "source_name": "漫蛙",
-      "matches": [
-        {
-          "status": "🚧",
-          "name": "漫蛙",
-          "url": "https://manwa.me",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
           ]
         }
       ]
@@ -1488,23 +1108,6 @@
       ]
     },
     {
-      "number": 17298,
-      "title": "Geass Comics Error api",
-      "source_name": "Geass Comics",
-      "matches": [
-        {
-          "status": "🚧",
-          "name": "Geass Comics",
-          "url": "https://geasscomics.xyz",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 17289,
       "title": "HTTP 429",
       "source_name": "PizzariaScan",
@@ -1526,7 +1129,7 @@
       "source_name": "Ortega Scans",
       "matches": [
         {
-          "status": "🔀",
+          "status": "✅",
           "name": "Ortega Scans",
           "url": "https://ortegascans.fr",
           "score": 100.0,
@@ -1562,23 +1165,6 @@
           "status": "✅",
           "name": "BarManga",
           "url": "https://archiviumbar.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 16945,
-      "title": "Error Niadd",
-      "source_name": "Niadd",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "Niadd",
-          "url": "https://br.niadd.com",
           "score": 100.0,
           "methods": [
             "gh:body→extName",
@@ -1658,11 +1244,12 @@
       "source_name": "LectorManga.lat",
       "matches": [
         {
-          "status": "🔀",
+          "status": "✅",
           "name": "LectorManga.lat",
-          "url": "https://lectormangass.com",
+          "url": "https://lector-mangas.lat",
           "score": 100.0,
           "methods": [
+            "url",
             "gh:body→extName"
           ]
         }
@@ -1848,22 +1435,6 @@
       ]
     },
     {
-      "number": 15601,
-      "title": "CManhua: `HTTP 404` error, wrong language code (`en` to `zh`)",
-      "source_name": "CManhua",
-      "matches": [
-        {
-          "status": "🚧",
-          "name": "CManhua",
-          "url": "https://cmanhua.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 15301,
       "title": "Problem merlinscans from Chapter's section",
       "source_name": "Merlin Scans",
@@ -1891,23 +1462,6 @@
           "score": 100.0,
           "methods": [
             "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 14774,
-      "title": "Hdoujin Tag Filter",
-      "source_name": "HDoujin",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "HDoujin",
-          "url": "https://hdoujin.org",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
           ]
         }
       ]
@@ -2324,23 +1878,6 @@
       ]
     },
     {
-      "number": 9496,
-      "title": "マンガ図書館Z HTTP error 500",
-      "source_name": "マンガ図書館Z",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "マンガ図書館Z",
-          "url": "https://www.mangaz.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 9389,
       "title": "Jinman Tiantang: Some series is only available on their app",
       "source_name": "禁漫天堂",
@@ -2434,33 +1971,6 @@
       ]
     },
     {
-      "number": 8545,
-      "title": "LANraragi Random Not Working",
-      "source_name": "LANraragi",
-      "matches": [
-        {
-          "status": "❌",
-          "name": "LANraragi (1)",
-          "url": "http://127.0.0.1:3000",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        },
-        {
-          "status": "❌",
-          "name": "LANraragi (2)",
-          "url": "http://127.0.0.1:3000",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 8386,
       "title": "Unable to view chapters unlocked in WebView",
       "source_name": "Tappytoon",
@@ -2469,22 +1979,6 @@
           "status": "✅",
           "name": "Tappytoon",
           "url": "https://www.tappytoon.com/de",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 7630,
-      "title": "BlackToon: `No results found`, `The image could not be loaded` error",
-      "source_name": "블랙툰",
-      "matches": [
-        {
-          "status": "🔀",
-          "name": "블랙툰",
-          "url": "https://blacktoon.me",
           "score": 100.0,
           "methods": [
             "gh:body→extName"
@@ -2551,22 +2045,6 @@
           "status": "❌",
           "name": "Komga",
           "url": "https://127.0.0.1:25600",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 4757,
-      "title": "Commit Strip - path change",
-      "source_name": "Commit Strip",
-      "matches": [
-        {
-          "status": "✅",
-          "name": "Commit Strip",
-          "url": "https://www.commitstrip.com",
           "score": 100.0,
           "methods": [
             "gh:body→extName"
