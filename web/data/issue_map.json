@@ -1,26 +1,17 @@
 {
-  "total": 118,
+  "total": 119,
   "matched": 117,
-  "timestamp": "2026-10-01T14:48:12+00:00",
+  "timestamp": "2026-10-02T05:56:05+00:00",
   "results": [
     {
-      "number": 19552,
-      "title": "doesn't load a chapter",
-      "source_name": "Mangahub",
+      "number": 19576,
+      "title": "VoraToon: HTTP 403 error / check website in WebView",
+      "source_name": "Voratoon",
       "matches": [
         {
-          "status": "🚧",
-          "name": "MangaHub",
-          "url": "https://mangahub.io",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        },
-        {
-          "status": "✅",
-          "name": "Mangahub",
-          "url": "https://mangahub.ru",
+          "status": "🔀",
+          "name": "VoraToon",
+          "url": "https://v4.voratoon.com",
           "score": 100.0,
           "methods": [
             "gh:body→extName"
@@ -29,14 +20,81 @@
       ]
     },
     {
-      "number": 19550,
-      "title": "Ego toons No Pages found",
-      "source_name": "Ego toons",
+      "number": 19575,
+      "title": "Orphaned Sourve",
+      "source_name": "Novelcrow",
+      "matches": []
+    },
+    {
+      "number": 19573,
+      "title": "HTTP 404 / newer chapters missing",
+      "source_name": "Webtoon",
       "matches": [
         {
+          "status": "🚧",
+          "name": "Empire Webtoon",
+          "url": "https://webtoonempire-bl.com",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName"
+          ]
+        },
+        {
+          "status": "🔀",
+          "name": "Naver Webtoon",
+          "url": "https://comic.naver.com",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName"
+          ]
+        },
+        {
+          "status": "🔀",
+          "name": "Naver Webtoon Best Challenge",
+          "url": "https://comic.naver.com",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19571,
+      "title": "VoraToon New Domain Again after servers down",
+      "source_name": "VoraToon",
+      "matches": [
+        {
+          "status": "🔀",
+          "name": "VoraToon",
+          "url": "https://v4.voratoon.com",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19552,
+      "title": "MangaHub doesn't load a chapter",
+      "source_name": "Mangahub",
+      "matches": [
+        {
+          "status": "🚧",
+          "name": "MangaHub",
+          "url": "https://mangahub.io",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        },
+        {
           "status": "✅",
-          "name": "Ego Toons",
-          "url": "https://egotoons.com",
+          "name": "Mangahub",
+          "url": "https://mangahub.ru",
           "score": 100.0,
           "methods": [
             "gh:body→extName",
@@ -54,23 +112,6 @@
           "status": "✅",
           "name": "Temple Scan",
           "url": "https://aedexnox.akan01.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19542,
-      "title": "Elf Toon can't browse titles",
-      "source_name": "Elf Toon",
-      "matches": [
-        {
-          "status": "🔀",
-          "name": "Elf Toon",
-          "url": "https://elftoon.com",
           "score": 100.0,
           "methods": [
             "gh:body→extName",
@@ -135,22 +176,6 @@
           "methods": [
             "gh:body→extName",
             "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19482,
-      "title": "Hot Comics - Error 403",
-      "source_name": "HotComics",
-      "matches": [
-        {
-          "status": "🔀",
-          "name": "HotComics",
-          "url": "https://hotcomics.me",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
           ]
         }
       ]
@@ -532,7 +557,7 @@
       "source_name": "1.4.35 rimu scan",
       "matches": [
         {
-          "status": "🛑",
+          "status": "🔀",
           "name": "Rimu Scans",
           "url": "https://rimuscan.fr",
           "score": 100.0,
