@@ -239,12 +239,16 @@ async def check_url_generic(
     final_url: str | None = None
     attempt = 0
     host = urlsplit(url).hostname or url
-    candidates = _router.candidates_for(host)[:DNS_MAX_ATTEMPTS] or [None]
 
     while attempt < attempts:
         attempt += 1
         snapshot: _ResponseSnapshot | None = None
         exc: Exception | None = None
+
+        # Re-sample per attempt so a retry explores fresh nameservers (weights
+        # have moved after earlier failures). `None` is the system-resolver last
+        # resort, used only when every DoH candidate failed to resolve.
+        candidates = [*_router.candidates_for(host)[:DNS_MAX_ATTEMPTS], None]
 
         # Rotate DoH nameservers within one attempt: a bad resolver is a
         # nameserver problem, not a reason to consume a retry.
