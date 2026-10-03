@@ -288,7 +288,10 @@ jobs:
 
   deploy:
     needs: [detect, process]
-    if: needs.detect.outputs.should_deploy == 'true'
+    # !cancelled() (not a bare comparison) stops the skipped scrape-* jobs in
+    # deploy_only mode from propagating a skip to this job; process.result
+    # keeps a real scrape/guard failure from deploying.
+    if: ${{ !cancelled() && needs.detect.outputs.should_deploy == 'true' && needs.process.result == 'success' }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
