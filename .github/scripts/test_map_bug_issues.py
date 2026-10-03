@@ -9,7 +9,7 @@
 # ]
 # ///
 
-"""Self-check for the matching logic in map_bug_issues.py.
+"""Self-check for the matching logic in matcher.py.
 
 Covers romanization, source-name extraction, title splitting, and the
 match_issue pipeline (URL host, exact name, fuzzy, superset suppression).
@@ -24,7 +24,8 @@ import tempfile
 from itertools import starmap
 from pathlib import Path
 
-import map_bug_issues as m
+import matcher as m
+from ext_db import build_ext_db
 
 
 def _entries(*pairs: tuple[str, str, str]) -> tuple[list[m.StatusEntry], list[str], dict[str, m.StatusEntry]]:
@@ -125,6 +126,24 @@ def test_parse_extensions_json() -> None:
     assert "wfwf507.com" in hosts, list(hosts)
 
 
+def test_build_ext_db() -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        src = Path(tmp) / "src"
+        ext = src / "foo"
+        (ext / "src").mkdir(parents=True)
+        (ext / "build.gradle").write_text('extName = "Foo Scan"\nextClass = ".FooSource"\n')
+        (ext / "src" / "Foo.kt").write_text(
+            'override val name: String = "Foo Alias"\n'
+            'class Bar : BaseSource("Bar Name", 1)\n'
+            'class Skip : UriPartFilter("nope")\n'
+        )
+        db = build_ext_db(src)
+    assert db["foo scan"] == {("Foo Alias", "kt:name"), ("Bar Name", "kt:factory")}, db.get("foo scan")
+    assert ("Foo Scan", "kt:class") in db["foosource"], db.get("foosource")
+    assert ("Foo Scan", "kt:dir") in db["foo"], db.get("foo")
+    assert "nope" not in {name for entries in db.values() for name, _ in entries}, db
+
+
 def main() -> None:
     tests = [
         test_romanize,
@@ -134,6 +153,7 @@ def main() -> None:
         test_match_hangul_slug,
         test_superset_suppression,
         test_parse_extensions_json,
+        test_build_ext_db,
     ]
     for test in tests:
         test()

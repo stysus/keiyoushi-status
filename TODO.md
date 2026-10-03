@@ -188,10 +188,10 @@ Keputusan grilling:
 - [x] Parity record terbukti: key & nilai identik dengan `extensions.json` + `issues.json` live
 - [x] ruff hijau; import smoke `transport` hijau
 
-### Phase 3 — D: pecah `map_bug_issues.py` [todo]
-- [ ] `ext_db.py` (`build_ext_db`), `matcher.py` (`match_issue`, `romanize`), `map_bug_issues.py` jadi CLI tipis
-- [ ] `test_map_bug_issues.py` impor `matcher`
-- [ ] Selftest + ruff hijau
+### Phase 3 — D: pecah `map_bug_issues.py` [done]
+- [x] `ext_db.py` (`build_ext_db` + regex Gradle/Kotlin), `matcher.py` (`romanize`, `parse_extensions_json`, `match_issue`, dataclass), `map_bug_issues.py` jadi CLI tipis
+- [x] `test_map_bug_issues.py` impor `matcher`; tambah `test_build_ext_db` (sebelumnya tanpa tes)
+- [x] ruff hijau; 8 kasus mapper lolos; smoke import CLI + `build_ext_db` hijau
 
 ### Phase 4 — E: self-check web (`node --test`) [todo]
 - [ ] Tes logika murni `state.js` / `config.js` (`node --test`), tanpa jsdom
