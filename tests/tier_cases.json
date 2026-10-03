@@ -1,0 +1,18 @@
+[
+  { "status": "ok", "subcategory": "", "tier": "ok", "category": "operational_pure", "operational": true },
+  { "status": "iuam", "subcategory": "", "tier": "challenge", "category": "protection_challenge", "operational": true },
+  { "status": "waf", "subcategory": "", "tier": "challenge", "category": "protection_challenge", "operational": true },
+  { "status": "redirect", "subcategory": "Same Authority", "tier": "challenge", "category": "protection_challenge", "operational": true },
+  { "status": "redirect", "subcategory": "same authority (js)", "tier": "challenge", "category": "protection_challenge", "operational": true },
+  { "status": "redirect", "subcategory": "Meta Refresh", "tier": "offline", "category": "inaccessible_offline", "operational": false },
+  { "status": "redirect", "subcategory": "", "tier": "offline", "category": "inaccessible_offline", "operational": false },
+  { "status": "rate_limited", "subcategory": "", "tier": "degraded", "category": "degraded_notice", "operational": false },
+  { "status": "warning", "subcategory": "", "tier": "degraded", "category": "degraded_notice", "operational": false },
+  { "status": "error", "subcategory": "", "tier": "offline", "category": "inaccessible_offline", "operational": false },
+  { "status": "blocked", "subcategory": "", "tier": "offline", "category": "inaccessible_offline", "operational": false },
+  { "status": "not_found", "subcategory": "", "tier": "offline", "category": "inaccessible_offline", "operational": false },
+  { "status": "dns_error", "subcategory": "", "tier": "offline", "category": "inaccessible_offline", "operational": false },
+  { "status": "parked", "subcategory": "", "tier": "offline", "category": "inaccessible_offline", "operational": false },
+  { "status": "placeholder", "subcategory": "", "tier": "offline", "category": "inaccessible_offline", "operational": false },
+  { "status": "", "subcategory": "", "tier": "offline", "category": "inaccessible_offline", "operational": false }
+]

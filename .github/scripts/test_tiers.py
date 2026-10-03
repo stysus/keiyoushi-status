@@ -4,40 +4,28 @@
 # dependencies = []
 # ///
 #
-# Self-check for the shared tier taxonomy. Fixtures mirror the cases the
-# history snapshot and the regression guard depend on, so a change to the
-# taxonomy that would silently move the guard's baseline fails here first.
+# Self-check for the shared tier taxonomy. Cases come from
+# tests/tier_cases.json, which the web self-check (tests/web.test.mjs) reads
+# too, so Python's tier_of and the JS getTierCategory mirror cannot drift.
 #
 # Run: uv run .github/scripts/test_tiers.py
 
 from __future__ import annotations
 
-from tiers import Tier, is_operational, tier_of
+import json
+from pathlib import Path
+
+from tiers import is_operational, tier_of
+
+CASES_PATH = Path(__file__).resolve().parents[2] / "tests" / "tier_cases.json"
 
 
 def main() -> None:
-    cases = [
-        (("ok", ""), Tier.OK, True),
-        (("iuam", ""), Tier.CHALLENGE, True),
-        (("waf", ""), Tier.CHALLENGE, True),
-        (("redirect", "Same Authority"), Tier.CHALLENGE, True),
-        (("redirect", "same authority (js)"), Tier.CHALLENGE, True),
-        (("redirect", "Meta Refresh"), Tier.OFFLINE, False),
-        (("redirect", ""), Tier.OFFLINE, False),
-        (("rate_limited", ""), Tier.DEGRADED, False),
-        (("warning", ""), Tier.DEGRADED, False),
-        (("error", ""), Tier.OFFLINE, False),
-        (("blocked", ""), Tier.OFFLINE, False),
-        (("not_found", ""), Tier.OFFLINE, False),
-        (("dns_error", ""), Tier.OFFLINE, False),
-        (("parked", ""), Tier.OFFLINE, False),
-        (("placeholder", ""), Tier.OFFLINE, False),
-        (("", ""), Tier.OFFLINE, False),
-    ]
-    for (status, subcategory), want_tier, want_op in cases:
+    for case in json.loads(CASES_PATH.read_text(encoding="utf-8")):
+        status, subcategory = case["status"], case["subcategory"]
         got = tier_of(status, subcategory)
-        assert got is want_tier, f"tier_of({status!r}, {subcategory!r}) = {got}, want {want_tier}"
-        assert is_operational(got) is want_op, f"is_operational({got}) = {not want_op}"
+        assert got.value == case["tier"], f"tier_of({status!r}, {subcategory!r}) = {got.value}, want {case['tier']}"
+        assert is_operational(got) is case["operational"], f"is_operational({got.value}) != {case['operational']}"
 
     # Aggregate contract the history snapshot and guard both rely on.
     results = [

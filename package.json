@@ -1,0 +1,6 @@
+{
+  "name": "keiyoushi-status",
+  "private": true,
+  "type": "module",
+  "description": "Node config for the web-logic self-checks (node --test). No runtime deps."
+}

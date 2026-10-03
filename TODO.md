@@ -193,10 +193,11 @@ Keputusan grilling:
 - [x] `test_map_bug_issues.py` impor `matcher`; tambah `test_build_ext_db` (sebelumnya tanpa tes)
 - [x] ruff hijau; 8 kasus mapper lolos; smoke import CLI + `build_ext_db` hijau
 
-### Phase 4 — E: self-check web (`node --test`) [todo]
-- [ ] Tes logika murni `state.js` / `config.js` (`node --test`), tanpa jsdom
-- [ ] Pin mirror `getTierCategory` vs taksonomi Python
-- [ ] Wire ke job `selfcheck`
+### Phase 4 — E: self-check web (`node --test`) [done]
+- [x] `tests/web.test.mjs`: tes logika murni `state.js`/`config.js` (`node --test`), tanpa jsdom
+- [x] `tests/tier_cases.json`: fixture bersama; `test_tiers.py` (Python) + tes web (JS) membacanya → mirror `getTierCategory` vs taksonomi Python tak bisa drift
+- [x] `package.json` root (`type: module`) agar `.js` eksplisit ESM, tak bergantung deteksi Node
+- [x] Wire ke job `selfcheck`; 7 kasus JS + tiers Python hijau; ruff hijau
 
 ### Ditunda
 - ~~F: pecah `web/js/app.js`~~ — ditunda sampai ada kebutuhan; lihat Round 4 bila diminta.

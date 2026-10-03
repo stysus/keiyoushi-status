@@ -136,6 +136,9 @@ jobs:
       - name: Run mapper self-checks
         run: .github/scripts/test_map_bug_issues.py
 
+      - name: Run web logic self-checks
+        run: node --test 'tests/**/*.test.mjs'
+
   scrape-extensions:
     needs: detect
     if: needs.detect.outputs.should_scrape == 'true'
