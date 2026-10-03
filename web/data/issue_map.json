@@ -1,7 +1,7 @@
 {
   "total": 125,
   "matched": 123,
-  "timestamp": "2026-10-03T07:20:23+00:00",
+  "timestamp": "2026-10-03T07:43:30+00:00",
   "results": [
     {
       "number": 19621,
@@ -397,7 +397,7 @@
       "source_name": "Manhwaz",
       "matches": [
         {
-          "status": "error",
+          "status": "dns_error",
           "name": "ManhwaZ",
           "url": "https://manhwaz.com",
           "score": 100.0,
@@ -2168,7 +2168,7 @@
       "source_name": "Hiveworks Comics",
       "matches": [
         {
-          "status": "error",
+          "status": "ok",
           "name": "Hiveworks Comics",
           "url": "https://hiveworkscomics.com",
           "score": 100.0,
