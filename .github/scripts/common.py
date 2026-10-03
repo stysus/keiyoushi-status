@@ -673,7 +673,9 @@ def classify_response(
 
     node_count = len(soup.select("*"))
 
-    redirected = not final_url.startswith(original_url)
+    # Compare parsed URLs, not string prefixes: a lookalike host such as
+    # "example.com.evil.com" starts with "example.com" but is a different origin.
+    redirected = URL(final_url) != URL(original_url)
     if redirected:
         infos.append(f"Redirected: {final_url}")
         parked_signals.extend(check_parked_redirect(URL(final_url)))

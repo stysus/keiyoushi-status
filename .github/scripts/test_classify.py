@@ -99,6 +99,21 @@ def main() -> None:
             (Status.REDIRECT, ""),
         ),
         (
+            "same-authority path redirect",
+            classify(PAGE, final_url="https://x.test/login"),
+            (Status.REDIRECT, "Same Authority"),
+        ),
+        (
+            "lookalike host redirect",
+            classify(PAGE, final_url="https://x.test.evil.test/"),
+            (Status.REDIRECT, ""),
+        ),
+        (
+            "trailing-slash only is not a redirect",
+            classify(PAGE, final_url="https://x.test"),
+            (Status.OK, ""),
+        ),
+        (
             "binary ok",
             classify(None, content_type="image/png"),
             (Status.OK, "Binary (image/png)"),
