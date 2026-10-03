@@ -1,8 +1,24 @@
 {
-  "total": 124,
-  "matched": 122,
-  "timestamp": "2026-10-03T06:08:13+00:00",
+  "total": 125,
+  "matched": 123,
+  "timestamp": "2026-10-03T06:47:44+00:00",
   "results": [
+    {
+      "number": 19621,
+      "title": "Comix",
+      "source_name": "Comix",
+      "matches": [
+        {
+          "status": "🚧",
+          "name": "Comix",
+          "url": "https://comix.to",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
     {
       "number": 19608,
       "title": "Bakai: `No pages found`  error when opening chapters",
@@ -1306,7 +1322,7 @@
       "source_name": "Webtoons.com",
       "matches": [
         {
-          "status": "✅",
+          "status": "🔀",
           "name": "Webtoons.com",
           "url": "https://www.webtoons.com",
           "score": 100.0,
@@ -2054,7 +2070,7 @@
       "source_name": "Tappytoon",
       "matches": [
         {
-          "status": "✅",
+          "status": "🔀",
           "name": "Tappytoon",
           "url": "https://www.tappytoon.com/de",
           "score": 100.0,
@@ -2102,7 +2118,7 @@
       "source_name": "Pixiv",
       "matches": [
         {
-          "status": "🚧",
+          "status": "🔀",
           "name": "Pixiv",
           "url": "https://www.pixiv.net",
           "score": 100.0,
