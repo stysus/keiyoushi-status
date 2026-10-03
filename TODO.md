@@ -85,8 +85,9 @@ Kerja bertahap. Centang saat selesai. `[ ]` belum, `[x]` selesai.
 - [x] Indikator `↻N` di kolom latency + `retried ×N` di tooltip bila `attempts > 1`
 - [x] Chip khusus kode HTTP di-skip: kotak pencarian sudah menutupi (53 baris retry, 449 baris 403 terlihat)
 
-### Stage 16 — Tes `map_bug_issues.py` ⬜
-- [ ] Fixture body issue → assert match (logika paling kompleks, nol tes)
+### Stage 16 — Tes `map_bug_issues.py` ✅
+- [x] `test_map_bug_issues.py`: 7 kasus (romanisasi, extract source, title split, match URL/exact/Hangul, superset suppression, parse JSON)
+- [x] Lolos ruff; dijalankan di job `selfcheck` (semua push)
 
 ### Stage 17 — Hardening kecil ⬜
 - [ ] CSV formula injection guard (`export.js`)
