@@ -199,5 +199,21 @@ Keputusan grilling:
 - [x] `package.json` root (`type: module`) agar `.js` eksplisit ESM, tak bergantung deteksi Node
 - [x] Wire ke job `selfcheck`; 7 kasus JS + tiers Python hijau; ruff hijau
 
+### HTTP transport A/B (2026-10-03) — impersonation `curl_cffi` [done]
+Upgrade kapabilitas request: tukar aiohttp → `curl_cffi` (`impersonate="chrome"`, HTTP/2),
+routing DoH per-TLD (`dns.py`), retry 5xx/429 + `Retry-After`, limit per-host. Tanpa
+dependensi baru di luar `curl_cffi`; skema JSON & `web/js` tak berubah.
+
+A/B atas 1513 URL identik (baseline = `extensions.json` sebelum upgrade):
+- Challenge (`iuam`+`blocked`+`waf`): **29.9% → 15.9%** (453 → 240 baris).
+- `ok`: **793 → 993** (+200); `rate_limited`: 31 → 0.
+- `dns_error` 24 → 24, `error` 26 → 26 (tidak memburuk).
+- 216 challenge → `ok`; 42 `ok` → challenge (variasi situs/fingerprint).
+- Guard regresi lolos; spot-check browser 20 `ok` baru: 16 konten asli, 4 di-challenge
+  hanya oleh browser headless (fetch langsung tetap konten asli) → **tanpa false-ok**.
+- Dua bug ditemukan & diperbaiki saat verifikasi: nameserver DoH mati
+  (`dnsoverhttps.com`, `doh-de.blahdns.com`) dan cache DNS curl menyimpan kegagalan
+  DoH per-host sehingga fallback ikut gagal; diatasi prune + `DNS_CACHE_TIMEOUT=0`.
+
 ### Ditunda
 - ~~F: pecah `web/js/app.js`~~ — ditunda sampai ada kebutuhan; lihat Round 4 bila diminta.
