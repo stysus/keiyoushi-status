@@ -182,10 +182,11 @@ Keputusan grilling:
 - [x] Parity terbukti atas 1530 baris live: `{ok:830, challenge:465, degraded:60, offline:175}` operational=1295, identik logika lama
 - [x] ruff bersih; 4 selftest + import smoke `transport` hijau
 
-### Phase 2 — B: lebur pipeline check [todo]
-- [ ] `transport.record(check, *, subject, extra)` jadi satu-satunya serializer record
-- [ ] `check_extensions.py` / `check_issues.py` pakai `record()` (urutan field dipertahankan)
-- [ ] Selftest + ruff hijau
+### Phase 2 — B: lebur pipeline check [done]
+- [x] `transport.record(item, *, subject, extra)` jadi satu-satunya serializer record (structural `Recordable` protocol)
+- [x] `check_extensions.py` / `check_issues.py` pakai `record()` (urutan field dipertahankan)
+- [x] Parity record terbukti: key & nilai identik dengan `extensions.json` + `issues.json` live
+- [x] ruff hijau; import smoke `transport` hijau
 
 ### Phase 3 — D: pecah `map_bug_issues.py` [todo]
 - [ ] `ext_db.py` (`build_ext_db`), `matcher.py` (`match_issue`, `romanize`), `map_bug_issues.py` jadi CLI tipis

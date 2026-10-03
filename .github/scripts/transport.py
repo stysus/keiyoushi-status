@@ -16,7 +16,7 @@ import random
 import socket
 import ssl
 import time
-from collections.abc import Awaitable, Callable
+from collections.abc import Awaitable, Callable, Mapping
 from dataclasses import dataclass
 from functools import partial
 from typing import Any, Protocol, TypeVar
@@ -442,8 +442,63 @@ class CheckResultProtocol(Protocol):
     def sort_key(self) -> tuple[Any, ...]: ...
 
 
+class Recordable(Protocol):
+    """Anything carrying a check outcome, so `record` can serialize it.
+
+    Satisfied structurally by `UrlCheck` and by each script's `CheckResult`.
+    """
+
+    @property
+    def status(self) -> Status: ...
+
+    @property
+    def duration(self) -> float: ...
+
+    @property
+    def info(self) -> str: ...
+
+    @property
+    def subcategory(self) -> str: ...
+
+    @property
+    def http_code(self) -> int | None: ...
+
+    @property
+    def final_url(self) -> str | None: ...
+
+    @property
+    def attempts(self) -> int: ...
+
+
 R = TypeVar("R", bound=CheckResultProtocol)
 T = TypeVar("T")
+
+
+def record(
+    item: Recordable, *, subject: Mapping[str, Any] | None = None, extra: Mapping[str, Any] | None = None
+) -> dict[str, Any]:
+    """Serialize a check into the shared JSON record shape.
+
+    `subject` keys land right after `status`; `extra` keys just before
+    `info`/`subcategory`. This preserves each endpoint's existing field order,
+    so the two check scripts only declare their own subject fields.
+
+    Returns:
+        A JSON-serializable result record.
+    """
+    out: dict[str, Any] = {"status": item.status.value}
+    if subject:
+        out.update(subject)
+    out["duration"] = round(item.duration, 3) if item.duration >= 0 else None
+    out["time"] = format_duration(item.duration, TIME_PRECISION_CUTOFF_SECONDS)
+    out["http_code"] = item.http_code
+    out["final_url"] = item.final_url
+    out["attempts"] = item.attempts
+    if extra:
+        out.update(extra)
+    out["info"] = item.info
+    out["subcategory"] = item.subcategory
+    return out
 
 
 async def check_url_generic(

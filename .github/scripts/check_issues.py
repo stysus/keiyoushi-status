@@ -33,7 +33,6 @@ from anyio import Path
 from classify import Status
 from publicsuffixlist import PublicSuffixList  # type: ignore[import-untyped]
 from transport import (
-    TIME_PRECISION_CUTOFF_SECONDS,
     TIMEOUT_CONNECT_SECONDS,
     TIMEOUT_SOCK_READ_SECONDS,
     TIMEOUT_TOTAL_SECONDS,
@@ -41,8 +40,8 @@ from transport import (
     check_all_generic,
     check_url_generic,
     create_connector,
-    format_duration,
     generate_headers,
+    record,
 )
 from yarl import URL
 
@@ -252,19 +251,11 @@ async def main() -> None:
         "timestamp": datetime.now(tz=timezone.utc).isoformat(timespec="seconds"),
         "user_agent": headers["User-Agent"],
         "results": [
-            {
-                "status": r.status.value,
-                "pr_number": r.pr.pr_number,
-                "url": r.pr.url,
-                "duration": round(r.duration, 3) if r.duration >= 0 else None,
-                "time": format_duration(r.duration, TIME_PRECISION_CUTOFF_SECONDS),
-                "http_code": r.http_code,
-                "final_url": r.final_url,
-                "attempts": r.attempts,
-                "labels": r.pr.label,
-                "info": r.info,
-                "subcategory": r.subcategory,
-            }
+            record(
+                r,
+                subject={"pr_number": r.pr.pr_number, "url": r.pr.url},
+                extra={"labels": r.pr.label},
+            )
             for r in sorted(results, key=attrgetter("sort_key"))
         ],
     }

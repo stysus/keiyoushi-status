@@ -36,7 +36,6 @@ from anyio import Path
 from classify import Status
 from generated import Index
 from transport import (
-    TIME_PRECISION_CUTOFF_SECONDS,
     TIMEOUT_CONNECT_SECONDS,
     TIMEOUT_SOCK_READ_SECONDS,
     TIMEOUT_TOTAL_SECONDS,
@@ -44,8 +43,8 @@ from transport import (
     check_all_generic,
     check_url_generic,
     create_connector,
-    format_duration,
     generate_headers,
+    record,
 )
 
 REPO_INDEX_URL = "https://raw.githubusercontent.com/keiyoushi/extensions/repo/index.pb"
@@ -261,18 +260,7 @@ async def main() -> None:
         "timestamp": datetime.now(tz=timezone.utc).isoformat(timespec="seconds"),
         "user_agent": headers["User-Agent"],
         "results": [
-            {
-                "status": r.status.value,
-                "name": r.source.name,
-                "url": r.source.url,
-                "duration": round(r.duration, 3) if r.duration >= 0 else None,
-                "time": format_duration(r.duration, TIME_PRECISION_CUTOFF_SECONDS),
-                "http_code": r.http_code,
-                "final_url": r.final_url,
-                "attempts": r.attempts,
-                "info": r.info,
-                "subcategory": r.subcategory,
-            }
+            record(r, subject={"name": r.source.name, "url": r.source.url})
             for r in sorted(results, key=attrgetter("sort_key"))
         ],
     }
