@@ -25,6 +25,7 @@ import math
 import os
 import random
 import sys
+from collections import Counter
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from operator import attrgetter
@@ -38,6 +39,7 @@ from common import (
     TIMEOUT_SOCK_READ_SECONDS,
     TIMEOUT_TOTAL_SECONDS,
     Status,
+    UrlCheck,
     check_all_generic,
     check_url_generic,
     create_connector,
@@ -64,6 +66,9 @@ class CheckResult:
     duration: float = -1.0
     info: str = ""
     subcategory: str = ""
+    http_code: int | None = None
+    final_url: str | None = None
+    attempts: int = 1
 
     @property
     def sort_key(self) -> tuple[str, str]:
@@ -82,8 +87,17 @@ def extract_sources(index: Index) -> list[Source]:
 
 
 async def check_source(session: aiohttp.ClientSession, source: Source) -> CheckResult:
-    def make_result(status: Status, duration: float, info: str, subcategory: str) -> CheckResult:
-        return CheckResult(source, status, duration, info, subcategory)
+    def make_result(check: UrlCheck) -> CheckResult:
+        return CheckResult(
+            source,
+            check.status,
+            check.duration,
+            check.info,
+            check.subcategory,
+            check.http_code,
+            check.final_url,
+            check.attempts,
+        )
 
     return await check_url_generic(session, source.url, make_result)
 
@@ -154,7 +168,9 @@ async def merge_shards(
 
     await output_path.parent.mkdir(parents=True, exist_ok=True)
     await output_path.write_text(json.dumps(final_data, indent=2, ensure_ascii=False), encoding="utf-8")
+    summary = Counter(r.get("status", "") for r in all_results)
     log.info("Successfully merged %d results into %s", len(all_results), output_path)
+    log.info("Merged status summary: %s", dict(summary.most_common()))
 
     for shard_file in shard_files:
         await shard_file.unlink()
@@ -203,6 +219,9 @@ async def main() -> None:
         random.shuffle(sources_shuffled)
         results = await check_all_generic(session, sources_shuffled, check_source, log_result)
 
+    summary = Counter(r.status.value for r in results)
+    log.info("Shard %d/%d summary: %s", shard_index + 1, total_shards, dict(summary.most_common()))
+
     json_data = {
         "count": len(results),
         "timestamp": datetime.now(tz=timezone.utc).isoformat(timespec="seconds"),
@@ -214,6 +233,9 @@ async def main() -> None:
                 "url": r.source.url,
                 "duration": round(r.duration, 3) if r.duration >= 0 else None,
                 "time": format_duration(r.duration, TIME_PRECISION_CUTOFF_SECONDS),
+                "http_code": r.http_code,
+                "final_url": r.final_url,
+                "attempts": r.attempts,
                 "info": r.info,
                 "subcategory": r.subcategory,
             }

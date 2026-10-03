@@ -22,6 +22,7 @@ import logging
 import random
 import re
 import subprocess
+from collections import Counter
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from operator import attrgetter
@@ -35,6 +36,7 @@ from common import (
     TIMEOUT_SOCK_READ_SECONDS,
     TIMEOUT_TOTAL_SECONDS,
     Status,
+    UrlCheck,
     check_all_generic,
     check_url_generic,
     create_connector,
@@ -90,6 +92,9 @@ class CheckResult:
     duration: float = -1.0
     info: str = ""
     subcategory: str = ""
+    http_code: int | None = None
+    final_url: str | None = None
+    attempts: int = 1
 
     @property
     def sort_key(self) -> tuple[int, str]:
@@ -196,10 +201,20 @@ async def check_url(session: aiohttp.ClientSession, pr: PrUrl) -> CheckResult:
     if not pr.url:
         return CheckResult(pr, Status.NOT_FOUND)
 
-    def make_result(status: Status, duration: float, info: str, subcategory: str) -> CheckResult:
+    def make_result(check: UrlCheck) -> CheckResult:
+        info = check.info
         if pr.is_bare:
             info = f"{info}, Bare URL" if info else "Bare URL"
-        return CheckResult(pr, status, duration, info, subcategory)
+        return CheckResult(
+            pr,
+            check.status,
+            check.duration,
+            info,
+            check.subcategory,
+            check.http_code,
+            check.final_url,
+            check.attempts,
+        )
 
     return await check_url_generic(session, pr.url, make_result)
 
@@ -229,6 +244,9 @@ async def main() -> None:
         random.shuffle(pr_urls_shuffled)
         results = await check_all_generic(session, pr_urls_shuffled, check_url, log_result)
 
+    summary = Counter(r.status.value for r in results)
+    log.info("Issues summary: %s", dict(summary.most_common()))
+
     json_data = {
         "count": len(results),
         "timestamp": datetime.now(tz=timezone.utc).isoformat(timespec="seconds"),
@@ -240,6 +258,9 @@ async def main() -> None:
                 "url": r.pr.url,
                 "duration": round(r.duration, 3) if r.duration >= 0 else None,
                 "time": format_duration(r.duration, TIME_PRECISION_CUTOFF_SECONDS),
+                "http_code": r.http_code,
+                "final_url": r.final_url,
+                "attempts": r.attempts,
                 "labels": r.pr.label,
                 "info": r.info,
                 "subcategory": r.subcategory,

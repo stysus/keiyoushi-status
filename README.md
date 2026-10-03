@@ -45,6 +45,9 @@ Status data is generated automatically and published as structured JSON files fo
       "url": "https://mangadex.org",
       "duration": 0.345,
       "time": "0.345s",
+      "http_code": 200,
+      "final_url": "https://mangadex.org",
+      "attempts": 1,
       "info": "",
       "subcategory": ""
     }

@@ -7,7 +7,7 @@ import re
 import socket
 import ssl
 import time
-from collections.abc import Awaitable, Callable
+from collections.abc import Awaitable, Callable, Mapping
 from dataclasses import dataclass
 from enum import StrEnum
 from functools import partial
@@ -41,6 +41,8 @@ MAX_CONCURRENT = 80
 PATTERN_WWSUB = re.compile(r"^ww\d+\.")
 MIN_NODES_WARN = 20
 TIME_PRECISION_CUTOFF_SECONDS = 10
+RETRY_ATTEMPTS = 2
+RETRY_BACKOFF_SECONDS = 0.5
 
 DNS_NAMESERVERS_RU = [
     "https://common.dot.dns.yandex.net/dns-query",  # ru
@@ -195,12 +197,7 @@ class DNSPythonResolver(AbstractResolver):
         self._jp_nameservers = list(jp_nameservers) if jp_nameservers is not None else list(DNS_NAMESERVERS_JP)
 
         all_unique = list(
-            dict.fromkeys(
-                self._global_nameservers
-                + self._ru_nameservers
-                + self._zh_nameservers
-                + self._jp_nameservers
-            )
+            dict.fromkeys(self._global_nameservers + self._ru_nameservers + self._zh_nameservers + self._jp_nameservers)
         )
         self._scores = {ns: _NameserverScore() for ns in all_unique}
         self._clients: dict[str, httpx.AsyncClient] = {}
@@ -404,6 +401,19 @@ PLACEHOLDER_BODIES = [
     "website has been stopped",
 ]
 
+# Client-rendered shells look "blank" to a static fetch; do not flag them as broken.
+SPA_MARKERS = (
+    "__next_data__",
+    "window.__nuxt__",
+    "data-reactroot",
+    "ng-version",
+    'id="app"',
+    "id='app'",
+    'id="root"',
+    "id='root'",
+    'id="__next"',
+)
+
 PARKED_TITLES = [
     "Loading...",
     "Redirecting...",
@@ -579,217 +589,350 @@ async def _read_response_html(resp: aiohttp.ClientResponse) -> str | None:
     return raw_bytes.decode(encoding, errors="replace")
 
 
-async def check_url_generic(
-    session: aiohttp.ClientSession,
-    url: str,
-    make_result: Callable[[Status, float, str, str], R],
-) -> R:
+@dataclass(frozen=True, slots=True)
+class Classification:
+    """Pure outcome of inspecting a fetched response."""
+
+    status: Status
+    subcategory: str = ""
+    info: str = ""
+
+
+@dataclass(frozen=True, slots=True)
+class UrlCheck:
+    """Enriched result handed to per-source result factories."""
+
+    status: Status
+    duration: float
+    info: str
+    subcategory: str
+    http_code: int | None = None
+    final_url: str | None = None
+    attempts: int = 1
+
+
+@dataclass(frozen=True, slots=True)
+class _ResponseSnapshot:
+    status_code: int
+    final_url: str
+    content_type: str
+    headers: dict[str, str]
+    html: str | None
+
+
+async def _fetch_snapshot(session: aiohttp.ClientSession, url: str) -> _ResponseSnapshot:
+    async def _get(ssl_context: ssl.SSLContext | None = None) -> _ResponseSnapshot:
+        async with session.get(url, ssl=ssl_context) as resp:
+            html = await _read_response_html(resp)
+            return _ResponseSnapshot(
+                status_code=resp.status,
+                final_url=str(resp.url),
+                content_type=resp.content_type,
+                headers={k.lower(): v for k, v in resp.headers.items()},
+                html=html,
+            )
+
+    try:
+        return await _get()
+    except aiohttp.ClientConnectorCertificateError:
+        # some servers omit intermediate certs; complete the chain like a browser would
+        return await _get(await _build_aia_ssl_context(url))
+
+
+def classify_response(
+    *,
+    status_code: int,
+    final_url: str,
+    content_type: str,
+    headers: Mapping[str, str],
+    html: str | None,
+    original_url: str,
+) -> Classification:
+    """Classify a fetched response without performing I/O (unit-testable).
+
+    Returns:
+        The classified status, subcategory, and human-readable info.
+    """
     infos: list[str] = []
     parked_signals: list[str] = []
-    start = time.perf_counter()
 
-    def result(status: Status, subcategory: str = "") -> R:
-        duration = time.perf_counter() - start
+    def out(status: Status, subcategory: str = "") -> Classification:
         parts = infos.copy()
         if parked_signals:
             parts.append(f"Method: {', '.join(parked_signals)}")
-        return make_result(status, duration, ". ".join(parts), subcategory)
+        return Classification(status, subcategory, ". ".join(parts))
 
-    try:
+    if html is None:
+        content_type = content_type.lower()
+        infos.append(f"Non-HTML ({content_type})")
+        if status_code == HTTPStatus.OK:
+            return out(Status.OK, subcategory=f"Binary ({content_type})")
+        return out(Status.WARNING, subcategory=f"Binary {status_code}")
+
+    soup = BeautifulSoup(html, "lxml")
+
+    node_count = len(soup.select("*"))
+
+    redirected = not final_url.startswith(original_url)
+    if redirected:
+        infos.append(f"Redirected: {final_url}")
+        parked_signals.extend(check_parked_redirect(URL(final_url)))
+
+    title = soup.title.string.strip() if soup.title and soup.title.string else ""
+    title_lower = title.lower()
+    html_lower = html.lower()
+    server_header = headers.get("server", "").lower()
+
+    # HTML Meta Refresh & JS Redirect Detection
+    meta_refresh = soup.find("meta", attrs={"http-equiv": re.compile(r"^refresh$", re.IGNORECASE)})
+    if (
+        meta_refresh
+        and (content_val := meta_refresh.get("content"))
+        and (m := META_REFRESH_CONTENT_RE.search(content_val))
+    ):
+        target = m.group(1).strip()
+        if not target.startswith(("http://", "https://")):
+            target = str(URL(original_url).join(URL(target)))
+        if target != original_url:
+            infos.append(f"Meta Refresh -> {target}")
+            subcat = "Same Authority (Meta)" if is_same_authority(original_url, target) else "Meta Refresh"
+            return out(Status.REDIRECT, subcat)
+
+    js_redirect_match = WINDOW_LOCATION_RE.search(html[:65536])
+    if js_redirect_match:
+        target = js_redirect_match.group(1).strip()
+        if target != original_url:
+            infos.append(f"JS Redirect -> {target}")
+            subcat = "Same Authority (JS)" if is_same_authority(original_url, target) else "JS Redirect"
+            return out(Status.REDIRECT, subcat)
+
+    # 1. Cloudflare Challenges & Blocks
+    if not redirected:
+        if (
+            title in {"Just a moment...", "Checking your browser...", "Verify you are human"}
+            or "challenges.cloudflare.com" in html_lower
+            or "cf-turnstile" in html_lower
+            or "turnstile-wrapper" in html_lower
+            or "cf-browser-verification" in html_lower
+            or (
+                "ray id:" in html_lower
+                and ("verifying you are human" in html_lower or "enable javascript and cookies" in html_lower)
+            )
+        ):
+            infos = []
+            return out(Status.CF_IUAM)
+
+        if (
+            title == "Attention Required! | Cloudflare"
+            or "attention required! | cloudflare" in title_lower
+            or "error 1020" in html_lower
+            or "error 1006" in html_lower
+            or "error 1007" in html_lower
+            or "sorry, you have been blocked" in html_lower
+            or ("access denied" in html_lower and "cloudflare" in html_lower)
+        ):
+            infos = []
+            return out(Status.CF_BLOCK)
+
+    # 2. Third-Party WAF / DDoS-Guard / Sucuri / Imperva
+    if (
+        "ddos-guard" in server_header
+        or "ddos-guard" in title_lower
+        or "ddos protection by ddos-guard" in html_lower
+        or "checking your browser before accessing" in html_lower
+        or "check.ddos-guard.net" in html_lower
+    ):
+        return out(Status.WAF, subcategory="DDoS-Guard")
+
+    if (
+        "x-sucuri-id" in headers
+        or "x-sucuri-cache" in headers
+        or "sucuri website firewall" in html_lower
+        or "access denied - sucuri" in title_lower
+    ):
+        return out(Status.WAF, subcategory="Sucuri WAF")
+
+    if (
+        "imperva" in headers.get("x-cdn", "").lower()
+        or "_incapsula_resource" in html_lower
+        or "incapsula incident id" in html_lower
+        or "request unsuccessful. incapsula" in html_lower
+    ):
+        return out(Status.WAF, subcategory="Imperva WAF")
+
+    if "security check" in title_lower or "challenge validation" in title_lower:
+        return out(Status.WAF, subcategory="WAF Challenge")
+
+    # 3. Rate Limiting (HTTP 429 / Error 1015)
+    if status_code == HTTPStatus.TOO_MANY_REQUESTS or "rate limit" in title_lower or "error 1015" in title_lower:
+        return out(Status.RATE_LIMITED, subcategory="HTTP 429" if status_code == 429 else "Rate Limited")
+
+    # 4. HTTP 404 (Not Found)
+    if status_code == HTTPStatus.NOT_FOUND:
+        return out(Status.NOT_FOUND, subcategory="HTTP 404")
+
+    # 5. Placeholders & Maintenance
+    if check_placeholder_content(title, html):
+        return out(Status.PLACEHOLDER, subcategory="Default Server Page")
+
+    if any(m in title_lower for m in MAINTENANCE_TITLES) or ("under maintenance" in html_lower and node_count < 30):
+        infos.append("Site under maintenance")
+        return out(Status.PLACEHOLDER, subcategory="Maintenance")
+
+    # 6. Parked / For Sale / Expired Domains
+    parked_signals.extend(check_parked_content(title, html))
+    if parked_signals:
+        return out(Status.PARKED, subcategory="Domain For Sale / Parked")
+
+    # 7. HTTP Redirects
+    if redirected:
+        subcategory = "Same Authority" if is_same_authority(original_url, final_url) else ""
+        return out(Status.REDIRECT, subcategory)
+
+    # 8. Operational (HTTP 200 OK) with False-Positive Checks
+    if status_code == HTTPStatus.OK:
+        # Check A: Blank page (few nodes and minimal text)
+        body_text = soup.text.strip()
+        if node_count < 6 and len(body_text) < 20:
+            if any(marker in html_lower for marker in SPA_MARKERS):
+                return out(Status.OK, subcategory="JS-rendered (SPA)")
+            infos.append(f"Empty page ({node_count} nodes)")
+            return out(Status.WARNING, subcategory="Blank Page")
+
+        # Check B: Database connection error disguised as 200
+        if any(db_err in html_lower for db_err in DB_ERROR_PATTERNS):
+            infos.append("Database connection failure")
+            return out(Status.WARNING, subcategory="Database Error")
+
+        if node_count < MIN_NODES_WARN:
+            infos.append(f"Few nodes ({node_count})")
+
+        return out(Status.OK, subcategory="With Notes" if infos else "")
+
+    # 9. Warnings with enriched subcategories
+    if status_code in {520, 521, 522, 523, 524, 525, 526}:
+        cf_subcat_map = {
+            520: "Cloudflare 520 (Unknown Error)",
+            521: "Cloudflare 521 (Server Down)",
+            522: "Cloudflare 522 (Connection Timed Out)",
+            523: "Cloudflare 523 (Origin Unreachable)",
+            524: "Cloudflare 524 (Timeout)",
+            525: "Cloudflare 525 (SSL Handshake Failed)",
+            526: "Cloudflare 526 (Invalid SSL)",
+        }
+        subcategory = cf_subcat_map.get(status_code, f"Cloudflare {status_code}")
+    elif 500 <= status_code < 600:
+        subcategory = f"Server Error ({status_code})"
+    elif status_code == HTTPStatus.FORBIDDEN:
+        subcategory = "Forbidden (403)"
+    else:
+        subcategory = f"HTTP {status_code}"
+
+    cleaned_msg = _clean_error_title(title, status_code, subcategory)
+    if cleaned_msg:
+        infos.append(cleaned_msg)
+
+    return out(Status.WARNING, subcategory=subcategory)
+
+
+RETRYABLE_EXCEPTIONS = (
+    aiohttp.ClientConnectorError,  # includes DNS failures
+    aiohttp.ServerDisconnectedError,
+    aiohttp.ClientOSError,
+    asyncio.TimeoutError,
+    TimeoutError,
+    ConnectionResetError,
+)
+NON_RETRYABLE_EXCEPTIONS = (
+    aiohttp.ClientConnectorCertificateError,
+    aiohttp.ClientConnectorSSLError,
+    ssl.SSLError,
+    aiohttp.TooManyRedirects,
+)
+
+
+def is_retryable(e: Exception) -> bool:
+    """Report whether a fetch exception is worth retrying.
+
+    Returns:
+        True for transient network failures, False for deterministic errors.
+    """
+    if isinstance(e, NON_RETRYABLE_EXCEPTIONS):
+        return False
+    return isinstance(e, RETRYABLE_EXCEPTIONS)
+
+
+def classify_exception(e: Exception) -> Classification:
+    """Classify a fetch exception without performing I/O (unit-testable).
+
+    Returns:
+        The classified status, subcategory, and exception message.
+    """
+    # DNS, SSL, Timeout, Redirect Loop, and Connection Errors
+    if isinstance(e, aiohttp.TooManyRedirects):
+        return Classification(Status.WARNING, "Redirect Loop", str(e))
+    if isinstance(e, (aiohttp.ClientConnectorDNSError, socket.gaierror)) or "DNS lookup failed" in str(e):
+        return Classification(Status.DNS_ERROR, "DNS Failure", str(e))
+    if isinstance(e, (aiohttp.ClientConnectorSSLError, aiohttp.ClientConnectorCertificateError, ssl.SSLError)):
+        return Classification(Status.ERROR, "SSL Error", str(e))
+    if isinstance(e, (asyncio.TimeoutError, TimeoutError)) or "timeout" in str(e).lower():
+        return Classification(Status.ERROR, "Timeout", str(e))
+    if isinstance(e, aiohttp.ClientConnectorError):
+        return Classification(Status.ERROR, "Connection Failed", str(e))
+    return Classification(Status.ERROR, type(e).__name__, str(e))
+
+
+async def check_url_generic(
+    session: aiohttp.ClientSession,
+    url: str,
+    make_result: Callable[[UrlCheck], R],
+    *,
+    attempts: int = RETRY_ATTEMPTS,
+) -> R:
+    start = time.perf_counter()
+    classification: Classification | None = None
+    http_code: int | None = None
+    final_url: str | None = None
+    attempt = 0
+
+    while attempt < attempts:
+        attempt += 1
         try:
-            async with session.get(url) as resp:
-                html = await _read_response_html(resp)
-        except aiohttp.ClientConnectorCertificateError:
-            # some servers omit intermediate certs; complete the chain like a browser would
-            ssl_context = await _build_aia_ssl_context(url)
-            async with session.get(url, ssl=ssl_context) as resp:
-                html = await _read_response_html(resp)
+            snapshot = await _fetch_snapshot(session, url)
+        except Exception as e:
+            if attempt >= attempts or not is_retryable(e):
+                classification = classify_exception(e)
+                break
+            log.debug("Retrying %s after transient error (attempt %d/%d): %s", url, attempt, attempts, e)
+            await asyncio.sleep(RETRY_BACKOFF_SECONDS * attempt)
+            continue
 
-        if html is None:
-            content_type = resp.content_type.lower()
-            infos.append(f"Non-HTML ({content_type})")
-            if resp.status == HTTPStatus.OK:
-                return result(Status.OK, subcategory=f"Binary ({content_type})")
-            return result(Status.WARNING, subcategory=f"Binary {resp.status}")
+        classification = classify_response(
+            status_code=snapshot.status_code,
+            final_url=snapshot.final_url,
+            content_type=snapshot.content_type,
+            headers=snapshot.headers,
+            html=snapshot.html,
+            original_url=url,
+        )
+        http_code = snapshot.status_code
+        final_url = snapshot.final_url
+        break
 
-        soup = BeautifulSoup(html, "lxml")
+    if classification is None:  # attempts <= 0 guard; never expected with defaults
+        classification = Classification(Status.ERROR, "Unknown")
 
-        node_count = len(soup.select("*"))
-
-        redirected = not str(resp.url).startswith(url)
-        if redirected:
-            infos.append(f"Redirected: {resp.url}")
-            parked_signals.extend(check_parked_redirect(resp.url))
-
-        title = soup.title.string.strip() if soup.title and soup.title.string else ""
-        title_lower = title.lower()
-        html_lower = html.lower()
-        server_header = resp.headers.get("server", "").lower()
-
-        # HTML Meta Refresh & JS Redirect Detection
-        meta_refresh = soup.find("meta", attrs={"http-equiv": re.compile(r"^refresh$", re.IGNORECASE)})
-        if (
-            meta_refresh
-            and (content_val := meta_refresh.get("content"))
-            and (m := META_REFRESH_CONTENT_RE.search(content_val))
-        ):
-            target = m.group(1).strip()
-            if not target.startswith(("http://", "https://")):
-                target = str(URL(url).join(URL(target)))
-            if target != url:
-                infos.append(f"Meta Refresh -> {target}")
-                subcat = "Same Authority (Meta)" if is_same_authority(url, target) else "Meta Refresh"
-                return result(Status.REDIRECT, subcat)
-
-        js_redirect_match = WINDOW_LOCATION_RE.search(html[:65536])
-        if js_redirect_match:
-            target = js_redirect_match.group(1).strip()
-            if target != url:
-                infos.append(f"JS Redirect -> {target}")
-                subcat = "Same Authority (JS)" if is_same_authority(url, target) else "JS Redirect"
-                return result(Status.REDIRECT, subcat)
-
-        # 1. Cloudflare Challenges & Blocks
-        if not redirected:
-            if (
-                title in {"Just a moment...", "Checking your browser...", "Verify you are human"}
-                or "challenges.cloudflare.com" in html_lower
-                or "cf-turnstile" in html_lower
-                or "turnstile-wrapper" in html_lower
-                or "cf-browser-verification" in html_lower
-                or (
-                    "ray id:" in html_lower
-                    and ("verifying you are human" in html_lower or "enable javascript and cookies" in html_lower)
-                )
-            ):
-                infos = []
-                return result(Status.CF_IUAM)
-
-            if (
-                title == "Attention Required! | Cloudflare"
-                or "attention required! | cloudflare" in title_lower
-                or "error 1020" in html_lower
-                or "error 1006" in html_lower
-                or "error 1007" in html_lower
-                or "sorry, you have been blocked" in html_lower
-                or ("access denied" in html_lower and "cloudflare" in html_lower)
-            ):
-                infos = []
-                return result(Status.CF_BLOCK)
-
-        # 2. Third-Party WAF / DDoS-Guard / Sucuri / Imperva
-        if (
-            "ddos-guard" in server_header
-            or "ddos-guard" in title_lower
-            or "ddos protection by ddos-guard" in html_lower
-            or "checking your browser before accessing" in html_lower
-            or "check.ddos-guard.net" in html_lower
-        ):
-            return result(Status.WAF, subcategory="DDoS-Guard")
-
-        if (
-            "x-sucuri-id" in resp.headers
-            or "x-sucuri-cache" in resp.headers
-            or "sucuri website firewall" in html_lower
-            or "access denied - sucuri" in title_lower
-        ):
-            return result(Status.WAF, subcategory="Sucuri WAF")
-
-        if (
-            "imperva" in resp.headers.get("x-cdn", "").lower()
-            or "_incapsula_resource" in html_lower
-            or "incapsula incident id" in html_lower
-            or "request unsuccessful. incapsula" in html_lower
-        ):
-            return result(Status.WAF, subcategory="Imperva WAF")
-
-        if "security check" in title_lower or "challenge validation" in title_lower:
-            return result(Status.WAF, subcategory="WAF Challenge")
-
-        # 3. Rate Limiting (HTTP 429 / Error 1015)
-        if resp.status == HTTPStatus.TOO_MANY_REQUESTS or "rate limit" in title_lower or "error 1015" in title_lower:
-            return result(Status.RATE_LIMITED, subcategory="HTTP 429" if resp.status == 429 else "Rate Limited")
-
-        # 4. HTTP 404 (Not Found)
-        if resp.status == HTTPStatus.NOT_FOUND:
-            return result(Status.NOT_FOUND, subcategory="HTTP 404")
-
-        # 5. Placeholders & Maintenance
-        if check_placeholder_content(title, html):
-            return result(Status.PLACEHOLDER, subcategory="Default Server Page")
-
-        if any(m in title_lower for m in MAINTENANCE_TITLES) or ("under maintenance" in html_lower and node_count < 30):
-            infos.append("Site under maintenance")
-            return result(Status.PLACEHOLDER, subcategory="Maintenance")
-
-        # 6. Parked / For Sale / Expired Domains
-        parked_signals.extend(check_parked_content(title, html))
-        if parked_signals:
-            return result(Status.PARKED, subcategory="Domain For Sale / Parked")
-
-        # 7. HTTP Redirects
-        if redirected:
-            subcategory = "Same Authority" if is_same_authority(url, str(resp.url)) else ""
-            return result(Status.REDIRECT, subcategory)
-
-        # 8. Operational (HTTP 200 OK) with False-Positive Checks
-        if resp.status == HTTPStatus.OK:
-            # Check A: Blank page (few nodes and minimal text)
-            body_text = soup.text.strip()
-            if node_count < 6 and len(body_text) < 20:
-                infos.append(f"Empty page ({node_count} nodes)")
-                return result(Status.WARNING, subcategory="Blank Page")
-
-            # Check B: Database connection error disguised as 200
-            if any(db_err in html_lower for db_err in DB_ERROR_PATTERNS):
-                infos.append("Database connection failure")
-                return result(Status.WARNING, subcategory="Database Error")
-
-            if node_count < MIN_NODES_WARN:
-                infos.append(f"Few nodes ({node_count})")
-
-            return result(Status.OK, subcategory="With Notes" if infos else "")
-
-        # 9. Warnings with enriched subcategories
-        if resp.status in {520, 521, 522, 523, 524, 525, 526}:
-            cf_subcat_map = {
-                520: "Cloudflare 520 (Unknown Error)",
-                521: "Cloudflare 521 (Server Down)",
-                522: "Cloudflare 522 (Connection Timed Out)",
-                523: "Cloudflare 523 (Origin Unreachable)",
-                524: "Cloudflare 524 (Timeout)",
-                525: "Cloudflare 525 (SSL Handshake Failed)",
-                526: "Cloudflare 526 (Invalid SSL)",
-            }
-            subcategory = cf_subcat_map.get(resp.status, f"Cloudflare {resp.status}")
-        elif 500 <= resp.status < 600:
-            subcategory = f"Server Error ({resp.status})"
-        elif resp.status == HTTPStatus.FORBIDDEN:
-            subcategory = "Forbidden (403)"
-        else:
-            subcategory = f"HTTP {resp.status}"
-
-        cleaned_msg = _clean_error_title(title, resp.status, subcategory)
-        if cleaned_msg:
-            infos.append(cleaned_msg)
-
-        return result(Status.WARNING, subcategory=subcategory)
-
-    except Exception as e:
-        if msg := str(e):
-            infos.append(msg)
-        # Classify DNS, SSL, Timeout, Redirect Loop, and Connection Errors
-        if isinstance(e, aiohttp.TooManyRedirects):
-            return result(Status.WARNING, subcategory="Redirect Loop")
-        if isinstance(e, (aiohttp.ClientConnectorDNSError, socket.gaierror)) or "DNS lookup failed" in str(e):
-            return result(Status.DNS_ERROR, subcategory="DNS Failure")
-        if isinstance(e, (aiohttp.ClientConnectorSSLError, aiohttp.ClientConnectorCertificateError, ssl.SSLError)):
-            return result(Status.ERROR, subcategory="SSL Error")
-        if isinstance(e, (asyncio.TimeoutError, TimeoutError)) or "timeout" in str(e).lower():
-            return result(Status.ERROR, subcategory="Timeout")
-        if isinstance(e, aiohttp.ClientConnectorError):
-            return result(Status.ERROR, subcategory="Connection Failed")
-        return result(Status.ERROR, subcategory=type(e).__name__)
+    return make_result(
+        UrlCheck(
+            status=classification.status,
+            duration=time.perf_counter() - start,
+            info=classification.info,
+            subcategory=classification.subcategory,
+            http_code=http_code,
+            final_url=final_url,
+            attempts=attempt,
+        )
+    )
 
 
 async def check_all_generic(
