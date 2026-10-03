@@ -64,6 +64,25 @@ function ariaSort(col, sortColumn, sortDirection) {
 }
 
 /**
+ * Renders one sortable column header whose label is a keyboard-reachable button.
+ * @param {string} col
+ * @param {string} label
+ * @param {string|null} sortColumn
+ * @param {'asc'|'desc'} sortDirection
+ * @param {string} [thClass]
+ * @returns {string}
+ */
+function sortableTh(col, label, sortColumn, sortDirection, thClass = '') {
+  const align = thClass.includes('text-right') ? 'text-right' : 'text-left';
+  return `
+        <th scope="col" aria-sort="${ariaSort(col, sortColumn, sortDirection)}" class="py-2.5 px-4 ${thClass}" data-sort="${col}">
+          <button type="button" class="w-full ${align} hover:text-zinc-950 dark:hover:text-white transition-colors cursor-pointer">
+            ${label} ${getSortIndicator(col, sortColumn, sortDirection)}
+          </button>
+        </th>`;
+}
+
+/**
  * Generates table header HTML based on the active tab and sort state.
  * @param {string} activeTab
  * @param {string|null} sortColumn
@@ -74,16 +93,10 @@ export function renderTableHead(activeTab, sortColumn, sortDirection) {
   if (activeTab === 'extensions') {
     return `
       <tr>
-        <th scope="col" aria-sort="${ariaSort('status', sortColumn, sortDirection)}" class="py-2.5 px-4 w-36 cursor-pointer hover:text-zinc-950 dark:hover:text-white transition-colors" data-sort="status">
-          STATUS ${getSortIndicator('status', sortColumn, sortDirection)}
-        </th>
-        <th scope="col" aria-sort="${ariaSort('name', sortColumn, sortDirection)}" class="py-2.5 px-4 cursor-pointer hover:text-zinc-950 dark:hover:text-white transition-colors" data-sort="name">
-          EXTENSION ${getSortIndicator('name', sortColumn, sortDirection)}
-        </th>
+        ${sortableTh('status', 'STATUS', sortColumn, sortDirection, 'w-36')}
+        ${sortableTh('name', 'EXTENSION', sortColumn, sortDirection)}
         <th scope="col" class="py-2.5 px-4 font-semibold">URL</th>
-        <th scope="col" aria-sort="${ariaSort('time', sortColumn, sortDirection)}" class="py-2.5 px-4 w-28 text-right cursor-pointer hover:text-zinc-950 dark:hover:text-white transition-colors" data-sort="time">
-          LATENCY ${getSortIndicator('time', sortColumn, sortDirection)}
-        </th>
+        ${sortableTh('time', 'LATENCY', sortColumn, sortDirection, 'w-28 text-right')}
         <th scope="col" class="py-2.5 px-4 font-semibold">NOTES / CATEGORY</th>
         <th scope="col" class="py-2.5 px-4 w-12 text-center font-semibold"></th>
       </tr>
@@ -93,16 +106,10 @@ export function renderTableHead(activeTab, sortColumn, sortDirection) {
   if (activeTab === 'issues') {
     return `
       <tr>
-        <th scope="col" aria-sort="${ariaSort('status', sortColumn, sortDirection)}" class="py-2.5 px-4 w-36 cursor-pointer hover:text-zinc-950 dark:hover:text-white transition-colors" data-sort="status">
-          STATUS ${getSortIndicator('status', sortColumn, sortDirection)}
-        </th>
-        <th scope="col" aria-sort="${ariaSort('number', sortColumn, sortDirection)}" class="py-2.5 px-4 w-28 cursor-pointer hover:text-zinc-950 dark:hover:text-white transition-colors" data-sort="number">
-          ISSUE ${getSortIndicator('number', sortColumn, sortDirection)}
-        </th>
+        ${sortableTh('status', 'STATUS', sortColumn, sortDirection, 'w-36')}
+        ${sortableTh('number', 'ISSUE', sortColumn, sortDirection, 'w-28')}
         <th scope="col" class="py-2.5 px-4 font-semibold">URL</th>
-        <th scope="col" aria-sort="${ariaSort('time', sortColumn, sortDirection)}" class="py-2.5 px-4 w-28 text-right cursor-pointer hover:text-zinc-950 dark:hover:text-white transition-colors" data-sort="time">
-          LATENCY ${getSortIndicator('time', sortColumn, sortDirection)}
-        </th>
+        ${sortableTh('time', 'LATENCY', sortColumn, sortDirection, 'w-28 text-right')}
         <th scope="col" class="py-2.5 px-4 font-semibold">LABELS</th>
         <th scope="col" class="py-2.5 px-4 font-semibold">INFO</th>
         <th scope="col" class="py-2.5 px-4 w-12 text-center font-semibold"></th>
@@ -113,12 +120,8 @@ export function renderTableHead(activeTab, sortColumn, sortDirection) {
   if (activeTab === 'map') {
     return `
       <tr>
-        <th scope="col" aria-sort="${ariaSort('number', sortColumn, sortDirection)}" class="py-2.5 px-4 w-36 cursor-pointer hover:text-zinc-950 dark:hover:text-white transition-colors" data-sort="number">
-          BUG ISSUE ${getSortIndicator('number', sortColumn, sortDirection)}
-        </th>
-        <th scope="col" aria-sort="${ariaSort('source', sortColumn, sortDirection)}" class="py-2.5 px-4 cursor-pointer hover:text-zinc-950 dark:hover:text-white transition-colors" data-sort="source">
-          SOURCE ${getSortIndicator('source', sortColumn, sortDirection)}
-        </th>
+        ${sortableTh('number', 'BUG ISSUE', sortColumn, sortDirection, 'w-36')}
+        ${sortableTh('source', 'SOURCE', sortColumn, sortDirection)}
         <th scope="col" class="py-2.5 px-4 w-36 font-semibold">STATUS</th>
         <th scope="col" class="py-2.5 px-4 font-semibold">MATCHED EXTENSION</th>
         <th scope="col" class="py-2.5 px-4 font-semibold">TARGET URL</th>

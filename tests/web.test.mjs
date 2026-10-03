@@ -9,6 +9,8 @@ import { test } from 'node:test';
 
 import { STATUS_CONFIG, getTierCategory, isOperationalSource } from '../web/js/config.js';
 import { getProcessedItems, loadData, resetStateFilters, state, toggleSortColumn } from '../web/js/state.js';
+import { renderTableHead } from '../web/js/table.js';
+import { nextTabIndex } from '../web/js/utils.js';
 
 const tierCases = JSON.parse(readFileSync(new URL('./tier_cases.json', import.meta.url), 'utf8'));
 
@@ -129,4 +131,21 @@ test('loadData rejects on a failed fetch instead of resolving null', async () =>
     globalThis.fetch = original;
     state.data.issues = null;
   }
+});
+
+test('sortable headers expose a keyboard-reachable button', () => {
+  const head = renderTableHead('extensions', null, 'asc');
+  assert.match(head, /aria-sort="none"/);
+  for (const col of ['status', 'name', 'time']) {
+    const re = new RegExp(`<th[^>]*data-sort="${col}"[^>]*>[\\s\\S]*?<button`);
+    assert.match(head, re, `sortable column ${col} needs a button`);
+  }
+});
+
+test('nextTabIndex wraps and handles Home/End', () => {
+  assert.equal(nextTabIndex(0, 'ArrowLeft', 3), 2);
+  assert.equal(nextTabIndex(2, 'ArrowRight', 3), 0);
+  assert.equal(nextTabIndex(1, 'Home', 3), 0);
+  assert.equal(nextTabIndex(1, 'End', 3), 2);
+  assert.equal(nextTabIndex(1, 'Enter', 3), 1);
 });

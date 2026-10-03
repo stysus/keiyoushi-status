@@ -1,5 +1,5 @@
 import { initTheme } from './js/theme.js';
-import { formatRelativeTime, debounce, copyTextToClipboard } from './js/utils.js';
+import { formatRelativeTime, debounce, copyTextToClipboard, nextTabIndex } from './js/utils.js';
 import { renderFilterChips, renderPaginationButtons, renderSparkline, showToast } from './js/components.js';
 import { renderTableHead, renderTableRows } from './js/table.js';
 import { state, loadData, getProcessedItems, toggleSortColumn, resetStateFilters, readStateFromUrl, writeStateToUrl } from './js/state.js';
@@ -243,6 +243,8 @@ async function renderActiveTab() {
 function applyTabStyles(targetTab) {
   el.tabBtns.forEach((btn) => {
     const isTarget = btn.dataset.tab === targetTab;
+    btn.setAttribute('aria-selected', isTarget ? 'true' : 'false');
+    btn.tabIndex = isTarget ? 0 : -1;
     if (isTarget) {
       btn.className =
         'tab-btn px-3 py-1.5 rounded-lg flex items-center gap-2 transition-all bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white shadow-sm border border-zinc-200 dark:border-zinc-700 font-semibold cursor-pointer';
@@ -284,6 +286,19 @@ function setupEvents() {
   // 1. Tab Clicks
   el.tabBtns.forEach((btn) => {
     btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+  });
+
+  // 1b. Tab keyboard navigation (roving tabindex)
+  const tablist = el.tabBtns[0]?.parentElement;
+  tablist?.addEventListener('keydown', (e) => {
+    if (!['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(e.key)) return;
+    const btns = [...el.tabBtns];
+    const idx = btns.indexOf(document.activeElement);
+    if (idx < 0) return;
+    e.preventDefault();
+    const next = nextTabIndex(idx, e.key, btns.length);
+    switchTab(btns[next].dataset.tab);
+    btns[next].focus();
   });
 
   // 2. Search Input with Debounce

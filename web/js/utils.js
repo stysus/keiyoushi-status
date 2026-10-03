@@ -92,3 +92,26 @@ export async function copyTextToClipboard(text) {
     document.body.removeChild(input);
   }
 }
+
+/**
+ * Returns the next tab index for arrow/Home/End navigation, wrapping at the ends.
+ * @param {number} current
+ * @param {string} key
+ * @param {number} count
+ * @returns {number}
+ */
+export function nextTabIndex(current, key, count) {
+  if (count <= 0) return -1;
+  switch (key) {
+    case 'ArrowRight':
+      return (current + 1) % count;
+    case 'ArrowLeft':
+      return (current - 1 + count) % count;
+    case 'Home':
+      return 0;
+    case 'End':
+      return count - 1;
+    default:
+      return current;
+  }
+}
