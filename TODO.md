@@ -67,9 +67,9 @@ Kerja bertahap. Centang saat selesai. `[ ]` belum, `[x]` selesai.
 - [x] Jalur romanisasi Korea + dep `korean-romanizer`
 - [x] Terverifikasi: `늑대닷컴 - 만화책` → `neukdaedatkeom - manhwachaek`, match skor 100
 
-### Stage 12 — #4 Backfill `history.json` dari git history ⬜
-- [ ] Script sekali-jalan: baca tiap versi `web/data/extensions.json` dari `git log`, hitung tier, seed history
-- [ ] Jalankan & commit hasil backfill (sparkline langsung tampil)
+### Stage 12 — #4 Backfill `history.json` dari git history ✅
+- [x] `backfill_history.py`: baca tiap versi `web/data/extensions.json` dari `git log`, hitung tier, seed history (entry live menang per tanggal)
+- [x] Backfill 11 hari (2026-09-23 .. 2026-10-03); sparkline terverifikasi render
 
 ### Stage 13 — #5 Tes jalan di semua push ⬜
 - [ ] Pindahkan/duplikasi `test_classify.py` ke job `detect` (selalu jalan) atau job kecil terpisah
