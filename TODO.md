@@ -62,10 +62,10 @@ Kerja bertahap. Centang saat selesai. `[ ]` belum, `[x]` selesai.
 - [x] Fixture tes: lookalike (`x.test.evil.test`), same-path redirect, trailing-slash
 - [x] Replay data nyata: 48 baris flag berubah (semua redirect path same-authority, tier-neutral)
 
-### Stage 11 — 🔴 Bug: romanisasi Hangul di `map_bug_issues.py` ⬜
-- [ ] Perluas `CJK_RE` dengan blok Hangul (`\uac00-\ud7af`)
-- [ ] Jalur romanisasi Korea + dep `korean-romanizer`
-- [ ] Selftest fixture: `늑대닷컴` dapat slug
+### Stage 11 — 🔴 Bug: romanisasi Hangul di `map_bug_issues.py` ✅
+- [x] Perluas `CJK_RE` dengan blok Hangul (`\uac00-\ud7af\u3130-\u318f`) + `HANGUL_RE`
+- [x] Jalur romanisasi Korea + dep `korean-romanizer`
+- [x] Terverifikasi: `늑대닷컴 - 만화책` → `neukdaedatkeom - manhwachaek`, match skor 100
 
 ### Stage 12 — #4 Backfill `history.json` dari git history ⬜
 - [ ] Script sekali-jalan: baca tiap versi `web/data/extensions.json` dari `git log`, hitung tier, seed history

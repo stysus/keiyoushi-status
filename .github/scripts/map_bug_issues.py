@@ -2,6 +2,7 @@
 # /// script
 # requires-python = ">=3.11"
 # dependencies = [
+#   "korean-romanizer",
 #   "pykakasi",
 #   "pypinyin",
 #   "rapidfuzz",
@@ -18,6 +19,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 
+from korean_romanizer.romanizer import Romanizer
 from pykakasi import kakasi
 from pypinyin import lazy_pinyin
 from rapidfuzz import fuzz, process
@@ -30,7 +32,8 @@ REPO = os.getenv("SOURCE_REPO", "keiyoushi/extensions-source")
 SCORE_CUTOFF = 90
 SKIP_LABELS = frozenset({"Meta request"})
 
-CJK_RE = re.compile(r"[\u4e00-\u9fff\u3400-\u4dbf\u3040-\u309f\u30a0-\u30ff]")
+CJK_RE = re.compile(r"[\u4e00-\u9fff\u3400-\u4dbf\u3040-\u309f\u30a0-\u30ff\uac00-\ud7af\u3130-\u318f]")
+HANGUL_RE = re.compile(r"[\uac00-\ud7af\u3130-\u318f]")
 PKG_ID_RE = re.compile(r"\b\w{2}\.\w+")  # e.g. co.navercomic, id.shinigami
 EXT_NAME_RE = re.compile(r"""extName\s*=\s*['"](.+?)['"]""")
 EXT_CLASS_RE = re.compile(r"""extClass\s*=\s*['"]\s*\.?(\w+)['"]""")
@@ -90,16 +93,15 @@ class IssueResult:
 
 
 def romanize(text: str) -> list[str]:
-    has_kana = bool(KANA_RE.search(text))
     slugs: list[str] = []
-    if not has_kana:
-        s = "".join(lazy_pinyin(text)).lower()
-        if s and s != text.lower():
-            slugs.append(s)
-    else:
+    if KANA_RE.search(text):
         s = "".join(item["hepburn"] for item in _kakasi.convert(text)).lower()
-        if s and s != text.lower() and s not in slugs:
-            slugs.append(s)
+    elif HANGUL_RE.search(text):
+        s = Romanizer(text).romanize().lower()
+    else:
+        s = "".join(lazy_pinyin(text)).lower()
+    if s and s != text.lower():
+        slugs.append(s)
     return slugs
 
 
