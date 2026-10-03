@@ -71,11 +71,14 @@ Kerja bertahap. Centang saat selesai. `[ ]` belum, `[x]` selesai.
 - [x] `backfill_history.py`: baca tiap versi `web/data/extensions.json` dari `git log`, hitung tier, seed history (entry live menang per tanggal)
 - [x] Backfill 11 hari (2026-09-23 .. 2026-10-03); sparkline terverifikasi render
 
-### Stage 13 — #5 Tes jalan di semua push ⬜
-- [ ] Pindahkan/duplikasi `test_classify.py` ke job `detect` (selalu jalan) atau job kecil terpisah
+### Stage 13 — #5 Tes jalan di semua push ✅
+- [x] Job `selfcheck` terpisah (selalu jalan, tak tergantung `should_scrape`)
+- [x] `process` butuh `selfcheck` + guard `needs.selfcheck.result` → deploy terblokir bila tes gagal
 
-### Stage 14 — #3 Race sharding: unduh `index.pb` sekali ⬜
-- [ ] `detect` simpan sources ke artefak; shard baca artefak (bukan fetch ulang) → hilangkan risiko source kelewatan
+### Stage 14 — #3 Race sharding: sumber dibekukan sekali ✅
+- [x] `check_extensions.py --dump-sources` + `SOURCES_FILE` env; `detect` unduh sekali, upload artefak
+- [x] Shard unduh artefak & baca daftar sumber yang sama (bukan fetch ulang) → tak ada sumber kelewatan
+- [x] Terverifikasi: dump 1530 sumber; jalur cache offline `--get-shards` OK
 
 ### Stage 15 — #6 Filter `http_code` + tampilkan `attempts` di UI ⬜
 - [ ] Chip/kolom kode HTTP, indikator retry

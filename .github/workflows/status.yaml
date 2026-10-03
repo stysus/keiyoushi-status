@@ -93,14 +93,42 @@ jobs:
           enable-cache: true
           cache-dependency-glob: '.github/scripts/*.py'
 
+      - name: Fetch source index once
+        if: steps.flags.outputs.should_scrape == 'true'
+        run: .github/scripts/check_extensions.py --dump-sources build/sources.json
+
+      - name: Upload source index
+        if: steps.flags.outputs.should_scrape == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: sources
+          path: build/sources.json
+          retention-days: 1
+
       - name: Calculate extensions matrix shards
         id: shards
         if: steps.flags.outputs.should_scrape == 'true'
+        env:
+          SOURCES_FILE: build/sources.json
         run: |
           SHARDS_JSON=$(.github/scripts/check_extensions.py --get-shards 100 2>/dev/null)
           echo "shards=$(echo "$SHARDS_JSON" | jq -c '.shards')" >> "$GITHUB_OUTPUT"
           echo "total_shards=$(echo "$SHARDS_JSON" | jq -r '.total_shards')" >> "$GITHUB_OUTPUT"
           echo "Generated shards: $SHARDS_JSON"
+
+  selfcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup uv with dependency caching
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          cache-dependency-glob: '.github/scripts/*.py'
+
+      - name: Run classifier self-checks
+        run: .github/scripts/test_classify.py
 
   scrape-extensions:
     needs: detect
@@ -119,10 +147,17 @@ jobs:
           enable-cache: true
           cache-dependency-glob: '.github/scripts/*.py'
 
+      - name: Download source index
+        uses: actions/download-artifact@v4
+        with:
+          name: sources
+          path: build
+
       - name: Run extensions status check shard
         env:
           SHARD_INDEX: ${{ matrix.shard }}
           TOTAL_SHARDS: ${{ needs.detect.outputs.total_shards }}
+          SOURCES_FILE: build/sources.json
         run: .github/scripts/check_extensions.py
 
       - name: Upload extensions shard artifact
@@ -160,11 +195,18 @@ jobs:
           if-no-files-found: error
 
   process:
-    needs: [detect, scrape-extensions, scrape-issues]
+    needs: [detect, selfcheck, scrape-extensions, scrape-issues]
     if: always() && (needs.detect.outputs.should_scrape == 'true' || needs.detect.outputs.should_deploy == 'true')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+
+      - name: Verify self-checks passed
+        run: |
+          if [ "${{ needs.selfcheck.result }}" != "success" ]; then
+            echo "Classifier self-checks failed."
+            exit 1
+          fi
 
       - name: Verify scrape jobs success
         if: needs.detect.outputs.should_scrape == 'true'
@@ -195,10 +237,6 @@ jobs:
         with:
           enable-cache: true
           cache-dependency-glob: '.github/scripts/*.py'
-
-      - name: Run classifier self-checks
-        if: needs.detect.outputs.should_scrape == 'true'
-        run: .github/scripts/test_classify.py
 
       - name: Merge extensions shards
         if: needs.detect.outputs.should_scrape == 'true'
