@@ -142,6 +142,8 @@ function applyTabStyles(targetTab) {
       numBadge.className = isTarget ? TAB_BADGE_ACTIVE_CLASS : TAB_BADGE_INACTIVE_CLASS;
     }
   });
+  const active = [...el.tabBtns].find((btn) => btn.dataset.tab === targetTab);
+  if (active && el.tableWrapper) el.tableWrapper.setAttribute('aria-labelledby', active.id);
 }
 
 function switchTab(targetTab) {
@@ -221,11 +223,17 @@ function setupEvents() {
   });
 
   // 5. Delegated Event: Table Header Sorting
-  el.tableHead.addEventListener('click', (e) => {
+  el.tableHead.addEventListener('click', async (e) => {
     const th = e.target.closest('th[data-sort]');
     if (!th) return;
-    toggleSortColumn(th.dataset.sort);
-    renderActiveTab();
+    const col = th.dataset.sort;
+    // Keep keyboard focus on the header across the re-render.
+    const hadFocus = th.contains(document.activeElement);
+    toggleSortColumn(col);
+    await renderActiveTab();
+    if (hadFocus) {
+      el.tableHead.querySelector(`th[data-sort="${col}"] button`)?.focus();
+    }
   });
 
   // 6. Delegated Event: Table Row Copy URL

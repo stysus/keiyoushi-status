@@ -16,6 +16,22 @@ export function escapeHtml(str) {
 }
 
 /**
+ * Returns a URL only if it uses a safe scheme (http/https); otherwise '#'.
+ * Prevents javascript:/data: URLs from being used as link targets.
+ * @param {string|null|undefined} url
+ * @returns {string}
+ */
+export function safeUrl(url) {
+  if (!url) return '#';
+  try {
+    const parsed = new URL(String(url), 'https://example.invalid');
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:' ? String(url) : '#';
+  } catch {
+    return '#';
+  }
+}
+
+/**
  * Formats an ISO date string into a relative human-readable time (e.g. "5m ago").
  * @param {string} isoString
  * @returns {string}

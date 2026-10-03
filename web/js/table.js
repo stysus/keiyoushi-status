@@ -1,5 +1,5 @@
 import { GITHUB_BASE_URL } from './config.js';
-import { escapeHtml } from './utils.js';
+import { escapeHtml, safeUrl } from './utils.js';
 import { renderStatusPill, renderStatusCell, renderBadge, renderCopyButton } from './components.js';
 
 /**
@@ -201,7 +201,7 @@ export function renderTableRows(items, activeTab) {
             ${escapeHtml(item.name)}
           </td>
           <td class="py-2.5 px-4 font-mono text-xs">
-            <a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(urlMeta(item))}"
+            <a href="${escapeHtml(safeUrl(item.url))}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(urlMeta(item))}"
                class="text-zinc-700 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white hover:underline break-all inline-flex items-center gap-1 font-normal">
               ${escapeHtml(item.url)}
             </a>
@@ -240,7 +240,7 @@ export function renderTableRows(items, activeTab) {
           <td class="py-2.5 px-4 font-mono text-xs">
             ${
               item.url
-                ? `<a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(urlMeta(item))}"
+                ? `<a href="${escapeHtml(safeUrl(item.url))}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(urlMeta(item))}"
                       class="text-zinc-700 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white hover:underline break-all inline-flex items-center gap-1 font-normal">
                      ${escapeHtml(item.url)}
                    </a>`
@@ -313,7 +313,7 @@ export function renderTableRows(items, activeTab) {
               <td class="py-2.5 px-4 font-mono text-xs">
                 ${
                   m.url
-                    ? `<a href="${escapeHtml(m.url)}" target="_blank" rel="noopener noreferrer" 
+                    ? `<a href="${escapeHtml(safeUrl(m.url))}" target="_blank" rel="noopener noreferrer" 
                           class="text-zinc-700 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white hover:underline break-all inline-flex items-center gap-1 font-normal">
                          ${escapeHtml(m.url)}
                        </a>`

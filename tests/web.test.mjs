@@ -9,8 +9,8 @@ import { test } from 'node:test';
 
 import { STATUS_CONFIG, getTierCategory, isOperationalSource } from '../web/js/config.js';
 import { computePageSlice, getProcessedItems, loadData, resetStateFilters, state, toggleSortColumn } from '../web/js/state.js';
-import { renderTableHead } from '../web/js/table.js';
-import { nextTabIndex } from '../web/js/utils.js';
+import { renderTableHead, renderTableRows } from '../web/js/table.js';
+import { nextTabIndex, safeUrl } from '../web/js/utils.js';
 
 const tierCases = JSON.parse(readFileSync(new URL('./tier_cases.json', import.meta.url), 'utf8'));
 
@@ -163,4 +163,33 @@ test('workflow push paths include the Tailwind build inputs', () => {
   for (const p of ['tailwind.config.js', 'package.json', 'package-lock.json', 'tests/**']) {
     assert.ok(paths.includes(p), `push paths must include ${p} so a config/lockfile change rebuilds app.css`);
   }
+});
+
+test('safeUrl only allows http(s) URLs', () => {
+  assert.equal(safeUrl('https://example.com/a'), 'https://example.com/a');
+  assert.equal(safeUrl('http://example.com'), 'http://example.com');
+  assert.equal(safeUrl('javascript:alert(1)'), '#');
+  assert.equal(safeUrl('data:text/html,<script>'), '#');
+  assert.equal(safeUrl(''), '#');
+  assert.equal(safeUrl(null), '#');
+});
+
+test('renderTableRows neutralizes a javascript: URL', () => {
+  const html = renderTableRows(
+    [{ name: 'x', url: 'javascript:alert(1)', status: 'ok', time: '1s', duration: 1 }],
+    'extensions',
+  );
+  assert.ok(!/href="javascript:/i.test(html), 'javascript: URL must not be used as an href');
+  assert.match(html, /href="#"/, 'unsafe URL should fall back to #');
+});
+
+test('theme-color, tabpanel labelling, and noscript fallbacks are hardened', () => {
+  // A single JS-managed theme-color meta (no OS media query), kept in sync with the stored theme.
+  const themeColors = indexHtml.match(/<meta name="theme-color"/g) || [];
+  assert.equal(themeColors.length, 1);
+  assert.doesNotMatch(indexHtml, /<meta name="theme-color"[^>]*media=/);
+  // The tabpanel points at the active tab.
+  assert.match(indexHtml, /id="tableWrapper"[^>]*aria-labelledby="tabExtensions"/);
+  // With JS disabled, the loading state must not stay visible.
+  assert.match(indexHtml, /<noscript><style>#loadingState\s*\{\s*display:\s*none;?\s*\}\s*<\/style><\/noscript>/);
 });

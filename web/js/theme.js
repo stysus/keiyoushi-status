@@ -37,6 +37,8 @@ export function initTheme(themeToggleBtn, sunIcon, moonIcon) {
  * @param {HTMLElement} [moonIcon]
  */
 export function applyTheme(isDark, sunIcon, moonIcon) {
+  const meta = document.getElementById('themeColorMeta');
+  if (meta) meta.setAttribute('content', isDark ? '#09090b' : '#ffffff');
   if (isDark) {
     document.documentElement.classList.add('dark');
     if (sunIcon) sunIcon.classList.remove('hidden');
