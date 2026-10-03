@@ -299,7 +299,7 @@ Drops aiohttp/aia/dnspython/httpx/ua-generator."
 ### Task 3: Quantitative A/B verification
 
 **Files:**
-- Modify: `TODO.md` (record the measured result)
+- Record: the measured result in this plan/spec (durable) and the local SDD ledger
 
 **Interfaces:**
 - Consumes: the running pipeline from Task 2.
@@ -327,11 +327,12 @@ Run `.github/scripts/guard_regression.py` against the new data; it must pass.
 
 - [ ] **Step 6: Record and commit**
 
-Add a `### HTTP transport A/B (2026-10-03)` note under the Round 4 section of `TODO.md` with the before/after numbers and the spot-check outcome.
+Record a `### HTTP transport A/B (2026-10-03)` note with the before/after numbers
+and the spot-check outcome in this plan/spec (durable) and the local SDD ledger.
 
 ```bash
-git add TODO.md
-git commit -m "docs(todo): record curl_cffi transport A/B result"
+git add docs/superpowers/specs docs/superpowers/plans
+git commit -m "docs(spec): record curl_cffi transport A/B result"
 ```
 
 ---
@@ -352,4 +353,5 @@ git commit -m "docs(todo): record curl_cffi transport A/B result"
 - [ ] **Step 3:** Implement the minimal fallback in `_fetch_snapshot` (e.g. a curated CA bundle for the affected hosts, or skip if no clean mechanism exists and document why).
 - [ ] **Step 4:** Run ruff + all self-checks; commit.
 
-If Task 3 shows no such regression, record "not needed" in `TODO.md` and do not implement.
+If Task 3 shows no such regression, record "not needed" in this plan/spec (durable)
+and the local SDD ledger, and do not implement.

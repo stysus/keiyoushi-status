@@ -126,7 +126,7 @@ unchanged. No paid proxy is assumed.
    aiohttp DNS classes. Update PEP723 lists. (Risk phase — A/B here.)
 3. Quantitative verification + guard. Run `scrape_only`, compare the
    challenge share to 29.7%, spot-check 20 newly-`ok`, confirm guard passes.
-   Record results in TODO/README.
+   Record results in this spec/plan (durable) and the local SDD ledger.
 4. Conditional: targeted AIA/CA fallback only if a specific cert-chain
    regression appears.
 
