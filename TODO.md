@@ -101,7 +101,6 @@ Kerja bertahap. Centang saat selesai. `[ ]` belum, `[x]` selesai.
 
 ### UX opsional
 - [x] Deep-link state ke URL (`?tab=&q=&status=`) — seed saat init, tulis via `replaceState` (debounced); terverifikasi di browser (lokal + live)
-- [ ] Auto-refresh + indikator umur data (versi hemat: timer umur 60s + refetch saat `visibilitychange`)
 
 ### Perbaikan pipeline (ditemukan saat verifikasi deploy)
 - [x] `deploy` di-skip pada push web-only / mode `deploy_only`: skip dari job `scrape-*` merambat karena `if` deploy tanpa fungsi status. Diperbaiki dengan `!cancelled() && needs.process.result == 'success'`. Terverifikasi di kedua mode.
@@ -109,3 +108,4 @@ Kerja bertahap. Centang saat selesai. `[ ]` belum, `[x]` selesai.
 ### Skip
 - ~~Virtualisasi tabel~~ — 1530 baris lancar.
 - ~~Per-source uptime history~~ — file besar, belum ada kebutuhan.
+- ~~Auto-refresh + indikator umur data~~ — data berubah ~1×/hari; user memutuskan tidak perlu.
