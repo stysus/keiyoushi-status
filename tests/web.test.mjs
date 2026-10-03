@@ -8,7 +8,7 @@ import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
 import { STATUS_CONFIG, getTierCategory, isOperationalSource } from '../web/js/config.js';
-import { getProcessedItems, loadData, resetStateFilters, state, toggleSortColumn } from '../web/js/state.js';
+import { computePageSlice, getProcessedItems, loadData, resetStateFilters, state, toggleSortColumn } from '../web/js/state.js';
 import { renderTableHead } from '../web/js/table.js';
 import { nextTabIndex } from '../web/js/utils.js';
 
@@ -148,4 +148,11 @@ test('nextTabIndex wraps and handles Home/End', () => {
   assert.equal(nextTabIndex(1, 'Home', 3), 0);
   assert.equal(nextTabIndex(1, 'End', 3), 2);
   assert.equal(nextTabIndex(1, 'Enter', 3), 1);
+});
+
+test('computePageSlice clamps an out-of-range page instead of yielding an empty slice', () => {
+  assert.deepEqual(computePageSlice(120, 50, 9), { page: 3, totalPages: 3, size: 50, start: 100, end: 120, isAll: false });
+  assert.deepEqual(computePageSlice(0, 50, 1), { page: 1, totalPages: 1, size: 50, start: 0, end: 0, isAll: false });
+  assert.deepEqual(computePageSlice(120, 'all', 1), { page: 1, totalPages: 1, size: 120, start: 0, end: 120, isAll: true });
+  assert.deepEqual(computePageSlice(120, 50, 0), { page: 1, totalPages: 3, size: 50, start: 0, end: 50, isAll: false });
 });

@@ -1,10 +1,10 @@
 import { initTheme } from './js/theme.js';
-import { formatRelativeTime, debounce, copyTextToClipboard, nextTabIndex } from './js/utils.js';
-import { renderFilterChips, renderPaginationButtons, renderSparkline, showToast } from './js/components.js';
+import { debounce, copyTextToClipboard, nextTabIndex } from './js/utils.js';
+import { renderFilterChips, renderPaginationButtons, showToast } from './js/components.js';
 import { renderTableHead, renderTableRows } from './js/table.js';
-import { state, loadData, getProcessedItems, toggleSortColumn, resetStateFilters, readStateFromUrl, writeStateToUrl } from './js/state.js';
+import { state, loadData, getProcessedItems, toggleSortColumn, resetStateFilters, readStateFromUrl, writeStateToUrl, computePageSlice } from './js/state.js';
+import { updateHeroOverview, updateTabBadges, updateTrend } from './js/overview.js';
 import { exportFilteredData } from './js/export.js';
-import { getTierCategory } from './js/config.js';
 
 // DOM Elements Cache
 const el = {
@@ -63,130 +63,6 @@ const el = {
 };
 
 // -------------------------------------------------------------
-// Hero Overview & Tab Badges
-// -------------------------------------------------------------
-function updateHeroOverview() {
-  const ext = state.data.extensions;
-  if (!ext || !ext.results) return;
-
-  const list = ext.results;
-  const total = list.length;
-  let pureOk = 0;
-  let challenge = 0;
-  let degraded = 0;
-  let offline = 0;
-
-  for (const item of list) {
-    const tier = getTierCategory(item);
-    if (tier === 'operational_pure') pureOk++;
-    else if (tier === 'protection_challenge') challenge++;
-    else if (tier === 'degraded_notice') degraded++;
-    else offline++;
-  }
-
-  el.statTotal.textContent = total.toLocaleString();
-  el.statOk.textContent = pureOk.toLocaleString();
-  el.statChallenge.textContent = challenge.toLocaleString();
-  el.statDegraded.textContent = degraded.toLocaleString();
-  el.statOffline.textContent = offline.toLocaleString();
-
-  // Percentages for status bar
-  const pOk = total > 0 ? (pureOk / total) * 100 : 0;
-  const pChallenge = total > 0 ? (challenge / total) * 100 : 0;
-  const pDegraded = total > 0 ? (degraded / total) * 100 : 0;
-  const pOffline = total > 0 ? (offline / total) * 100 : 0;
-
-  el.barOk.style.width = `${pOk}%`;
-  el.barChallenge.style.width = `${pChallenge}%`;
-  el.barDegraded.style.width = `${pDegraded}%`;
-  el.barOffline.style.width = `${pOffline}%`;
-
-  // Comprehensive Operational Headline (Pure OK + Challenge/WAF/Same-Auth)
-  const totalOperational = pureOk + challenge;
-  const pOperational = total > 0 ? (totalOperational / total) * 100 : 0;
-  const percentage = pOperational.toFixed(1);
-  el.heroStatusText.innerHTML = `<span>${percentage}% Sources Operational</span>`;
-
-  if (pOperational >= 90) {
-    el.heroPulse.className = 'animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75';
-    el.heroDot.className = 'relative inline-flex rounded-full h-3 w-3 bg-emerald-500';
-  } else if (pOperational >= 75) {
-    el.heroPulse.className = 'animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75';
-    el.heroDot.className = 'relative inline-flex rounded-full h-3 w-3 bg-amber-500';
-  } else {
-    el.heroPulse.className = 'animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75';
-    el.heroDot.className = 'relative inline-flex rounded-full h-3 w-3 bg-rose-500';
-  }
-
-  // Timestamp
-  if (ext.timestamp) {
-    const rel = formatRelativeTime(ext.timestamp);
-    el.lastUpdatedRelative.textContent = `Checked ${rel}`;
-    el.lastUpdatedRelative.title = `${ext.timestamp} (UTC)`;
-  }
-}
-
-function updateTabBadges() {
-  if (state.data.extensions) {
-    el.tabCountExtensions.textContent = (state.data.extensions.results || []).length.toLocaleString();
-  }
-  if (state.data.issues) {
-    el.tabCountIssues.textContent = (state.data.issues.results || []).length.toLocaleString();
-  }
-  if (state.data.map) {
-    el.tabCountMap.textContent = (state.data.map.results || []).length.toLocaleString();
-  }
-}
-
-// -------------------------------------------------------------
-// 30-day Operational Trend
-// -------------------------------------------------------------
-async function updateTrend() {
-  let history;
-  try {
-    history = await loadData('history');
-  } catch {
-    return;
-  }
-  if (!history || !Array.isArray(history.days) || history.days.length < 2) return;
-
-  const recent = history.days.slice(-30);
-  const pct = recent.map((d) => (d.total ? (d.operational / d.total) * 100 : 0));
-
-  el.trendSparkline.innerHTML = renderSparkline(pct);
-  const last = pct[pct.length - 1];
-  const delta = last - pct[0];
-  el.trendValue.textContent = `${last.toFixed(1)}%`;
-  el.trendValue.className = `font-semibold tabular-nums ${
-    delta >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'
-  }`;
-  el.trendContainer.title = `Operational ${pct[0].toFixed(1)}% → ${last.toFixed(1)}% over ${recent.length} days`;
-  el.trendContainer.classList.remove('hidden');
-  el.trendContainer.classList.add('inline-flex');
-}
-
-// -------------------------------------------------------------
-// Pagination Rendering
-// -------------------------------------------------------------
-function renderPagination(totalCount) {
-  const isAll = state.pageSize === 'all';
-  const pageSize = isAll ? totalCount : parseInt(state.pageSize, 10);
-  const totalPages = isAll || totalCount === 0 ? 1 : Math.ceil(totalCount / pageSize);
-
-  if (state.currentPage > totalPages) state.currentPage = totalPages;
-  if (state.currentPage < 1) state.currentPage = 1;
-
-  const startIdx = totalCount === 0 ? 0 : (state.currentPage - 1) * pageSize + 1;
-  const endIdx = isAll ? totalCount : Math.min(state.currentPage * pageSize, totalCount);
-
-  el.pageStart.textContent = startIdx.toLocaleString();
-  el.pageEnd.textContent = endIdx.toLocaleString();
-  el.pageTotal.textContent = totalCount.toLocaleString();
-
-  el.paginationButtons.innerHTML = renderPaginationButtons(state.currentPage, totalPages);
-}
-
-// -------------------------------------------------------------
 // Master Render View
 // -------------------------------------------------------------
 async function renderActiveTab() {
@@ -210,16 +86,23 @@ async function renderActiveTab() {
     return;
   }
 
-  updateHeroOverview();
-  updateTabBadges();
+  updateHeroOverview(el);
+  updateTabBadges(el);
   el.filterChipsContainer.innerHTML = renderFilterChips(data.results, state.filterStatus, state.activeTab);
 
   const filtered = getProcessedItems();
+  const { page, totalPages, start, end, isAll } = computePageSlice(filtered.length, state.pageSize, state.currentPage);
+  state.currentPage = page;
+
+  // Pagination footer is always rendered, even when the current filter is empty.
+  el.pageStart.textContent = (filtered.length === 0 ? 0 : start + 1).toLocaleString();
+  el.pageEnd.textContent = end.toLocaleString();
+  el.pageTotal.textContent = filtered.length.toLocaleString();
+  el.paginationButtons.innerHTML = renderPaginationButtons(page, totalPages);
 
   if (filtered.length === 0) {
     el.emptyState.classList.remove('hidden');
     el.tableWrapper.classList.add('hidden');
-    renderPagination(0);
     return;
   }
 
@@ -228,39 +111,31 @@ async function renderActiveTab() {
 
   el.tableHead.innerHTML = renderTableHead(state.activeTab, state.sortColumn, state.sortDirection);
 
-  const isAll = state.pageSize === 'all';
-  const pageSize = isAll ? filtered.length : parseInt(state.pageSize, 10);
-  const startIdx = (state.currentPage - 1) * pageSize;
-  const pageItems = isAll ? filtered : filtered.slice(startIdx, startIdx + pageSize);
-
+  const pageItems = isAll ? filtered : filtered.slice(start, end);
   el.tableBody.innerHTML = renderTableRows(pageItems, state.activeTab);
-  renderPagination(filtered.length);
 }
 
 // -------------------------------------------------------------
 // Tab Switching
 // -------------------------------------------------------------
+const TAB_ACTIVE_CLASS =
+  'tab-btn px-3 py-1.5 rounded-lg flex items-center gap-2 transition-all bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white shadow-sm border border-zinc-200 dark:border-zinc-700 font-semibold cursor-pointer';
+const TAB_INACTIVE_CLASS =
+  'tab-btn px-3 py-1.5 rounded-lg flex items-center gap-2 transition-all text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white font-medium cursor-pointer';
+const TAB_BADGE_ACTIVE_CLASS =
+  'w-4 h-4 rounded text-xs font-mono flex items-center justify-center bg-zinc-100 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-600 font-medium';
+const TAB_BADGE_INACTIVE_CLASS =
+  'w-4 h-4 rounded text-xs font-mono flex items-center justify-center bg-zinc-200/70 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400';
+
 function applyTabStyles(targetTab) {
   el.tabBtns.forEach((btn) => {
     const isTarget = btn.dataset.tab === targetTab;
     btn.setAttribute('aria-selected', isTarget ? 'true' : 'false');
     btn.tabIndex = isTarget ? 0 : -1;
-    if (isTarget) {
-      btn.className =
-        'tab-btn px-3 py-1.5 rounded-lg flex items-center gap-2 transition-all bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white shadow-sm border border-zinc-200 dark:border-zinc-700 font-semibold cursor-pointer';
-      const numBadge = btn.querySelector('span:first-child');
-      if (numBadge) {
-        numBadge.className =
-          'w-4 h-4 rounded text-xs font-mono flex items-center justify-center bg-zinc-100 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-600 font-medium';
-      }
-    } else {
-      btn.className =
-        'tab-btn px-3 py-1.5 rounded-lg flex items-center gap-2 transition-all text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white font-medium cursor-pointer';
-      const numBadge = btn.querySelector('span:first-child');
-      if (numBadge) {
-        numBadge.className =
-          'w-4 h-4 rounded text-xs font-mono flex items-center justify-center bg-zinc-200/70 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400';
-      }
+    btn.className = isTarget ? TAB_ACTIVE_CLASS : TAB_INACTIVE_CLASS;
+    const numBadge = btn.querySelector('span:first-child');
+    if (numBadge) {
+      numBadge.className = isTarget ? TAB_BADGE_ACTIVE_CLASS : TAB_BADGE_INACTIVE_CLASS;
     }
   });
 }
@@ -445,7 +320,7 @@ function initApp() {
   el.clearSearchBtn.classList.toggle('hidden', !state.searchQuery);
   setupEvents();
   renderActiveTab();
-  updateTrend();
+  updateTrend(el);
 }
 
 // Launch application on DOM ready

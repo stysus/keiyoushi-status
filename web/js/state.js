@@ -203,6 +203,23 @@ export function resetStateFilters() {
   state.sortDirection = 'asc';
 }
 
+/**
+ * Clamps the current page and computes the visible slice bounds.
+ * @param {number} totalCount
+ * @param {number|'all'} pageSize
+ * @param {number} currentPage
+ * @returns {{page:number, totalPages:number, size:number, start:number, end:number, isAll:boolean}}
+ */
+export function computePageSlice(totalCount, pageSize, currentPage) {
+  const isAll = pageSize === 'all';
+  const size = isAll ? totalCount : parseInt(pageSize, 10);
+  const totalPages = isAll || totalCount === 0 ? 1 : Math.ceil(totalCount / size);
+  const page = Math.min(Math.max(currentPage, 1), totalPages);
+  const start = totalCount === 0 ? 0 : (page - 1) * size;
+  const end = isAll ? totalCount : Math.min(page * size, totalCount);
+  return { page, totalPages, size, start, end, isAll };
+}
+
 const VALID_TABS = new Set(['extensions', 'issues', 'map']);
 
 /**
