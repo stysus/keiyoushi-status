@@ -196,6 +196,10 @@ jobs:
           enable-cache: true
           cache-dependency-glob: '.github/scripts/*.py'
 
+      - name: Run classifier self-checks
+        if: needs.detect.outputs.should_scrape == 'true'
+        run: .github/scripts/test_classify.py
+
       - name: Merge extensions shards
         if: needs.detect.outputs.should_scrape == 'true'
         run: .github/scripts/check_extensions.py --merge
