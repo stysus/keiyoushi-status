@@ -130,6 +130,9 @@ jobs:
       - name: Run classifier self-checks
         run: .github/scripts/test_classify.py
 
+      - name: Run tier taxonomy self-checks
+        run: .github/scripts/test_tiers.py
+
       - name: Run mapper self-checks
         run: .github/scripts/test_map_bug_issues.py
 

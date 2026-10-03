@@ -23,6 +23,8 @@ from datetime import datetime, timezone
 from operator import itemgetter
 from pathlib import Path
 
+from tiers import tier_of
+
 EXTENSIONS_JSON = Path("web/data/extensions.json")
 HISTORY_JSON = Path("web/data/history.json")
 MAX_DAYS = 90
@@ -31,17 +33,8 @@ MAX_DAYS = 90
 def tier_counts(results: list[dict]) -> dict[str, int]:
     counts = {"total": 0, "ok": 0, "challenge": 0, "degraded": 0, "offline": 0}
     for item in results:
-        status = item.get("status", "")
-        subcategory = (item.get("subcategory") or "").lower()
         counts["total"] += 1
-        if status == "ok":
-            counts["ok"] += 1
-        elif status in {"iuam", "waf"} or (status == "redirect" and "same authority" in subcategory):
-            counts["challenge"] += 1
-        elif status in {"rate_limited", "warning"}:
-            counts["degraded"] += 1
-        else:
-            counts["offline"] += 1
+        counts[tier_of(item.get("status", ""), item.get("subcategory") or "").value] += 1
     counts["operational"] = counts["ok"] + counts["challenge"]
     return counts
 

@@ -2,18 +2,14 @@
 # /// script
 # requires-python = ">=3.11"
 # dependencies = [
-#   "aia",
 #   "aiohttp[speedups]",
 #   "beautifulsoup4[lxml]",
-#   "dnspython[doh,idna]",
-#   "httpx[http2]",
 #   "publicsuffixlist",
-#   "ua-generator",
 #   "yarl",
 # ]
 # ///
 
-"""Self-check for the pure classification helpers in common.py.
+"""Self-check for the pure classification helpers in classify.py.
 
 Run: uv run .github/scripts/test_classify.py
 """
@@ -23,7 +19,7 @@ from __future__ import annotations
 import asyncio
 import ssl
 
-from common import Classification, Status, classify_exception, classify_response, is_retryable
+from classify import Classification, Status, classify_exception, classify_response, is_retryable
 
 _BODY = "".join(f"<p>line {i}</p>" for i in range(20))
 PAGE = f"<html><head><title>Example</title></head><body>{_BODY}</body></html>"

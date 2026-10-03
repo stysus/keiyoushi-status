@@ -33,12 +33,13 @@ from typing import NamedTuple
 
 import aiohttp
 from anyio import Path
-from common import (
+from classify import Status
+from generated import Index
+from transport import (
     TIME_PRECISION_CUTOFF_SECONDS,
     TIMEOUT_CONNECT_SECONDS,
     TIMEOUT_SOCK_READ_SECONDS,
     TIMEOUT_TOTAL_SECONDS,
-    Status,
     UrlCheck,
     check_all_generic,
     check_url_generic,
@@ -46,7 +47,6 @@ from common import (
     format_duration,
     generate_headers,
 )
-from generated import Index
 
 REPO_INDEX_URL = "https://raw.githubusercontent.com/keiyoushi/extensions/repo/index.pb"
 

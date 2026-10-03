@@ -28,6 +28,8 @@ import sys
 from collections import Counter
 from pathlib import Path
 
+from tiers import is_operational, tier_of
+
 NEW_PATH = "web/data/extensions.json"
 OLD_REF = "HEAD:web/data/extensions.json"
 HISTORY_PATH = "web/data/history.json"
@@ -35,7 +37,6 @@ MIN_BASELINE = 200  # need enough history for shares to mean anything
 STATUS_DELTA = 0.30  # a status may not grow by more than 30 points...
 STATUS_FLOOR = 0.50  # ...and may not pass half of all results
 OPERATIONAL_DROP = 0.25  # nor may operational share collapse by 25 points
-OPERATIONAL_STATUSES = {"ok", "iuam", "waf"}
 MEDIAN_WINDOW = 7  # recent days used for the robust operational baseline
 MIN_MEDIAN_DAYS = 3  # below this, fall back to the single previous day
 
@@ -62,12 +63,7 @@ def status_counts(results: list[dict]) -> Counter[str]:
 def operational_share(results: list[dict]) -> float:
     if not results:
         return 0.0
-    count = 0
-    for item in results:
-        status = item.get("status", "")
-        subcategory = (item.get("subcategory") or "").lower()
-        if status in OPERATIONAL_STATUSES or (status == "redirect" and "same authority" in subcategory):
-            count += 1
+    count = sum(1 for item in results if is_operational(tier_of(item.get("status", ""), item.get("subcategory") or "")))
     return count / len(results)
 
 

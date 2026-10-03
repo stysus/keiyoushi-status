@@ -30,12 +30,13 @@ from typing import NamedTuple
 
 import aiohttp
 from anyio import Path
-from common import (
+from classify import Status
+from publicsuffixlist import PublicSuffixList  # type: ignore[import-untyped]
+from transport import (
     TIME_PRECISION_CUTOFF_SECONDS,
     TIMEOUT_CONNECT_SECONDS,
     TIMEOUT_SOCK_READ_SECONDS,
     TIMEOUT_TOTAL_SECONDS,
-    Status,
     UrlCheck,
     check_all_generic,
     check_url_generic,
@@ -43,7 +44,6 @@ from common import (
     format_duration,
     generate_headers,
 )
-from publicsuffixlist import PublicSuffixList  # type: ignore[import-untyped]
 from yarl import URL
 
 REPO = "keiyoushi/extensions-source"

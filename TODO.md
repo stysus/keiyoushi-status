@@ -142,8 +142,60 @@ Peta slug: `ok, redirect, iuam, waf, blocked, rate_limited, dns_error, parked, p
 - [x] `README.md` contoh JSON → slug; emoji dekoratif dihapus
 - [x] `?status=` deep-link lama (emoji) tak didukung lagi (minor, `readStateFromUrl` abaikan)
 
-### Stage 23 — Verifikasi [todo]
-- [ ] Semua selftest + ruff + `node --check`
-- [ ] Guard lolos pada data ter-migrasi
-- [ ] Browser lokal: pill/emoji, chip, filter, deep-link slug
-- [ ] Live setelah deploy
+### Stage 23 — Verifikasi [done]
+- [x] Semua selftest + ruff + `node --check`
+- [x] Guard lolos pada data ter-migrasi
+- [x] Browser lokal: pill (dot + label), chip, filter, deep-link slug
+- [x] Live setelah deploy (CI run `37106236323` hijau; situs live terverifikasi)
+
+### Stage 24 — Hapus emoji tampilan dari web [done]
+- [x] `STATUS_CONFIG` buang field `emoji`; pill = dot + label
+- [x] Commit `ab29a79`; CI hijau; terverifikasi di live
+
+---
+
+## Round 4 — Modular refactor (A–E)
+
+Dari review arsitektur (hot spot 40 commit terakhir: `web/js`, `.github/workflows/status.yaml`, `.github/scripts`).
+Constraint tetap: **tanpa dependensi runtime/tes baru** (Node pakai `node --test` bawaan; Python tetap stdlib + PEP723).
+
+Keputusan grilling:
+- Q1 urutan: A+C dulu, lalu B, D, E. F ditunda.
+- Q2: split penuh `common.py` → buang `common.py`.
+- Q3: mirror tier JS dipertahankan, didokumentasikan, dipin oleh E.
+- Q4: E = tes logika murni, tanpa jsdom.
+- Q5: commit bertahap ke `main`, CI hijau antar fase.
+- Q7: `transport.py` memiliki `UrlCheck` + `check_url_generic` + serializer `record()`.
+- Q8: peta modul — `tiers.py` (stdlib-only), `classify.py`, `transport.py`; `common.py` dibuang.
+- Q9: batas D — `ext_db.py`, `matcher.py`, CLI `map_bug_issues.py` tipis.
+- Q10: andalkan Node bawaan runner.
+- Q11: `Tier(StrEnum){OK,CHALLENGE,DEGRADED,OFFLINE}` + `tier_of(status, subcategory="")` + `is_operational(tier)`.
+- Q12: `test_tiers.py` + parity diff sekali jalan atas 1530 baris live.
+
+### Phase 1 — A+C: satu taksonomi tier + pecah `common.py` [done]
+- [x] `tiers.py` (stdlib-only): `Tier`, `tier_of`, `is_operational`
+- [x] `classify.py`: `Status`, `Classification`, `classify_response`, `classify_exception`, `is_retryable`, `is_same_authority`, tabel regex/fixture
+- [x] `transport.py`: DoH resolver, connector, `_fetch_snapshot`, `UrlCheck`, `check_url_generic`, `check_all_generic`, `generate_headers`, `format_duration`
+- [x] `common.py` dihapus; import `check_extensions.py` / `check_issues.py` / `test_classify.py` diperbarui
+- [x] `record_history.py` + `guard_regression.py` pakai `tier_of`/`is_operational` (bukan literal ganda)
+- [x] `test_tiers.py` + dijalankan di job `selfcheck`
+- [x] Parity terbukti atas 1530 baris live: `{ok:830, challenge:465, degraded:60, offline:175}` operational=1295, identik logika lama
+- [x] ruff bersih; 4 selftest + import smoke `transport` hijau
+
+### Phase 2 — B: lebur pipeline check [todo]
+- [ ] `transport.record(check, *, subject, extra)` jadi satu-satunya serializer record
+- [ ] `check_extensions.py` / `check_issues.py` pakai `record()` (urutan field dipertahankan)
+- [ ] Selftest + ruff hijau
+
+### Phase 3 — D: pecah `map_bug_issues.py` [todo]
+- [ ] `ext_db.py` (`build_ext_db`), `matcher.py` (`match_issue`, `romanize`), `map_bug_issues.py` jadi CLI tipis
+- [ ] `test_map_bug_issues.py` impor `matcher`
+- [ ] Selftest + ruff hijau
+
+### Phase 4 — E: self-check web (`node --test`) [todo]
+- [ ] Tes logika murni `state.js` / `config.js` (`node --test`), tanpa jsdom
+- [ ] Pin mirror `getTierCategory` vs taksonomi Python
+- [ ] Wire ke job `selfcheck`
+
+### Ditunda
+- ~~F: pecah `web/js/app.js`~~ — ditunda sampai ada kebutuhan; lihat Round 4 bila diminta.
