@@ -1,7 +1,7 @@
 #!/usr/bin/env -S uv run --script
 # /// script
 # requires-python = ">=3.11"
-# dependencies = ["beautifulsoup4[lxml]", "curl_cffi", "publicsuffixlist", "yarl"]
+# dependencies = ["beautifulsoup4[lxml]", "curl_cffi==0.16.3", "publicsuffixlist", "yarl"]
 # ///
 #
 # Self-check for the transport helpers. No network: it exercises
@@ -16,6 +16,7 @@ import asyncio
 import math
 
 import transport
+from curl_cffi.requests import exceptions as curl_exc
 
 retry_after = transport._retry_after_seconds  # noqa: SLF001
 host_semaphore = transport._host_semaphore  # noqa: SLF001
@@ -73,6 +74,17 @@ async def _all_dns_test() -> None:
     assert session.calls[-1] is None  # each attempt ends on the system-resolver fallback
 
 
+def _curl_exception_contract() -> None:
+    # Pin the real curl_cffi API that classify.py duck-types: a genuine error
+    # carries `.code` as an int. If upstream renames or retypes it, every fetch
+    # error would silently degrade to the type-name branch; this fails loudly.
+    dns = curl_exc.DNSError("could not resolve host: x.test", code=6)
+    assert isinstance(dns.code, int), type(dns.code)
+    assert transport.classify_exception(dns).status == transport.Status.DNS_ERROR
+    assert transport.is_retryable(dns)
+    assert not transport.is_retryable(curl_exc.SSLError("cert", code=60))
+
+
 def main() -> None:
     assert transport.is_retryable_status(500)
     assert transport.is_retryable_status(429)
@@ -90,6 +102,7 @@ def main() -> None:
     assert host_semaphore("a.test") is not host_semaphore("b.test")
     assert host_semaphore("a.test")._value == 3  # noqa: SLF001
 
+    _curl_exception_contract()
     asyncio.run(_rotation_test())
     asyncio.run(_all_dns_test())
 

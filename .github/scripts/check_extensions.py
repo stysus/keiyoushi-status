@@ -5,7 +5,7 @@
 #   "anyio",
 #   "beautifulsoup4[lxml]",
 #   "betterproto==2.0.0b7",
-#   "curl_cffi",
+#   "curl_cffi==0.16.3",
 #   "publicsuffixlist",
 #   "yarl",
 # ]

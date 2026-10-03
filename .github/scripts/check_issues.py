@@ -4,7 +4,7 @@
 # dependencies = [
 #   "anyio",
 #   "beautifulsoup4[lxml]",
-#   "curl_cffi",
+#   "curl_cffi==0.16.3",
 #   "publicsuffixlist",
 #   "yarl",
 # ]
