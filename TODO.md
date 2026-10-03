@@ -89,9 +89,10 @@ Kerja bertahap. Centang saat selesai. `[ ]` belum, `[x]` selesai.
 - [x] `test_map_bug_issues.py`: 7 kasus (romanisasi, extract source, title split, match URL/exact/Hangul, superset suppression, parse JSON)
 - [x] Lolos ruff; dijalankan di job `selfcheck` (semua push)
 
-### Stage 17 — Hardening kecil ⬜
-- [ ] CSV formula injection guard (`export.js`)
-- [ ] a11y: `aria-sort`, `aria-pressed`, `<th scope>`
+### Stage 17 — Hardening kecil ✅
+- [x] CSV formula injection guard (`export.js`): sel berawalan `= + - @ \t \r` diberi prefix `'`
+- [x] a11y: `aria-sort` dinamis, `scope="col"` pada semua `<th>`, `aria-pressed` pada chip filter
+- [x] Terverifikasi via node: guard netralkan `=cmd()`/`-42`, nama wajar utuh; atribut a11y muncul
 
 ### Stage 18 — #7 Guard baseline lebih tahan banting ⬜
 - [ ] Bandingkan vs median beberapa hari (opsional)

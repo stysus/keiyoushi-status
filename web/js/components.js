@@ -148,7 +148,7 @@ export function renderFilterChips(items, currentFilter, activeTab) {
       currentFilter === 'all'
         ? 'bg-zinc-950 text-white border-zinc-950 dark:bg-zinc-100 dark:text-zinc-950 dark:border-white shadow-sm font-semibold'
         : 'bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border-zinc-300 dark:border-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-600'
-    }" data-status="all">
+    }" data-status="all" aria-pressed="${currentFilter === 'all'}">
       <span>All</span>
       <span class="text-xs px-1.5 py-0.5 rounded font-medium ${
         currentFilter === 'all' ? 'bg-zinc-800 text-zinc-100 dark:bg-zinc-200 dark:text-zinc-900' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400'
@@ -164,7 +164,7 @@ export function renderFilterChips(items, currentFilter, activeTab) {
         isActive
           ? 'bg-zinc-950 text-white border-zinc-950 dark:bg-zinc-100 dark:text-zinc-950 dark:border-white shadow-sm font-semibold'
           : 'bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border-zinc-300 dark:border-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-600'
-      }" data-status="${emoji}">
+      }" data-status="${emoji}" aria-pressed="${isActive}">
         <span class="w-1.5 h-1.5 rounded-full ${conf.dot}"></span>
         <span>${conf.label}</span>
         <span class="text-xs px-1.5 py-0.5 rounded font-medium ${

@@ -70,7 +70,11 @@ export function exportFilteredData(activeTab, items, format, onSuccess) {
       .map((row) =>
         row
           .map((cell) => {
-            const str = String(cell ?? '');
+            let str = String(cell ?? '');
+            // Neutralize spreadsheet formula injection (=, +, -, @, tab, CR).
+            if (/^[=+\-@\t\r]/.test(str)) {
+              str = `'${str}`;
+            }
             if (/[,"\r\n]/.test(str)) {
               return `"${str.replace(/"/g, '""')}"`;
             }
