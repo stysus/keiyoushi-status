@@ -49,6 +49,8 @@ const el = {
   tableBody: document.getElementById('tableBody'),
   loadingState: document.getElementById('loadingState'),
   emptyState: document.getElementById('emptyState'),
+  errorState: document.getElementById('errorState'),
+  retryLoadBtn: document.getElementById('retryLoadBtn'),
   resetFiltersBtn: document.getElementById('resetFiltersBtn'),
   // Pagination
   pageStart: document.getElementById('pageStart'),
@@ -140,7 +142,12 @@ function updateTabBadges() {
 // 30-day Operational Trend
 // -------------------------------------------------------------
 async function updateTrend() {
-  const history = await loadData('history');
+  let history;
+  try {
+    history = await loadData('history');
+  } catch {
+    return;
+  }
   if (!history || !Array.isArray(history.days) || history.days.length < 2) return;
 
   const recent = history.days.slice(-30);
@@ -186,8 +193,16 @@ async function renderActiveTab() {
   el.loadingState.classList.remove('hidden');
   el.tableWrapper.classList.add('hidden');
   el.emptyState.classList.add('hidden');
+  el.errorState.classList.add('hidden');
 
-  const data = await loadData(state.activeTab);
+  let data;
+  try {
+    data = await loadData(state.activeTab);
+  } catch (err) {
+    el.loadingState.classList.add('hidden');
+    el.errorState.classList.remove('hidden');
+    return;
+  }
   el.loadingState.classList.add('hidden');
 
   if (!data || !data.results) {
@@ -355,6 +370,12 @@ function setupEvents() {
     el.searchInput.value = '';
     el.clearSearchBtn.classList.add('hidden');
     writeStateToUrl();
+    renderActiveTab();
+  });
+
+  // 8b. Retry Load Button
+  el.retryLoadBtn.addEventListener('click', () => {
+    state.data[state.activeTab] = null;
     renderActiveTab();
   });
 

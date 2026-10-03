@@ -8,7 +8,7 @@ import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
 import { STATUS_CONFIG, getTierCategory, isOperationalSource } from '../web/js/config.js';
-import { getProcessedItems, resetStateFilters, state, toggleSortColumn } from '../web/js/state.js';
+import { getProcessedItems, loadData, resetStateFilters, state, toggleSortColumn } from '../web/js/state.js';
 
 const tierCases = JSON.parse(readFileSync(new URL('./tier_cases.json', import.meta.url), 'utf8'));
 
@@ -111,4 +111,22 @@ test('index.html declares canonical and share metadata', () => {
   assert.match(indexHtml, /rel="canonical"/);
   assert.match(indexHtml, /property="og:title"/);
   assert.match(indexHtml, /name="theme-color"/);
+});
+
+test('index.html has a distinct load-error state and a noscript fallback', () => {
+  assert.match(indexHtml, /id="errorState"/);
+  assert.match(indexHtml, /id="retryLoadBtn"/);
+  assert.match(indexHtml, /<noscript>/);
+});
+
+test('loadData rejects on a failed fetch instead of resolving null', async () => {
+  state.data.issues = null;
+  const original = globalThis.fetch;
+  globalThis.fetch = async () => ({ ok: false, status: 503 });
+  try {
+    await assert.rejects(() => loadData('issues'), /503/);
+  } finally {
+    globalThis.fetch = original;
+    state.data.issues = null;
+  }
 });

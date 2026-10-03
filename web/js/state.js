@@ -50,7 +50,7 @@ export async function loadData(tab) {
     return json;
   } catch (err) {
     console.error(`Failed to load ${tab} data:`, err);
-    return null;
+    throw err;
   }
 }
 
