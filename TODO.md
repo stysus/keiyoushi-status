@@ -116,6 +116,8 @@ Kerja bertahap. Centang saat selesai. `[ ]` belum, `[x]` selesai.
 
 Data/key jadi slug ASCII stabil; emoji hanya glyph tampilan di `STATUS_CONFIG`.
 
+> Follow-up: emoji tampilan dihapus juga — `STATUS_CONFIG` kini hanya `label` + warna, pill memakai dot + label. Proyek bebas emoji status (0 kemunculan).
+
 Peta slug: `ok, redirect, iuam, waf, blocked, rate_limited, dns_error, parked, placeholder, warning, error, not_found`.
 
 ### Stage 19 — Producer Python: `Status` pakai slug [done]

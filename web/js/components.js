@@ -5,13 +5,11 @@ import { escapeHtml } from './utils.js';
 
 /**
  * Renders a high-contrast semantic status pill from a status slug.
- * The emoji is a display-only glyph; the label carries the meaning.
  * @param {string} statusSlug
  * @returns {string}
  */
 export function renderStatusPill(statusSlug) {
   const conf = STATUS_CONFIG[statusSlug] || {
-    emoji: '',
     label: statusSlug || 'Unknown',
     dot: 'bg-zinc-500',
     text: 'text-zinc-700 dark:text-zinc-300',
@@ -19,11 +17,9 @@ export function renderStatusPill(statusSlug) {
     border: 'border-zinc-500/25',
   };
 
-  const glyph = conf.emoji ? `<span aria-hidden="true">${conf.emoji}</span>` : '';
-
   return `
     <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-semibold font-mono ${conf.bg} ${conf.text} border ${conf.border}">
-      ${glyph}
+      <span class="w-1.5 h-1.5 rounded-full ${conf.dot}"></span>
       <span>${conf.label}</span>
     </span>
   `;
