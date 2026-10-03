@@ -90,6 +90,7 @@ export function getProcessedItems() {
           (item.url && item.url.toLowerCase().includes(q)) ||
           (item.info && item.info.toLowerCase().includes(q)) ||
           (item.subcategory && item.subcategory.toLowerCase().includes(q)) ||
+          (item.http_code && String(item.http_code).includes(q)) ||
           statusLabel.includes(q)
         );
       });
@@ -102,6 +103,7 @@ export function getProcessedItems() {
           (item.labels && item.labels.toLowerCase().includes(q)) ||
           (item.info && item.info.toLowerCase().includes(q)) ||
           (item.subcategory && item.subcategory.toLowerCase().includes(q)) ||
+          (item.http_code && String(item.http_code).includes(q)) ||
           statusLabel.includes(q)
         );
       });

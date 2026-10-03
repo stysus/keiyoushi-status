@@ -80,8 +80,10 @@ Kerja bertahap. Centang saat selesai. `[ ]` belum, `[x]` selesai.
 - [x] Shard unduh artefak & baca daftar sumber yang sama (bukan fetch ulang) → tak ada sumber kelewatan
 - [x] Terverifikasi: dump 1530 sumber; jalur cache offline `--get-shards` OK
 
-### Stage 15 — #6 Filter `http_code` + tampilkan `attempts` di UI ⬜
-- [ ] Chip/kolom kode HTTP, indikator retry
+### Stage 15 — #6 Filter `http_code` + tampilkan `attempts` di UI ✅
+- [x] Pencarian cocokkan `http_code` (extensions + issues) → ketik "403" menyaring kode itu
+- [x] Indikator `↻N` di kolom latency + `retried ×N` di tooltip bila `attempts > 1`
+- [x] Chip khusus kode HTTP di-skip: kotak pencarian sudah menutupi (53 baris retry, 449 baris 403 terlihat)
 
 ### Stage 16 — Tes `map_bug_issues.py` ⬜
 - [ ] Fixture body issue → assert match (logika paling kompleks, nol tes)

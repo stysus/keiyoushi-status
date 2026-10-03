@@ -37,7 +37,18 @@ function urlMeta(item) {
   const parts = [];
   if (item.http_code) parts.push(`HTTP ${item.http_code}`);
   if (item.final_url && item.final_url !== item.url) parts.push(`→ ${item.final_url}`);
+  if (item.attempts > 1) parts.push(`retried ×${item.attempts - 1}`);
   return parts.join(' · ');
+}
+
+/**
+ * Shows a marker when a source only came up after a retry.
+ * @param {Object} item
+ * @returns {string}
+ */
+function retryIndicator(item) {
+  if (!item.attempts || item.attempts <= 1) return '';
+  return `<span class="ml-1 text-amber-600 dark:text-amber-400" title="Recovered after ${item.attempts} attempts">↻${item.attempts}</span>`;
 }
 
 /**
@@ -181,7 +192,7 @@ export function renderTableRows(items, activeTab) {
             </a>
           </td>
           <td class="py-2.5 px-4 text-right font-mono text-xs ${latencyColor} tabular-nums whitespace-nowrap">
-            ${escapeHtml(item.time || '-')}
+            ${escapeHtml(item.time || '-')}${retryIndicator(item)}
           </td>
           <td class="py-2.5 px-4">
             ${renderNotesCell(item.subcategory, item.info)}
@@ -222,7 +233,7 @@ export function renderTableRows(items, activeTab) {
             }
           </td>
           <td class="py-2.5 px-4 text-right font-mono text-xs text-zinc-600 dark:text-zinc-400 tabular-nums whitespace-nowrap font-medium">
-            ${escapeHtml(item.time || '-')}
+            ${escapeHtml(item.time || '-')}${retryIndicator(item)}
           </td>
           <td class="py-2.5 px-4 whitespace-nowrap">${labelsBadge}</td>
           <td class="py-2.5 px-4">
