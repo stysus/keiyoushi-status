@@ -204,6 +204,14 @@ jobs:
         if: needs.detect.outputs.should_scrape == 'true'
         run: .github/scripts/check_extensions.py --merge
 
+      - name: Guard against classifier regression
+        if: needs.detect.outputs.should_scrape == 'true'
+        run: .github/scripts/guard_regression.py
+
+      - name: Record history snapshot
+        if: needs.detect.outputs.should_scrape == 'true'
+        run: .github/scripts/record_history.py
+
       - name: Checkout extensions source
         if: needs.detect.outputs.should_scrape == 'true'
         uses: actions/checkout@v6

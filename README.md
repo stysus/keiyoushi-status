@@ -30,6 +30,7 @@ Status data is generated automatically and published as structured JSON files fo
 | [`web/data/extensions.json`](web/data/extensions.json) | Comprehensive status check results for all extension sources |
 | [`web/data/issues.json`](web/data/issues.json) | Health check results for URLs extracted from GitHub issues |
 | [`web/data/issue_map.json`](web/data/issue_map.json) | Mapped relationships between open bug issues and extension sources |
+| [`web/data/history.json`](web/data/history.json) | Daily operational-tier snapshots (last 90 days) for trend charts |
 
 ### Example Schema (`extensions.json`)
 
