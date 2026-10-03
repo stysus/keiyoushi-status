@@ -133,6 +133,9 @@ jobs:
       - name: Run tier taxonomy self-checks
         run: .github/scripts/test_tiers.py
 
+      - name: Run DNS router self-checks
+        run: .github/scripts/test_dns.py
+
       - name: Run mapper self-checks
         run: .github/scripts/test_map_bug_issues.py
 
