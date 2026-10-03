@@ -1,16 +1,35 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Keiyoushi Status</title>
   <meta name="description" content="Operational health and tracking dashboard for the Keiyoushi extensions ecosystem.">
+  <link rel="canonical" href="https://stysus.github.io/keiyoushi-status/">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Keiyoushi Status">
+  <meta property="og:description" content="Operational health and tracking dashboard for the Keiyoushi extensions ecosystem.">
+  <meta property="og:url" content="https://stysus.github.io/keiyoushi-status/">
+  <meta name="twitter:card" content="summary">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%20%22100%22%20%22100%22><circle cx=%2250%22 cy=%2250%22 r=%2240%22 fill=%22%2310b981%22/></svg>">
   
   <!-- Fonts: Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <script>
+    // Keep in sync with web/js/theme.js. Must run before first paint.
+    (function () {
+      try {
+        var saved = localStorage.getItem('keiyoushi-theme');
+        var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.classList.toggle('dark', dark);
+      } catch (e) {}
+    })();
+  </script>
 
   <link rel="stylesheet" href="css/app.css">
 </head>

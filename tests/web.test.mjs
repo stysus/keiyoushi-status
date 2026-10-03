@@ -94,3 +94,21 @@ test('resetStateFilters clears filter, search, sort, and page', () => {
     ['all', '', 1, null, 'asc'],
   );
 });
+
+const indexHtml = readFileSync(new URL('../web/index.html', import.meta.url), 'utf8');
+
+test('index.html applies the stored theme before first paint', () => {
+  // No hardcoded dark class: the inline bootstrap decides before paint.
+  assert.doesNotMatch(indexHtml, /<html[^>]*class="dark"/);
+  assert.match(indexHtml, /keiyoushi-theme/);
+  // The bootstrap must run before the stylesheet link.
+  const boot = indexHtml.indexOf('keiyoushi-theme');
+  const css = indexHtml.indexOf('css/app.css');
+  assert.ok(boot > -1 && css > -1 && boot < css, 'theme bootstrap must precede the stylesheet');
+});
+
+test('index.html declares canonical and share metadata', () => {
+  assert.match(indexHtml, /rel="canonical"/);
+  assert.match(indexHtml, /property="og:title"/);
+  assert.match(indexHtml, /name="theme-color"/);
+});
