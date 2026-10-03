@@ -214,6 +214,9 @@ A/B atas 1513 URL identik (baseline = `extensions.json` sebelum upgrade):
 - Dua bug ditemukan & diperbaiki saat verifikasi: nameserver DoH mati
   (`dnsoverhttps.com`, `doh-de.blahdns.com`) dan cache DNS curl menyimpan kegagalan
   DoH per-host sehingga fallback ikut gagal; diatasi prune + `DNS_CACHE_TIMEOUT=0`.
+- Tindak lanjut review: `curl_cffi` di-pin `==0.16.3` + kontrak `.code` diuji dengan
+  exception asli; batas body 256 KB dikembalikan via streaming (`stream=True` +
+  `aiter_content`), bukan buffer penuh.
 - Task 4 (fallback AIA/CA) **tidak perlu**: tak ada regresi `ok` → `SSL Error`;
   12 SSL Error baru semuanya dari baris yang sudah `error`/`iuam`/`parked`/`dns_error`.
 
