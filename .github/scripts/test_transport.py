@@ -4,19 +4,73 @@
 # dependencies = ["beautifulsoup4[lxml]", "curl_cffi", "publicsuffixlist", "yarl"]
 # ///
 #
-# Self-check for the transport helpers. No network: it only exercises the
-# retry-classification, Retry-After parsing, and per-host limiter.
+# Self-check for the transport helpers. No network: it exercises
+# retry-classification, Retry-After parsing, the per-host limiter, and the
+# DoH-rotation / attempt-counting loop against a scripted fake session.
 #
 # Run via: .github/scripts/test_transport.py
 
 from __future__ import annotations
 
+import asyncio
 import math
 
 import transport
 
 retry_after = transport._retry_after_seconds  # noqa: SLF001
 host_semaphore = transport._host_semaphore  # noqa: SLF001
+
+
+class FakeCurlError(Exception):
+    """Stand-in for a curl_cffi error: only `.code` drives retry/DNS logic."""
+
+    def __init__(self, code: int) -> None:
+        super().__init__(f"curl error {code}")
+        self.code = code
+
+
+class FakeResponse:
+    def __init__(self) -> None:
+        self.status_code = 200
+        self.url = "https://a.test/"
+        self.encoding = "utf-8"
+        self.headers = {"content-type": "text/html"}
+        self.content = b"<html><head><title>T</title></head><body>" + b"<p>x</p>" * 20 + b"</body></html>"
+
+
+class FakeSession:
+    """Minimal AsyncSession: pops scripted results, or always raises one error."""
+
+    def __init__(self, *, script: list[object] | None = None, always: Exception | None = None) -> None:
+        self._script = list(script or [])
+        self._always = always
+        self.calls: list[str | None] = []
+
+    async def get(self, url: str, *, doh_url: str | None = None, **_kwargs: object) -> FakeResponse:
+        self.calls.append(doh_url)
+        if self._always is not None:
+            raise self._always
+        item = self._script.pop(0)
+        if isinstance(item, Exception):
+            raise item
+        return item
+
+
+async def _rotation_test() -> None:
+    # first DoH candidate fails to resolve, second succeeds: no retry consumed
+    session = FakeSession(script=[FakeCurlError(6), FakeResponse()])
+    res = await transport.check_url_generic(session, "https://a.test/", lambda c: c)
+    assert res.status == transport.Status.OK, res
+    assert res.attempts == 1, res.attempts
+    assert session.calls[0] != session.calls[1]  # rotated to another nameserver
+
+
+async def _all_dns_test() -> None:
+    session = FakeSession(always=FakeCurlError(6))
+    res = await transport.check_url_generic(session, "https://a.test/", lambda c: c)
+    assert res.status == transport.Status.DNS_ERROR, res
+    assert res.attempts == 3, res.attempts
+    assert session.calls[-1] is None  # each attempt ends on the system-resolver fallback
 
 
 def main() -> None:
@@ -35,6 +89,9 @@ def main() -> None:
     assert host_semaphore("a.test") is host_semaphore("a.test")
     assert host_semaphore("a.test") is not host_semaphore("b.test")
     assert host_semaphore("a.test")._value == 3  # noqa: SLF001
+
+    asyncio.run(_rotation_test())
+    asyncio.run(_all_dns_test())
 
     print("transport selftest OK")
 

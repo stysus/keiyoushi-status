@@ -93,6 +93,9 @@ def _read_response_html(resp: Response) -> tuple[str | None, str]:
     if any(content_type.startswith(b) for b in BINARY_CONTENT_PREFIXES):
         return None, content_type
     encoding = getattr(resp, "encoding", None) or "utf-8"
+    # ponytail: curl_cffi buffers the whole body before we slice; the old aiohttp
+    # path streamed with a 256 KB cap. Upgrade to stream=True + aiter_content()
+    # if large bodies ever pressure runner memory.
     return resp.content[:MAX_BODY_BYTES].decode(encoding, errors="replace"), content_type
 
 
@@ -210,6 +213,7 @@ def is_retryable_status(code: int) -> bool:
 
 
 def _retry_after_seconds(headers: Mapping[str, str], cap: float = RETRY_AFTER_CAP_SECONDS) -> float | None:
+    # only the delta-seconds form is parsed; HTTP-date falls back to backoff
     raw = headers.get("retry-after")
     if raw is None:
         return None
