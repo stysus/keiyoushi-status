@@ -1,7 +1,7 @@
 {
   "total": 125,
   "matched": 123,
-  "timestamp": "2026-10-03T07:52:14+00:00",
+  "timestamp": "2026-10-03T08:57:17+00:00",
   "results": [
     {
       "number": 19621,
@@ -37,7 +37,7 @@
     },
     {
       "number": 19606,
-      "title": "MeTruyen18: domain moved to metruyen18.sbs (site rebuilt, no longer Madara)",
+      "title": "MeTruyen18: domain moved to metruyen18.sbs (site rebuilt, or new source)",
       "source_name": "MeTruyen18",
       "matches": [
         {
@@ -238,7 +238,7 @@
       "source_name": "Lunar Manga",
       "matches": [
         {
-          "status": "iuam",
+          "status": "ok",
           "name": "Lunar Manga",
           "url": "https://lunarx.to",
           "score": 100.0,
@@ -287,7 +287,7 @@
       "source_name": "Dilar",
       "matches": [
         {
-          "status": "iuam",
+          "status": "ok",
           "name": "Dilar",
           "url": "https://dilar.tube",
           "score": 100.0,
@@ -344,7 +344,7 @@
       "source_name": "Kuromanga",
       "matches": [
         {
-          "status": "iuam",
+          "status": "blocked",
           "name": "KuroMangas",
           "url": "https://kuromangas.com",
           "score": 100.0,
@@ -380,7 +380,7 @@
       "source_name": "Point Zero Toons",
       "matches": [
         {
-          "status": "iuam",
+          "status": "ok",
           "name": "Point Zero Toons",
           "url": "https://kitsuneyako.com",
           "score": 100.0,
@@ -447,7 +447,7 @@
       "source_name": "Madara Scans",
       "matches": [
         {
-          "status": "iuam",
+          "status": "redirect",
           "name": "Madara Scans",
           "url": "https://madarascans.com",
           "score": 100.0,
@@ -496,7 +496,7 @@
       "source_name": "XXX Yaoi",
       "matches": [
         {
-          "status": "blocked",
+          "status": "iuam",
           "name": "XXX Yaoi",
           "url": "https://3xyaoi.com",
           "score": 100.0,
@@ -512,7 +512,7 @@
       "source_name": "Manwa",
       "matches": [
         {
-          "status": "iuam",
+          "status": "redirect",
           "name": "漫蛙",
           "url": "https://manwa.me",
           "score": 100.0,
@@ -578,7 +578,7 @@
       "source_name": "Mangas.in",
       "matches": [
         {
-          "status": "iuam",
+          "status": "ok",
           "name": "Mangas.in",
           "url": "https://m440.in",
           "score": 100.0,
@@ -669,7 +669,7 @@
       "source_name": "Eternalmamgas",
       "matches": [
         {
-          "status": "iuam",
+          "status": "ok",
           "name": "EternalMangas",
           "url": "https://eternalmangas.org",
           "score": 92.3,
@@ -752,7 +752,7 @@
       "source_name": "manwa",
       "matches": [
         {
-          "status": "iuam",
+          "status": "redirect",
           "name": "漫蛙",
           "url": "https://manwa.me",
           "score": 100.0,
@@ -769,7 +769,7 @@
       "source_name": "Comichubfree",
       "matches": [
         {
-          "status": "iuam",
+          "status": "ok",
           "name": "ComicHubFree",
           "url": "https://comichubfree.com",
           "score": 100.0,
@@ -786,7 +786,7 @@
       "source_name": "Magus Manga",
       "matches": [
         {
-          "status": "iuam",
+          "status": "warning",
           "name": "Magus Manga",
           "url": "https://magustoon.org",
           "score": 100.0,
@@ -802,7 +802,7 @@
       "source_name": "Ikigai Mangas",
       "matches": [
         {
-          "status": "iuam",
+          "status": "ok",
           "name": "Ikigai Mangas",
           "url": "https://visorikigai.gettocaboca.com",
           "score": 100.0,
@@ -835,7 +835,7 @@
       "source_name": "Athrea Scans",
       "matches": [
         {
-          "status": "iuam",
+          "status": "redirect",
           "name": "Athrea Scans",
           "url": "https://athreascans.com",
           "score": 100.0,
@@ -867,7 +867,7 @@
       "source_name": "Blackout Comics",
       "matches": [
         {
-          "status": "iuam",
+          "status": "blocked",
           "name": "Blackout Comics",
           "url": "https://blackoutcomics.com",
           "score": 100.0,
@@ -1032,7 +1032,7 @@
       "source_name": "CrotPedia",
       "matches": [
         {
-          "status": "iuam",
+          "status": "ok",
           "name": "CrotPedia",
           "url": "https://crotpedia.net",
           "score": 100.0,
@@ -1067,7 +1067,7 @@
       "source_name": "EternalMangas",
       "matches": [
         {
-          "status": "iuam",
+          "status": "ok",
           "name": "EternalMangas",
           "url": "https://eternalmangas.org",
           "score": 100.0,
@@ -1115,7 +1115,7 @@
       "source_name": "AllPornComics.co",
       "matches": [
         {
-          "status": "blocked",
+          "status": "ok",
           "name": "AllPornComics.co",
           "url": "https://allporncomics.co",
           "score": 100.0,
@@ -1125,7 +1125,7 @@
           ]
         },
         {
-          "status": "iuam",
+          "status": "ok",
           "name": "AllPornComic",
           "url": "https://allporncomic.com",
           "score": 96.0,
@@ -1134,7 +1134,7 @@
           ]
         },
         {
-          "status": "ok",
+          "status": "waf",
           "name": "AllPornComic.io",
           "url": "https://allporncomic.io",
           "score": 90.3,
@@ -1182,7 +1182,7 @@
       "source_name": "Scan-Manga",
       "matches": [
         {
-          "status": "iuam",
+          "status": "redirect",
           "name": "Scan-Manga",
           "url": "https://m.scan-manga.com",
           "score": 100.0,
@@ -1191,7 +1191,7 @@
           ]
         },
         {
-          "status": "iuam",
+          "status": "blocked",
           "name": "Manga Can",
           "url": "https://mangacanblog.com",
           "score": 94.7,
@@ -1404,7 +1404,7 @@
       "source_name": "FlowerManga.net",
       "matches": [
         {
-          "status": "iuam",
+          "status": "ok",
           "name": "FlowerManga.net",
           "url": "https://flowermangas.net",
           "score": 100.0,
@@ -1454,7 +1454,7 @@
       "source_name": "LinkManga",
       "matches": [
         {
-          "status": "iuam",
+          "status": "ok",
           "name": "LinkManga",
           "url": "https://linkmanga.com",
           "score": 100.0,
@@ -1486,7 +1486,7 @@
       "source_name": "Tempest Scans",
       "matches": [
         {
-          "status": "iuam",
+          "status": "ok",
           "name": "JuraTempest",
           "url": "https://juratempe.st",
           "score": 100.0,
@@ -1805,7 +1805,7 @@
       "source_name": "包子漫画",
       "matches": [
         {
-          "status": "iuam",
+          "status": "placeholder",
           "name": "包子漫画",
           "url": "https://appcn.baozimh.com",
           "score": 100.0,
@@ -1822,7 +1822,7 @@
       "source_name": "Rawkuma",
       "matches": [
         {
-          "status": "iuam",
+          "status": "ok",
           "name": "Rawkuma",
           "url": "https://rawkuma.net",
           "score": 100.0,
@@ -1961,7 +1961,7 @@
       "source_name": "TonizuToon",
       "matches": [
         {
-          "status": "ok",
+          "status": "waf",
           "name": "TonizuToon",
           "url": "https://tonizu.top",
           "score": 100.0,
