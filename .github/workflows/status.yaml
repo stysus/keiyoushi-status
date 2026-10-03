@@ -29,6 +29,10 @@ on:
       - .github/scripts/**
       - .github/workflows/status.yaml
       - web/**
+      - tailwind.config.js
+      - package.json
+      - package-lock.json
+      - tests/**
 
 concurrency:
   group: status

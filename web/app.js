@@ -53,6 +53,7 @@ const el = {
   retryLoadBtn: document.getElementById('retryLoadBtn'),
   resetFiltersBtn: document.getElementById('resetFiltersBtn'),
   // Pagination
+  paginationContainer: document.getElementById('paginationContainer'),
   pageStart: document.getElementById('pageStart'),
   pageEnd: document.getElementById('pageEnd'),
   pageTotal: document.getElementById('pageTotal'),
@@ -70,16 +71,19 @@ async function renderActiveTab() {
   el.tableWrapper.classList.add('hidden');
   el.emptyState.classList.add('hidden');
   el.errorState.classList.add('hidden');
+  el.paginationContainer.classList.add('hidden');
 
   let data;
   try {
     data = await loadData(state.activeTab);
   } catch (err) {
     el.loadingState.classList.add('hidden');
+    el.filterChipsContainer.innerHTML = '';
     el.errorState.classList.remove('hidden');
     return;
   }
   el.loadingState.classList.add('hidden');
+  el.paginationContainer.classList.remove('hidden');
 
   if (!data || !data.results) {
     el.emptyState.classList.remove('hidden');

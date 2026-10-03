@@ -156,3 +156,11 @@ test('computePageSlice clamps an out-of-range page instead of yielding an empty 
   assert.deepEqual(computePageSlice(120, 'all', 1), { page: 1, totalPages: 1, size: 120, start: 0, end: 120, isAll: true });
   assert.deepEqual(computePageSlice(120, 50, 0), { page: 1, totalPages: 3, size: 50, start: 0, end: 50, isAll: false });
 });
+
+test('workflow push paths include the Tailwind build inputs', () => {
+  const wf = readFileSync(new URL('../.github/workflows/status.yaml', import.meta.url), 'utf8');
+  const paths = wf.slice(wf.indexOf('  push:'), wf.indexOf('concurrency:'));
+  for (const p of ['tailwind.config.js', 'package.json', 'package-lock.json', 'tests/**']) {
+    assert.ok(paths.includes(p), `push paths must include ${p} so a config/lockfile change rebuilds app.css`);
+  }
+});
