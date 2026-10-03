@@ -12,56 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
-            mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
-          },
-          colors: {
-            zinc: {
-              850: '#1f1f23',
-              925: '#111114',
-              950: '#09090b',
-            }
-          }
-        }
-      }
-    }
-  </script>
-
-  <style>
-    /* Custom sleek scrollbar */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: rgba(161, 161, 170, 0.35);
-      border-radius: 9999px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(161, 161, 170, 0.55);
-    }
-    .dark ::-webkit-scrollbar-thumb {
-      background: rgba(113, 113, 122, 0.45);
-    }
-    .dark ::-webkit-scrollbar-thumb:hover {
-      background: rgba(113, 113, 122, 0.7);
-    }
-    /* Tabular numbers for clean financial/data alignment */
-    .tabular-nums {
-      font-variant-numeric: tabular-nums;
-    }
-  </style>
+  <link rel="stylesheet" href="css/app.css">
 </head>
 <body class="bg-white text-zinc-950 dark:bg-zinc-950 dark:text-zinc-50 font-sans min-h-screen flex flex-col antialiased selection:bg-zinc-200 dark:selection:bg-zinc-800">
   

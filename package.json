@@ -2,5 +2,12 @@
   "name": "keiyoushi-status",
   "private": true,
   "type": "module",
-  "description": "Node config for the web-logic self-checks (node --test). No runtime deps."
+  "description": "Node config for the web-logic self-checks (node --test) and the Tailwind CSS build. No runtime deps.",
+  "scripts": {
+    "test": "node --test 'tests/**/*.test.mjs'",
+    "build:css": "tailwindcss -i web/css/input.css -o web/css/app.css --minify"
+  },
+  "devDependencies": {
+    "tailwindcss": "3.4.19"
+  }
 }

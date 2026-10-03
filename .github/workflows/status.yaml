@@ -288,6 +288,28 @@ jobs:
           commit_message: 'chore: update extensions, issues, and bug issue map'
           file_pattern: 'web/data/*.json'
 
+      - name: Setup Node for Tailwind
+        if: needs.detect.outputs.should_deploy == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Build Tailwind CSS
+        if: needs.detect.outputs.should_deploy == 'true'
+        run: |
+          npm ci
+          npm run build:css
+          test -s web/css/app.css
+          if grep -q '@tailwind' web/css/app.css; then
+            echo "::error::Unresolved @tailwind directives in app.css"; exit 1
+          fi
+          for cls in bg-zinc-850 stroke-emerald-500 text-amber-800 bg-indigo-500; do
+            grep -q -- "$cls" web/css/app.css || {
+              echo "::error::Tailwind missed .$cls — check the content globs"; exit 1;
+            }
+          done
+
       - name: Setup Pages
         if: needs.detect.outputs.should_deploy == 'true'
         uses: actions/configure-pages@v5
