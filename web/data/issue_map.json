@@ -1,7 +1,7 @@
 {
   "total": 125,
   "matched": 123,
-  "timestamp": "2026-10-03T06:47:44+00:00",
+  "timestamp": "2026-10-03T07:02:39+00:00",
   "results": [
     {
       "number": 19621,
@@ -25,7 +25,7 @@
       "source_name": "Bakai",
       "matches": [
         {
-          "status": "🔍",
+          "status": "🚧",
           "name": "Bakai",
           "url": "https://bakai.org",
           "score": 100.0,
