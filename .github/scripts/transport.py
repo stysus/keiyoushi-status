@@ -28,6 +28,7 @@ from classify import (
     is_retryable,
 )
 from curl_cffi import AsyncSession
+from curl_cffi.const import CurlOpt
 from curl_cffi.requests import Response
 from dns import DNS_MAX_ATTEMPTS, DoHRouter
 
@@ -59,6 +60,9 @@ def create_session() -> AsyncSession:
         http_version="v2",
         max_clients=MAX_CONCURRENT,
         timeout=TIMEOUT_TOTAL_SECONDS,
+        # curl caches a failed DoH lookup per host, which would make the next
+        # candidate (and the system-resolver fallback) fail instantly too.
+        curl_options={CurlOpt.DNS_CACHE_TIMEOUT: 0},
     )
 
 
