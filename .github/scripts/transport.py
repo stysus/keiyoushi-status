@@ -88,15 +88,20 @@ def format_duration(duration: float, cutoff: float = TIME_PRECISION_CUTOFF_SECON
     return f"{m}m{s}s" if m else f"{s}s"
 
 
-def _read_response_html(resp: Response) -> tuple[str | None, str]:
+async def _read_response_html(resp: Response) -> tuple[str | None, str]:
     content_type = resp.headers.get("content-type", "").split(";", 1)[0].strip().lower()
     if any(content_type.startswith(b) for b in BINARY_CONTENT_PREFIXES):
         return None, content_type
     encoding = getattr(resp, "encoding", None) or "utf-8"
-    # ponytail: curl_cffi buffers the whole body before we slice; the old aiohttp
-    # path streamed with a 256 KB cap. Upgrade to stream=True + aiter_content()
-    # if large bodies ever pressure runner memory.
-    return resp.content[:MAX_BODY_BYTES].decode(encoding, errors="replace"), content_type
+    # stream in chunks and stop at the cap, so a huge body is never buffered whole
+    chunks: list[bytes] = []
+    total = 0
+    async for chunk in resp.aiter_content():
+        chunks.append(chunk)
+        total += len(chunk)
+        if total >= MAX_BODY_BYTES:
+            break
+    return b"".join(chunks)[:MAX_BODY_BYTES].decode(encoding, errors="replace"), content_type
 
 
 @dataclass(frozen=True, slots=True)
@@ -122,15 +127,18 @@ class _ResponseSnapshot:
 
 
 async def _fetch_snapshot(session: AsyncSession, url: str, *, doh_url: str | None = None) -> _ResponseSnapshot:
-    resp = await session.get(url, doh_url=doh_url, allow_redirects=True)
-    html, content_type = _read_response_html(resp)
-    return _ResponseSnapshot(
-        status_code=resp.status_code,
-        final_url=str(resp.url),
-        content_type=content_type,
-        headers={k.lower(): v for k, v in resp.headers.items()},
-        html=html,
-    )
+    resp = await session.get(url, doh_url=doh_url, allow_redirects=True, stream=True)
+    try:
+        html, content_type = await _read_response_html(resp)
+        return _ResponseSnapshot(
+            status_code=resp.status_code,
+            final_url=str(resp.url),
+            content_type=content_type,
+            headers={k.lower(): v for k, v in resp.headers.items()},
+            html=html,
+        )
+    finally:
+        await resp.aclose()
 
 
 class CheckResultProtocol(Protocol):

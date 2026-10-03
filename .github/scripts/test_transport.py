@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import asyncio
 import math
+from collections.abc import AsyncIterator
 
 import transport
 from curl_cffi.requests import exceptions as curl_exc
@@ -31,12 +32,25 @@ class FakeCurlError(Exception):
 
 
 class FakeResponse:
-    def __init__(self) -> None:
+    """Streaming-shaped response: yields one chunk and records being closed."""
+
+    def __init__(self, *, body: bytes | None = None, content_type: str = "text/html") -> None:
         self.status_code = 200
         self.url = "https://a.test/"
         self.encoding = "utf-8"
-        self.headers = {"content-type": "text/html"}
-        self.content = b"<html><head><title>T</title></head><body>" + b"<p>x</p>" * 20 + b"</body></html>"
+        self.headers = {"content-type": content_type}
+        self._body = (
+            body
+            if body is not None
+            else b"<html><head><title>T</title></head><body>" + b"<p>x</p>" * 20 + b"</body></html>"
+        )
+        self.closed = False
+
+    async def aiter_content(self, chunk_size: int | None = None) -> AsyncIterator[bytes]:
+        yield self._body
+
+    async def aclose(self) -> None:
+        self.closed = True
 
 
 class FakeSession:
@@ -74,6 +88,26 @@ async def _all_dns_test() -> None:
     assert session.calls[-1] is None  # each attempt ends on the system-resolver fallback
 
 
+async def _body_cap_test() -> None:
+    # a body larger than the cap is truncated, never buffered whole, and closed
+    resp = FakeResponse(body=b"<html><body>" + b"a" * (transport.MAX_BODY_BYTES * 2))
+    session = FakeSession(script=[resp])
+    snap = await transport._fetch_snapshot(session, "https://a.test/")  # noqa: SLF001
+    assert snap.html is not None
+    assert len(snap.html) <= transport.MAX_BODY_BYTES, len(snap.html)
+    assert resp.closed
+
+
+async def _binary_test() -> None:
+    # Review Focus 4: a non-HTML body yields html=None without reading or raising
+    resp = FakeResponse(body=b"\x89PNG\r\n\x1a\n", content_type="image/png")
+    session = FakeSession(script=[resp])
+    snap = await transport._fetch_snapshot(session, "https://a.test/")  # noqa: SLF001
+    assert snap.html is None
+    assert snap.content_type == "image/png"
+    assert resp.closed
+
+
 def _curl_exception_contract() -> None:
     # Pin the real curl_cffi API that classify.py duck-types: a genuine error
     # carries `.code` as an int. If upstream renames or retypes it, every fetch
@@ -105,6 +139,8 @@ def main() -> None:
     _curl_exception_contract()
     asyncio.run(_rotation_test())
     asyncio.run(_all_dns_test())
+    asyncio.run(_body_cap_test())
+    asyncio.run(_binary_test())
 
     print("transport selftest OK")
 
