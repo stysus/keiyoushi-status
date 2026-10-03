@@ -1,8 +1,40 @@
 {
-  "total": 125,
-  "matched": 123,
-  "timestamp": "2026-10-03T09:26:49+00:00",
+  "total": 127,
+  "matched": 125,
+  "timestamp": "2026-10-03T09:46:06+00:00",
   "results": [
+    {
+      "number": 19624,
+      "title": "Despair Manga: URL changed",
+      "source_name": "Despair Manga",
+      "matches": [
+        {
+          "status": "redirect",
+          "name": "Despair Manga",
+          "url": "https://despair-manga.net",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19623,
+      "title": "Kawii Manga: HTTP error 404 - sections don't appear and it doesn't work",
+      "source_name": "Kawii Manga",
+      "matches": [
+        {
+          "status": "ok",
+          "name": "Kawii Manga",
+          "url": "https://kawaiimanga.org",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
     {
       "number": 19621,
       "title": "Comix",
