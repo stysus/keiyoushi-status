@@ -2,13 +2,10 @@
 # /// script
 # requires-python = ">=3.11"
 # dependencies = [
-#   "aia",
-#   "aiohttp[speedups]",
 #   "anyio",
 #   "beautifulsoup4[lxml]",
-#   "dnspython[doh,idna]",
+#   "curl_cffi",
 #   "publicsuffixlist",
-#   "ua-generator",
 #   "yarl",
 # ]
 # ///
@@ -28,19 +25,16 @@ from datetime import datetime, timezone
 from operator import attrgetter
 from typing import NamedTuple
 
-import aiohttp
 from anyio import Path
 from classify import Status
+from curl_cffi import AsyncSession
 from publicsuffixlist import PublicSuffixList  # type: ignore[import-untyped]
 from transport import (
-    TIMEOUT_CONNECT_SECONDS,
-    TIMEOUT_SOCK_READ_SECONDS,
-    TIMEOUT_TOTAL_SECONDS,
+    USER_AGENT_LABEL,
     UrlCheck,
     check_all_generic,
     check_url_generic,
-    create_connector,
-    generate_headers,
+    create_session,
     record,
 )
 from yarl import URL
@@ -196,7 +190,7 @@ def extract_pr_urls(issues: list[dict]) -> list[PrUrl]:
     return sorted(pr_urls)
 
 
-async def check_url(session: aiohttp.ClientSession, pr: PrUrl) -> CheckResult:
+async def check_url(session: AsyncSession, pr: PrUrl) -> CheckResult:
     if not pr.url:
         return CheckResult(pr, Status.NOT_FOUND)
 
@@ -227,18 +221,7 @@ async def main() -> None:
     pr_urls = extract_pr_urls(issues)
     log.info("Checking %d URLs from %d issues", len(pr_urls), len(issues))
 
-    seed = ",".join(f"{p.pr_number}:{p.url}" for p in pr_urls)
-    headers = generate_headers(seed)
-
-    async with aiohttp.ClientSession(
-        timeout=aiohttp.ClientTimeout(
-            total=TIMEOUT_TOTAL_SECONDS,
-            connect=TIMEOUT_CONNECT_SECONDS,
-            sock_read=TIMEOUT_SOCK_READ_SECONDS,
-        ),
-        headers=headers,
-        connector=create_connector(),
-    ) as session:
+    async with create_session() as session:
         pr_urls_shuffled = pr_urls.copy()
         random.shuffle(pr_urls_shuffled)
         results = await check_all_generic(session, pr_urls_shuffled, check_url, log_result)
@@ -249,7 +232,7 @@ async def main() -> None:
     json_data = {
         "count": len(results),
         "timestamp": datetime.now(tz=timezone.utc).isoformat(timespec="seconds"),
-        "user_agent": headers["User-Agent"],
+        "user_agent": USER_AGENT_LABEL,
         "results": [
             record(
                 r,

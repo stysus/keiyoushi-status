@@ -10,16 +10,12 @@ Run:
 
 from __future__ import annotations
 
-import asyncio
 import re
-import socket
-import ssl
 from collections.abc import Mapping
 from dataclasses import dataclass
 from enum import StrEnum
 from http import HTTPStatus
 
-import aiohttp
 from bs4 import BeautifulSoup
 from publicsuffixlist import PublicSuffixList  # type: ignore[import-untyped]
 from yarl import URL
@@ -431,48 +427,42 @@ def classify_response(
     return out(Status.WARNING, subcategory=subcategory)
 
 
-RETRYABLE_EXCEPTIONS = (
-    aiohttp.ClientConnectorError,  # includes DNS failures
-    aiohttp.ServerDisconnectedError,
-    aiohttp.ClientOSError,
-    asyncio.TimeoutError,
-    TimeoutError,
-    ConnectionResetError,
-)
-NON_RETRYABLE_EXCEPTIONS = (
-    aiohttp.ClientConnectorCertificateError,
-    aiohttp.ClientConnectorSSLError,
-    ssl.SSLError,
-    aiohttp.TooManyRedirects,
-)
+RETRYABLE_CURL_CODES = frozenset({6, 7, 28, 52, 56})  # resolve/connect/timeout/empty-reply/recv
+SSL_CURL_CODES = frozenset({35, 60})
+REDIRECT_LOOP_CODE = 47
+DNS_CURL_CODE = 6
+TIMEOUT_CURL_CODE = 28
+
+
+def _curl_code(e: Exception) -> int | None:
+    code = getattr(e, "code", None)
+    return code if isinstance(code, int) else None
 
 
 def is_retryable(e: Exception) -> bool:
     """Report whether a fetch exception is worth retrying.
 
     Returns:
-        True for transient network failures, False for deterministic errors.
+        True for transient curl network failures, False for deterministic errors.
     """
-    if isinstance(e, NON_RETRYABLE_EXCEPTIONS):
-        return False
-    return isinstance(e, RETRYABLE_EXCEPTIONS)
+    return _curl_code(e) in RETRYABLE_CURL_CODES
 
 
 def classify_exception(e: Exception) -> Classification:
-    """Classify a fetch exception without performing I/O (unit-testable).
+    """Classify a curl_cffi fetch exception without performing I/O (unit-testable).
 
     Returns:
         The classified status, subcategory, and exception message.
     """
-    # DNS, SSL, Timeout, Redirect Loop, and Connection Errors
-    if isinstance(e, aiohttp.TooManyRedirects):
+    code = _curl_code(e)
+    if code == REDIRECT_LOOP_CODE:
         return Classification(Status.WARNING, "Redirect Loop", str(e))
-    if isinstance(e, (aiohttp.ClientConnectorDNSError, socket.gaierror)) or "DNS lookup failed" in str(e):
+    if code == DNS_CURL_CODE:
         return Classification(Status.DNS_ERROR, "DNS Failure", str(e))
-    if isinstance(e, (aiohttp.ClientConnectorSSLError, aiohttp.ClientConnectorCertificateError, ssl.SSLError)):
+    if code in SSL_CURL_CODES:
         return Classification(Status.ERROR, "SSL Error", str(e))
-    if isinstance(e, (asyncio.TimeoutError, TimeoutError)) or "timeout" in str(e).lower():
+    if code == TIMEOUT_CURL_CODE or "timeout" in str(e).lower():
         return Classification(Status.ERROR, "Timeout", str(e))
-    if isinstance(e, aiohttp.ClientConnectorError):
+    if code is not None:
         return Classification(Status.ERROR, "Connection Failed", str(e))
     return Classification(Status.ERROR, type(e).__name__, str(e))

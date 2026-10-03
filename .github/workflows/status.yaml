@@ -136,6 +136,9 @@ jobs:
       - name: Run DNS router self-checks
         run: .github/scripts/test_dns.py
 
+      - name: Run transport self-checks
+        run: .github/scripts/test_transport.py
+
       - name: Run mapper self-checks
         run: .github/scripts/test_map_bug_issues.py
 

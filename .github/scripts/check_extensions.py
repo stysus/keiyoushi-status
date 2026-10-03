@@ -2,14 +2,11 @@
 # /// script
 # requires-python = ">=3.11"
 # dependencies = [
-#   "aia",
-#   "aiohttp[speedups]",
 #   "anyio",
 #   "beautifulsoup4[lxml]",
 #   "betterproto==2.0.0b7",
-#   "dnspython[doh,idna]",
+#   "curl_cffi",
 #   "publicsuffixlist",
-#   "ua-generator",
 #   "yarl",
 # ]
 # ///
@@ -31,19 +28,16 @@ from datetime import datetime, timezone
 from operator import attrgetter
 from typing import NamedTuple
 
-import aiohttp
 from anyio import Path
 from classify import Status
+from curl_cffi import AsyncSession
 from generated import Index
 from transport import (
-    TIMEOUT_CONNECT_SECONDS,
-    TIMEOUT_SOCK_READ_SECONDS,
-    TIMEOUT_TOTAL_SECONDS,
+    USER_AGENT_LABEL,
     UrlCheck,
     check_all_generic,
     check_url_generic,
-    create_connector,
-    generate_headers,
+    create_session,
     record,
 )
 
@@ -85,7 +79,7 @@ def extract_sources(index: Index) -> list[Source]:
     return sorted(sources)
 
 
-async def check_source(session: aiohttp.ClientSession, source: Source) -> CheckResult:
+async def check_source(session: AsyncSession, source: Source) -> CheckResult:
     def make_result(check: UrlCheck) -> CheckResult:
         return CheckResult(
             source,
@@ -109,10 +103,10 @@ DEFAULT_SOURCES_PATH = Path("build/sources.json")
 
 
 async def fetch_sources() -> list[Source]:
-    async with aiohttp.ClientSession(connector=create_connector()) as session:
+    async with create_session() as session:
         log.info("Fetching repository index from %s", REPO_INDEX_URL)
-        async with session.get(REPO_INDEX_URL) as resp:
-            index = Index().parse(gzip.decompress(await resp.read()))
+        resp = await session.get(REPO_INDEX_URL)
+        index = Index().parse(gzip.decompress(resp.content))
     return extract_sources(index)
 
 
@@ -236,18 +230,7 @@ async def main() -> None:
         log.info("Checking %d unique sources in single-runner mode", len(sources))
         json_path = Path("web/data/extensions.json")
 
-    seed = ",".join(f"{s.name}:{s.url}" for s in sources)
-    headers = generate_headers(seed)
-
-    async with aiohttp.ClientSession(
-        timeout=aiohttp.ClientTimeout(
-            total=TIMEOUT_TOTAL_SECONDS,
-            connect=TIMEOUT_CONNECT_SECONDS,
-            sock_read=TIMEOUT_SOCK_READ_SECONDS,
-        ),
-        headers=headers,
-        connector=create_connector(),
-    ) as session:
+    async with create_session() as session:
         sources_shuffled = sources.copy()
         random.shuffle(sources_shuffled)
         results = await check_all_generic(session, sources_shuffled, check_source, log_result)
@@ -258,7 +241,7 @@ async def main() -> None:
     json_data = {
         "count": len(results),
         "timestamp": datetime.now(tz=timezone.utc).isoformat(timespec="seconds"),
-        "user_agent": headers["User-Agent"],
+        "user_agent": USER_AGENT_LABEL,
         "results": [
             record(r, subject={"name": r.source.name, "url": r.source.url})
             for r in sorted(results, key=attrgetter("sort_key"))

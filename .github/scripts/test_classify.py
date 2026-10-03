@@ -2,7 +2,6 @@
 # /// script
 # requires-python = ">=3.11"
 # dependencies = [
-#   "aiohttp[speedups]",
 #   "beautifulsoup4[lxml]",
 #   "publicsuffixlist",
 #   "yarl",
@@ -16,14 +15,19 @@ Run: uv run .github/scripts/test_classify.py
 
 from __future__ import annotations
 
-import asyncio
-import ssl
-
 from classify import Classification, Status, classify_exception, classify_response, is_retryable
 
 _BODY = "".join(f"<p>line {i}</p>" for i in range(20))
 PAGE = f"<html><head><title>Example</title></head><body>{_BODY}</body></html>"
 URL = "https://x.test/"
+
+
+class FakeCurlError(Exception):
+    """Minimal stand-in for a curl_cffi error: only `.code` drives classification."""
+
+    def __init__(self, code: int) -> None:
+        super().__init__(f"curl error {code}")
+        self.code = code
 
 
 def classify(
@@ -115,6 +119,11 @@ def main() -> None:
             (Status.OK, "Binary (image/png)"),
         ),
         (
+            "binary missing content-type",
+            classify(None, content_type=""),
+            (Status.OK, "Binary ()"),
+        ),
+        (
             "cloudflare 522",
             classify(PAGE, status=522),
             (Status.WARNING, "Cloudflare 522 (Connection Timed Out)"),
@@ -131,8 +140,12 @@ def main() -> None:
         assert actual == want, f"{name}: got {actual!r}, want {want!r}"
 
     exc_cases: list[tuple[str, Exception, tuple[Status, str]]] = [
-        ("timeout", asyncio.TimeoutError(), (Status.ERROR, "Timeout")),
-        ("dns", OSError(None, "DNS lookup failed for x.test"), (Status.DNS_ERROR, "DNS Failure")),
+        ("dns", FakeCurlError(6), (Status.DNS_ERROR, "DNS Failure")),
+        ("timeout", FakeCurlError(28), (Status.ERROR, "Timeout")),
+        ("ssl", FakeCurlError(60), (Status.ERROR, "SSL Error")),
+        ("redirect loop", FakeCurlError(47), (Status.WARNING, "Redirect Loop")),
+        ("connection", FakeCurlError(7), (Status.ERROR, "Connection Failed")),
+        ("plain timeout message", TimeoutError("operation timeout"), (Status.ERROR, "Timeout")),
         ("generic", ValueError("boom"), (Status.ERROR, "ValueError")),
     ]
     for name, exc, want in exc_cases:
@@ -141,9 +154,12 @@ def main() -> None:
         assert actual == want, f"{name}: got {actual!r}, want {want!r}"
 
     retry_cases: list[tuple[str, Exception, bool]] = [
-        ("timeout", asyncio.TimeoutError(), True),
-        ("connection reset", ConnectionResetError(), True),
-        ("ssl", ssl.SSLError(), False),
+        ("dns", FakeCurlError(6), True),
+        ("connect", FakeCurlError(7), True),
+        ("timeout", FakeCurlError(28), True),
+        ("empty reply", FakeCurlError(52), True),
+        ("ssl cert", FakeCurlError(60), False),
+        ("redirect loop", FakeCurlError(47), False),
         ("generic", ValueError("boom"), False),
     ]
     for name, exc, want in retry_cases:
