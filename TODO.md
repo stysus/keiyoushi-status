@@ -94,8 +94,10 @@ Kerja bertahap. Centang saat selesai. `[ ]` belum, `[x]` selesai.
 - [x] a11y: `aria-sort` dinamis, `scope="col"` pada semua `<th>`, `aria-pressed` pada chip filter
 - [x] Terverifikasi via node: guard netralkan `=cmd()`/`-42`, nama wajar utuh; atribut a11y muncul
 
-### Stage 18 — #7 Guard baseline lebih tahan banting ⬜
-- [ ] Bandingkan vs median beberapa hari (opsional)
+### Stage 18 — #7 Guard baseline lebih tahan banting ✅
+- [x] Baseline operational = **median 7 hari terakhir** dari `history.json` (fallback ke hari sebelumnya bila <3 hari)
+- [x] Selftest: hari baseline yang sudah rusak tak lagi menyembunyikan collapse nyata; recovery wajar tak memicu alarm
+- [x] Terverifikasi: median op share 0.8311, guard lolos pada data 1530 baris
 
 ### UX opsional (tanya dulu)
 - [ ] Auto-refresh + indikator umur data

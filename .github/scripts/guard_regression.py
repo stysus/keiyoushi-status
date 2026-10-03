@@ -11,6 +11,10 @@ bug (e.g. every page classified as WARNING) shows up as one status category
 suddenly dominating, which is far more plausible than a simultaneous real
 outage across ~1500 unrelated sites.
 
+When `web/data/history.json` has enough days, the operational-share check
+compares against the median of recent days instead of the single previous day,
+so one already-degraded baseline day cannot mask a real collapse.
+
 Run:
     .github/scripts/guard_regression.py            # check
     .github/scripts/guard_regression.py --selftest # pure-logic self-check
@@ -26,11 +30,29 @@ from pathlib import Path
 
 NEW_PATH = "web/data/extensions.json"
 OLD_REF = "HEAD:web/data/extensions.json"
+HISTORY_PATH = "web/data/history.json"
 MIN_BASELINE = 200  # need enough history for shares to mean anything
 STATUS_DELTA = 0.30  # a status may not grow by more than 30 points...
 STATUS_FLOOR = 0.50  # ...and may not pass half of all results
 OPERATIONAL_DROP = 0.25  # nor may operational share collapse by 25 points
 OPERATIONAL_STATUSES = {"✅", "🚧", "🛡️"}
+MEDIAN_WINDOW = 7  # recent days used for the robust operational baseline
+MIN_MEDIAN_DAYS = 3  # below this, fall back to the single previous day
+
+
+def median(values: list[float]) -> float:
+    """Return the median of values.
+
+    Returns:
+        The middle value (mean of the two middles for an even count), or 0.0 if empty.
+    """
+    if not values:
+        return 0.0
+    ordered = sorted(values)
+    mid = len(ordered) // 2
+    if len(ordered) % 2:
+        return ordered[mid]
+    return (ordered[mid - 1] + ordered[mid]) / 2
 
 
 def status_counts(results: list[dict]) -> Counter[str]:
@@ -49,7 +71,7 @@ def operational_share(results: list[dict]) -> float:
     return count / len(results)
 
 
-def detect_regressions(old: list[dict], new: list[dict]) -> list[str]:
+def detect_regressions(old: list[dict], new: list[dict], *, operational_baseline: float | None = None) -> list[str]:
     """Return human-readable reasons the new run looks regressed (empty if fine)."""
     old_counts = status_counts(old)
     new_counts = status_counts(new)
@@ -64,11 +86,34 @@ def detect_regressions(old: list[dict], new: list[dict]) -> list[str]:
             if new_share - old_share > STATUS_DELTA and new_share > STATUS_FLOOR:
                 findings.append(f"status {status or '(blank)'} jumped {old_share:.1%} -> {new_share:.1%} of results")
 
-    drop = operational_share(old) - operational_share(new)
+    reference = operational_baseline if operational_baseline is not None else operational_share(old)
+    new_operational = operational_share(new)
+    drop = reference - new_operational
     if drop > OPERATIONAL_DROP:
-        findings.append(f"operational share dropped {operational_share(old):.1%} -> {operational_share(new):.1%}")
+        findings.append(f"operational share dropped {reference:.1%} -> {new_operational:.1%}")
 
     return findings
+
+
+def load_operational_median() -> float | None:
+    """Median operational share over recent history days, or None if too few.
+
+    Returns:
+        The median operational share, or None when history has fewer than
+        MIN_MEDIAN_DAYS usable days.
+    """
+    try:
+        days = json.loads(Path(HISTORY_PATH).read_text(encoding="utf-8")).get("days", [])
+    except (OSError, json.JSONDecodeError):
+        return None
+    shares = [
+        day["operational"] / day["total"]
+        for day in days[-MEDIAN_WINDOW:]
+        if day.get("total") and day.get("operational") is not None
+    ]
+    if len(shares) < MIN_MEDIAN_DAYS:
+        return None
+    return median(shares)
 
 
 def load_baseline() -> list[dict] | None:
@@ -91,6 +136,13 @@ def selftest() -> None:
     # operational collapse is caught even without one dominant status
     collapsed = [{"status": "❌"}] * 400 + [{"status": "⚠️"}] * 400 + [{"status": "🔌"}] * 200
     assert detect_regressions(ok, collapsed), "operational collapse not caught"
+    # a single already-degraded baseline day can hide a real collapse from the
+    # per-day check; the median baseline catches it
+    broken_prev = [{"status": "❌"}] * 700 + [{"status": "✅"}] * 300
+    still_broken = [{"status": "❌"}] * 800 + [{"status": "✅"}] * 200
+    assert not detect_regressions(broken_prev, still_broken), "single-day baseline should miss this"
+    assert detect_regressions(broken_prev, still_broken, operational_baseline=0.85), "median baseline missed collapse"
+    assert not detect_regressions(ok, [{"status": "✅"}] * 850 + [{"status": "⚠️"}] * 150, operational_baseline=0.85)
     print("guard selftest OK")
 
 
@@ -105,7 +157,7 @@ def main() -> None:
         print("No usable baseline yet; skipping regression guard.")
         return
 
-    findings = detect_regressions(baseline, new)
+    findings = detect_regressions(baseline, new, operational_baseline=load_operational_median())
     if findings:
         print("Suspected classifier regression — aborting before commit/deploy:")
         for finding in findings:
