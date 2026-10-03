@@ -1,8 +1,40 @@
 {
-  "total": 122,
-  "matched": 120,
-  "timestamp": "2026-10-02T20:19:34+00:00",
+  "total": 124,
+  "matched": 122,
+  "timestamp": "2026-10-03T06:08:13+00:00",
   "results": [
+    {
+      "number": 19608,
+      "title": "Bakai: `No pages found`  error when opening chapters",
+      "source_name": "Bakai",
+      "matches": [
+        {
+          "status": "🔍",
+          "name": "Bakai",
+          "url": "https://bakai.org",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19606,
+      "title": "MeTruyen18: domain moved to metruyen18.sbs (site rebuilt, no longer Madara)",
+      "source_name": "MeTruyen18",
+      "matches": [
+        {
+          "status": "🔀",
+          "name": "MeTruyen18",
+          "url": "https://metruyen18.pro",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
     {
       "number": 19599,
       "title": "Fenix Project: Site changed from WordPress/Madara to Phoenix LiveView (needs rewrite)",
@@ -349,7 +381,7 @@
       "source_name": "Manhwaz",
       "matches": [
         {
-          "status": "❌",
+          "status": "🔌",
           "name": "ManhwaZ",
           "url": "https://manhwaz.com",
           "score": 100.0,
@@ -861,7 +893,7 @@
           ]
         },
         {
-          "status": "⚠️",
+          "status": "✅",
           "name": "Mangack",
           "url": "https://mangack.com",
           "score": 92.3,
