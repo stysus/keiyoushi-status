@@ -72,7 +72,7 @@ _kakasi = kakasi()
 
 @dataclass(frozen=True, slots=True)
 class StatusEntry:
-    emoji: str
+    status: str
     name: str
     url: str
 
@@ -144,7 +144,7 @@ def parse_extensions_json(path: Path) -> tuple[list[StatusEntry], list[str], dic
     results = payload.get("results", []) if isinstance(payload, dict) else payload
     base = [
         StatusEntry(
-            emoji=item.get("status", ""),
+            status=item.get("status", ""),
             name=item.get("name", "").strip(),
             url=item.get("url", "").strip(),
         )
@@ -341,7 +341,7 @@ def main() -> None:
                 "source_name": r.source_name,
                 "matches": [
                     {
-                        "status": m.entry.emoji,
+                        "status": m.entry.status,
                         "name": m.entry.name,
                         "url": m.entry.url,
                         "score": round(m.score, 1),

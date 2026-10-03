@@ -34,11 +34,11 @@ def tier_counts(results: list[dict]) -> dict[str, int]:
         status = item.get("status", "")
         subcategory = (item.get("subcategory") or "").lower()
         counts["total"] += 1
-        if status == "✅":
+        if status == "ok":
             counts["ok"] += 1
-        elif status in {"🚧", "🛡️"} or (status == "🔀" and "same authority" in subcategory):
+        elif status in {"iuam", "waf"} or (status == "redirect" and "same authority" in subcategory):
             counts["challenge"] += 1
-        elif status in {"⏳", "⚠️"}:
+        elif status in {"rate_limited", "warning"}:
             counts["degraded"] += 1
         else:
             counts["offline"] += 1
@@ -55,12 +55,12 @@ def upsert_day(days: list[dict], date: str, snapshot: dict) -> list[dict]:
 
 def selftest() -> None:
     results = [
-        {"status": "✅"},
-        {"status": "🚧"},
-        {"status": "🔀", "subcategory": "Same Authority"},
-        {"status": "🔀", "subcategory": "Meta Refresh"},
-        {"status": "⚠️"},
-        {"status": "❌"},
+        {"status": "ok"},
+        {"status": "iuam"},
+        {"status": "redirect", "subcategory": "Same Authority"},
+        {"status": "redirect", "subcategory": "Meta Refresh"},
+        {"status": "warning"},
+        {"status": "error"},
     ]
     counts = tier_counts(results)
     assert counts == {"total": 6, "ok": 1, "challenge": 2, "degraded": 1, "offline": 2, "operational": 3}, counts

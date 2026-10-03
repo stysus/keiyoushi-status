@@ -61,7 +61,7 @@ def test_title_to_names() -> None:
 
 
 def test_match_url_host() -> None:
-    entries, names, hosts = _entries(("✅", "Example Scans", "https://examplescans.com"))
+    entries, names, hosts = _entries(("ok", "Example Scans", "https://examplescans.com"))
     matches = m.match_issue(
         "Example Scans",
         "Example Scans down",
@@ -77,7 +77,7 @@ def test_match_url_host() -> None:
 
 
 def test_match_hangul_slug() -> None:
-    entries, names, hosts = _entries(("✅", "늑대닷컴 - 만화책", "https://wfwf507.com"))
+    entries, names, hosts = _entries(("ok", "늑대닷컴 - 만화책", "https://wfwf507.com"))
     # parse_extensions_json appends the romanized slug; mirror that here.
     entries.append(entries[0])
     names.append(m.romanize(entries[0].name)[0])
@@ -94,7 +94,7 @@ def test_match_hangul_slug() -> None:
 
 
 def test_superset_suppression() -> None:
-    entries, names, hosts = _entries(("✅", "Komga", "https://komga.org"), ("✅", "Komga (2)", "https://k2.org"))
+    entries, names, hosts = _entries(("ok", "Komga", "https://komga.org"), ("ok", "Komga (2)", "https://k2.org"))
     matches = m.match_issue(
         "Komga",
         "Komga is broken",
@@ -111,8 +111,8 @@ def test_superset_suppression() -> None:
 def test_parse_extensions_json() -> None:
     payload = {
         "results": [
-            {"status": "✅", "name": "늑대닷컴", "url": "https://www.wfwf507.com"},
-            {"status": "🔍", "name": "No Url", "url": ""},
+            {"status": "ok", "name": "늑대닷컴", "url": "https://www.wfwf507.com"},
+            {"status": "not_found", "name": "No Url", "url": ""},
         ]
     }
     with tempfile.TemporaryDirectory() as tmp:

@@ -7,11 +7,11 @@ Automated health monitoring and issue tracking dashboard for the [Keiyoushi](htt
 
 ---
 
-## 🌐 Live Web Dashboard
+## Live Web Dashboard
 
 Explore real-time extension health, issue status, and bug mappings directly through the interactive web dashboard:
 
-👉 **[https://stysus.github.io/keiyoushi-status/](https://stysus.github.io/keiyoushi-status/)**
+**[https://stysus.github.io/keiyoushi-status/](https://stysus.github.io/keiyoushi-status/)**
 
 Features:
 - **Instant Search & Filtering**: Filter by operational status, category, HTTP response codes, and keywords.
@@ -21,7 +21,7 @@ Features:
 
 ---
 
-## 📊 Structured Data Endpoints (JSON)
+## Structured Data Endpoints (JSON)
 
 Status data is generated automatically and published as structured JSON files for programmatic consumption:
 
@@ -41,7 +41,7 @@ Status data is generated automatically and published as structured JSON files fo
   "user_agent": "Mozilla/5.0 ...",
   "results": [
     {
-      "status": "✅",
+      "status": "ok",
       "name": "MangaDex",
       "url": "https://mangadex.org",
       "duration": 0.345,
@@ -58,7 +58,7 @@ Status data is generated automatically and published as structured JSON files fo
 
 ---
 
-## ⚙️ Architecture & Automation
+## Architecture & Automation
 
 - **Engine**: Powered by Python 3.11+ using `aiohttp`, `dnspython` (with DoH TLD-aware smart routing), `publicsuffixlist`, and `beautifulsoup4`.
 - **Workflow**: Scheduled GitHub Actions pipeline (`.github/workflows/status.yaml`) executes scraping, validates network health, correlates GitHub issues, and deploys the updated dashboard to GitHub Pages.

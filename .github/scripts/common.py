@@ -312,18 +312,18 @@ def create_connector() -> aiohttp.TCPConnector:
 
 
 class Status(StrEnum):
-    OK = "✅"
-    ERROR = "❌"
-    WARNING = "⚠️"
-    CF_BLOCK = "🛑"
-    CF_IUAM = "🚧"
-    WAF = "🛡️"
-    RATE_LIMITED = "⏳"
-    DNS_ERROR = "🔌"
-    REDIRECT = "🔀"
-    PARKED = "🅿️"
-    NOT_FOUND = "🔍"
-    PLACEHOLDER = "🪧"
+    OK = "ok"
+    ERROR = "error"
+    WARNING = "warning"
+    CF_BLOCK = "blocked"
+    CF_IUAM = "iuam"
+    WAF = "waf"
+    RATE_LIMITED = "rate_limited"
+    DNS_ERROR = "dns_error"
+    REDIRECT = "redirect"
+    PARKED = "parked"
+    NOT_FOUND = "not_found"
+    PLACEHOLDER = "placeholder"
 
 
 BINARY_CONTENT_PREFIXES = (

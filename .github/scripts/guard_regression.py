@@ -35,7 +35,7 @@ MIN_BASELINE = 200  # need enough history for shares to mean anything
 STATUS_DELTA = 0.30  # a status may not grow by more than 30 points...
 STATUS_FLOOR = 0.50  # ...and may not pass half of all results
 OPERATIONAL_DROP = 0.25  # nor may operational share collapse by 25 points
-OPERATIONAL_STATUSES = {"✅", "🚧", "🛡️"}
+OPERATIONAL_STATUSES = {"ok", "iuam", "waf"}
 MEDIAN_WINDOW = 7  # recent days used for the robust operational baseline
 MIN_MEDIAN_DAYS = 3  # below this, fall back to the single previous day
 
@@ -66,7 +66,7 @@ def operational_share(results: list[dict]) -> float:
     for item in results:
         status = item.get("status", "")
         subcategory = (item.get("subcategory") or "").lower()
-        if status in OPERATIONAL_STATUSES or (status == "🔀" and "same authority" in subcategory):
+        if status in OPERATIONAL_STATUSES or (status == "redirect" and "same authority" in subcategory):
             count += 1
     return count / len(results)
 
@@ -125,24 +125,26 @@ def load_baseline() -> list[dict] | None:
 
 
 def selftest() -> None:
-    ok = [{"status": "✅"} for _ in range(900)] + [{"status": "⚠️"} for _ in range(100)]
-    # mass misclassification: ⚠️ jumps 10% -> 80%
-    assert detect_regressions(ok, [{"status": "✅"}] * 200 + [{"status": "⚠️"}] * 800), "mass WARNING not caught"
+    ok = [{"status": "ok"} for _ in range(900)] + [{"status": "warning"} for _ in range(100)]
+    # mass misclassification: warning jumps 10% -> 80%
+    assert detect_regressions(ok, [{"status": "ok"}] * 200 + [{"status": "warning"}] * 800), "mass WARNING not caught"
     # a moderate, real shift stays below the alarm
-    assert not detect_regressions(ok, [{"status": "✅"}] * 800 + [{"status": "⚠️"}] * 200), "false alarm"
+    assert not detect_regressions(ok, [{"status": "ok"}] * 800 + [{"status": "warning"}] * 200), "false alarm"
     # already-broken baseline is not re-alarmed forever
-    broken = [{"status": "⚠️"}] * 900
+    broken = [{"status": "warning"}] * 900
     assert not detect_regressions(broken, broken), "re-alarm"
     # operational collapse is caught even without one dominant status
-    collapsed = [{"status": "❌"}] * 400 + [{"status": "⚠️"}] * 400 + [{"status": "🔌"}] * 200
+    collapsed = [{"status": "error"}] * 400 + [{"status": "warning"}] * 400 + [{"status": "dns_error"}] * 200
     assert detect_regressions(ok, collapsed), "operational collapse not caught"
     # a single already-degraded baseline day can hide a real collapse from the
     # per-day check; the median baseline catches it
-    broken_prev = [{"status": "❌"}] * 700 + [{"status": "✅"}] * 300
-    still_broken = [{"status": "❌"}] * 800 + [{"status": "✅"}] * 200
+    broken_prev = [{"status": "error"}] * 700 + [{"status": "ok"}] * 300
+    still_broken = [{"status": "error"}] * 800 + [{"status": "ok"}] * 200
     assert not detect_regressions(broken_prev, still_broken), "single-day baseline should miss this"
     assert detect_regressions(broken_prev, still_broken, operational_baseline=0.85), "median baseline missed collapse"
-    assert not detect_regressions(ok, [{"status": "✅"}] * 850 + [{"status": "⚠️"}] * 150, operational_baseline=0.85)
+    assert not detect_regressions(
+        ok, [{"status": "ok"}] * 850 + [{"status": "warning"}] * 150, operational_baseline=0.85
+    )
     print("guard selftest OK")
 
 

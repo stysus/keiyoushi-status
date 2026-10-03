@@ -1,18 +1,18 @@
 import { DATA_ENDPOINTS, STATUS_CONFIG, isOperationalSource } from './config.js';
 
 const STATUS_RANK = {
-  '✅': 1,
-  '🔀': 2,
-  '🚧': 3,
-  '🛡️': 4,
-  '⏳': 5,
-  '⚠️': 6,
-  '🛑': 7,
-  '🔌': 8,
-  '🅿️': 9,
-  '🪧': 10,
-  '🔍': 11,
-  '❌': 12,
+  ok: 1,
+  redirect: 2,
+  iuam: 3,
+  waf: 4,
+  rate_limited: 5,
+  warning: 6,
+  blocked: 7,
+  dns_error: 8,
+  parked: 9,
+  placeholder: 10,
+  not_found: 11,
+  error: 12,
 };
 
 export const state = {
@@ -69,7 +69,7 @@ export function getProcessedItems() {
   if (state.filterStatus !== 'all') {
     if (state.activeTab === 'map') {
       items = items.filter((item) => {
-        if (!item.matches || item.matches.length === 0) return state.filterStatus === '🔍';
+        if (!item.matches || item.matches.length === 0) return state.filterStatus === 'not_found';
         return item.matches.some((m) => m.status === state.filterStatus);
       });
     } else {

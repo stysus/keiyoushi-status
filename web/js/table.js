@@ -273,7 +273,7 @@ export function renderTableRows(items, activeTab) {
               <span class="text-zinc-600 dark:text-zinc-400 text-xs font-sans">${escapeHtml(item.title)}</span>
             </td>
             <td class="py-2.5 px-4 text-zinc-700 dark:text-zinc-300 font-medium whitespace-nowrap">${escapeHtml(item.source_name || '-')}</td>
-            <td class="py-2.5 px-4">${renderStatusPill('🔍')}</td>
+            <td class="py-2.5 px-4">${renderStatusPill('not_found')}</td>
             <td class="py-2.5 px-4 text-zinc-500 italic font-mono text-xs">No match found</td>
             <td class="py-2.5 px-4 text-zinc-400 font-mono">-</td>
             <td class="py-2.5 px-4 text-center text-zinc-400 font-mono">-</td>

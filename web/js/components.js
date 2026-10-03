@@ -4,22 +4,26 @@ import { STATUS_CONFIG } from './config.js';
 import { escapeHtml } from './utils.js';
 
 /**
- * Renders a high-contrast semantic status pill.
- * @param {string} statusEmoji
+ * Renders a high-contrast semantic status pill from a status slug.
+ * The emoji is a display-only glyph; the label carries the meaning.
+ * @param {string} statusSlug
  * @returns {string}
  */
-export function renderStatusPill(statusEmoji) {
-  const conf = STATUS_CONFIG[statusEmoji] || {
-    label: statusEmoji || 'Unknown',
+export function renderStatusPill(statusSlug) {
+  const conf = STATUS_CONFIG[statusSlug] || {
+    emoji: '',
+    label: statusSlug || 'Unknown',
     dot: 'bg-zinc-500',
     text: 'text-zinc-700 dark:text-zinc-300',
     bg: 'bg-zinc-500/10',
     border: 'border-zinc-500/25',
   };
 
+  const glyph = conf.emoji ? `<span aria-hidden="true">${conf.emoji}</span>` : '';
+
   return `
     <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-semibold font-mono ${conf.bg} ${conf.text} border ${conf.border}">
-      <span class="w-1.5 h-1.5 rounded-full ${conf.dot}"></span>
+      ${glyph}
       <span>${conf.label}</span>
     </span>
   `;
@@ -27,25 +31,25 @@ export function renderStatusPill(statusEmoji) {
 
 /**
  * Renders the primary status cell with operational state and condition sub-badge.
- * @param {Object|string} itemOrEmoji
+ * @param {Object|string} itemOrSlug
  * @returns {string}
  */
-export function renderStatusCell(itemOrEmoji) {
-  if (!itemOrEmoji) return renderStatusPill('🔍');
-  if (typeof itemOrEmoji === 'string') return renderStatusPill(itemOrEmoji);
+export function renderStatusCell(itemOrSlug) {
+  if (!itemOrSlug) return renderStatusPill('not_found');
+  if (typeof itemOrSlug === 'string') return renderStatusPill(itemOrSlug);
 
-  const status = itemOrEmoji.status;
-  const subcategory = (itemOrEmoji.subcategory || '').toLowerCase();
-  const isSameAuth = status === '🔀' && subcategory.includes('same authority');
+  const status = itemOrSlug.status;
+  const subcategory = (itemOrSlug.subcategory || '').toLowerCase();
+  const isSameAuth = status === 'redirect' && subcategory.includes('same authority');
 
-  if (status === '✅') {
-    return renderStatusPill('✅');
+  if (status === 'ok') {
+    return renderStatusPill('ok');
   }
 
   if (isSameAuth) {
     return `
       <div class="inline-flex flex-col items-start gap-1">
-        ${renderStatusPill('✅')}
+        ${renderStatusPill('ok')}
         <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-mono bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/20 font-medium">
           <span class="w-1 h-1 rounded-full bg-blue-500"></span>
           <span>Redirect</span>
@@ -54,10 +58,10 @@ export function renderStatusCell(itemOrEmoji) {
     `;
   }
 
-  if (status === '🚧') {
+  if (status === 'iuam') {
     return `
       <div class="inline-flex flex-col items-start gap-1">
-        ${renderStatusPill('✅')}
+        ${renderStatusPill('ok')}
         <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-mono bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/20 font-medium">
           <span class="w-1 h-1 rounded-full bg-amber-500"></span>
           <span>IUAM</span>
@@ -66,10 +70,10 @@ export function renderStatusCell(itemOrEmoji) {
     `;
   }
 
-  if (status === '🛡️') {
+  if (status === 'waf') {
     return `
       <div class="inline-flex flex-col items-start gap-1">
-        ${renderStatusPill('✅')}
+        ${renderStatusPill('ok')}
         <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-mono bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border border-indigo-500/20 font-medium">
           <span class="w-1 h-1 rounded-full bg-indigo-500"></span>
           <span>WAF</span>
@@ -130,7 +134,7 @@ export function renderFilterChips(items, currentFilter, activeTab) {
   for (const item of items) {
     if (activeTab === 'map') {
       if (!item.matches || item.matches.length === 0) {
-        counts['🔍'] = (counts['🔍'] || 0) + 1;
+        counts['not_found'] = (counts['not_found'] || 0) + 1;
       } else {
         const statuses = new Set(item.matches.map((m) => m.status));
         for (const s of statuses) {
@@ -156,20 +160,20 @@ export function renderFilterChips(items, currentFilter, activeTab) {
     </button>
   `;
 
-  for (const [emoji, conf] of Object.entries(STATUS_CONFIG)) {
-    if (!counts[emoji]) continue;
-    const isActive = currentFilter === emoji;
+  for (const [statusSlug, conf] of Object.entries(STATUS_CONFIG)) {
+    if (!counts[statusSlug]) continue;
+    const isActive = currentFilter === statusSlug;
     chipsHtml += `
       <button type="button" class="filter-chip px-2.5 py-1 rounded-md text-xs font-mono font-medium border transition-colors flex items-center gap-1.5 cursor-pointer ${
         isActive
           ? 'bg-zinc-950 text-white border-zinc-950 dark:bg-zinc-100 dark:text-zinc-950 dark:border-white shadow-sm font-semibold'
           : 'bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border-zinc-300 dark:border-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-600'
-      }" data-status="${emoji}" aria-pressed="${isActive}">
+      }" data-status="${statusSlug}" aria-pressed="${isActive}">
         <span class="w-1.5 h-1.5 rounded-full ${conf.dot}"></span>
         <span>${conf.label}</span>
         <span class="text-xs px-1.5 py-0.5 rounded font-medium ${
           isActive ? 'bg-zinc-800 text-zinc-100 dark:bg-zinc-200 dark:text-zinc-900' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400'
-        }">${counts[emoji]}</span>
+        }">${counts[statusSlug]}</span>
       </button>
     `;
   }

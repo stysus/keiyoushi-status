@@ -31,6 +31,36 @@ from record_history import (
 
 GIT_PATH = "web/data/extensions.json"
 
+# Historical extensions.json revisions stored the status as an emoji; the
+# current schema uses ASCII slugs. Translate old revisions on replay. Written
+# as escapes so this file itself stays free of emoji bytes.
+LEGACY_STATUS = {
+    "\u2705": "ok",  # check mark
+    "\u274c": "error",  # cross mark
+    "\u26a0\ufe0f": "warning",  # warning sign
+    "\U0001f6d1": "blocked",  # stop sign
+    "\U0001f6a7": "iuam",  # construction sign
+    "\U0001f6e1\ufe0f": "waf",  # shield
+    "\u23f3": "rate_limited",  # hourglass
+    "\U0001f50c": "dns_error",  # plug
+    "\U0001f500": "redirect",  # shuffle
+    "\U0001f17f\ufe0f": "parked",  # parking
+    "\U0001f50d": "not_found",  # magnifier
+    "\U0001faa7": "placeholder",  # placard
+}
+
+
+def normalize_legacy_status(results: list[dict]) -> list[dict]:
+    """Map pre-migration emoji statuses to slugs (historical revisions only).
+
+    Returns:
+        The results with any emoji status replaced by its slug.
+    """
+    return [
+        {**item, "status": LEGACY_STATUS[item["status"]]} if item.get("status") in LEGACY_STATUS else item
+        for item in results
+    ]
+
 
 def committed_versions() -> list[tuple[str, str]]:
     """Return (sha, commit_date) newest-first for every revision of GIT_PATH.
@@ -76,6 +106,13 @@ def selftest() -> None:
         ("a", "2026-10-02T23:00:00+00:00"),
     ]
     assert select_daily(versions) == [("c", "2026-10-03"), ("a", "2026-10-02")], select_daily(versions)
+
+    legacy = [{"status": "\u2705"}, {"status": "\U0001f500", "subcategory": "Same Authority"}]
+    assert normalize_legacy_status(legacy) == [
+        {"status": "ok"},
+        {"status": "redirect", "subcategory": "Same Authority"},
+    ], normalize_legacy_status(legacy)
+    assert normalize_legacy_status([{"status": "ok"}]) == [{"status": "ok"}]
     print("backfill selftest OK")
 
 
@@ -99,7 +136,7 @@ def main() -> None:
             continue
         if not results:
             continue
-        days = upsert_day(days, day, tier_counts(results))
+        days = upsert_day(days, day, tier_counts(normalize_legacy_status(results)))
 
     # Existing live entries take precedence for their date.
     if HISTORY_JSON.exists():
