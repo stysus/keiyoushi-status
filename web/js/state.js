@@ -21,6 +21,7 @@ export const state = {
     extensions: null,
     issues: null,
     map: null,
+    history: null,
   },
   filterStatus: 'all',
   searchQuery: '',

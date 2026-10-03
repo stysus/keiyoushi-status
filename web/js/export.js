@@ -24,14 +24,32 @@ export function exportFilteredData(activeTab, items, format, onSuccess) {
   // CSV format
   const csvRows = [];
   if (activeTab === 'extensions') {
-    csvRows.push(['Status', 'Name', 'URL', 'Time', 'Notes', 'Subcategory']);
+    csvRows.push(['Status', 'Name', 'URL', 'Time', 'Notes', 'Subcategory', 'HTTP Code', 'Final URL']);
     for (const it of items) {
-      csvRows.push([it.status, it.name, it.url, it.time || '', it.info || '', it.subcategory || '']);
+      csvRows.push([
+        it.status,
+        it.name,
+        it.url,
+        it.time || '',
+        it.info || '',
+        it.subcategory || '',
+        it.http_code ?? '',
+        it.final_url || '',
+      ]);
     }
   } else if (activeTab === 'issues') {
-    csvRows.push(['Status', 'Issue', 'URL', 'Time', 'Labels', 'Info']);
+    csvRows.push(['Status', 'Issue', 'URL', 'Time', 'Labels', 'Info', 'HTTP Code', 'Final URL']);
     for (const it of items) {
-      csvRows.push([it.status, `#${it.pr_number}`, it.url || '', it.time || '', it.labels || '', it.info || '']);
+      csvRows.push([
+        it.status,
+        `#${it.pr_number}`,
+        it.url || '',
+        it.time || '',
+        it.labels || '',
+        it.info || '',
+        it.http_code ?? '',
+        it.final_url || '',
+      ]);
     }
   } else if (activeTab === 'map') {
     csvRows.push(['Issue', 'Source', 'Title', 'Matched_Extension', 'Status', 'Score', 'URL']);

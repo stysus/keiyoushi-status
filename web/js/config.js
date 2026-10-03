@@ -19,6 +19,7 @@ export const DATA_ENDPOINTS = {
   extensions: 'data/extensions.json',
   issues: 'data/issues.json',
   map: 'data/issue_map.json',
+  history: 'data/history.json',
 };
 
 export const GITHUB_BASE_URL = 'https://github.com/keiyoushi/extensions-source';
@@ -55,7 +56,8 @@ export function getTierCategory(item) {
   if (!item) return 'inaccessible_offline';
   const s = item.status;
   if (s === '✅') return 'operational_pure';
-  if (s === '🚧' || s === '🛡️' || s === '🔀') return 'protection_challenge';
+  if (s === '🚧' || s === '🛡️') return 'protection_challenge';
+  if (isSameAuthorityRedirect(item)) return 'protection_challenge';
   if (s === '⏳' || s === '⚠️') return 'degraded_notice';
   return 'inaccessible_offline';
 }

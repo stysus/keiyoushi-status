@@ -143,10 +143,19 @@
           </div>
         </div>
 
-        <!-- Relative Last Checked with UTC tooltip -->
-        <div class="text-xs text-zinc-600 dark:text-zinc-400 flex items-center gap-1.5 self-start sm:self-center font-mono" id="timeContainer">
-          <svg class="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          <span id="lastUpdatedRelative" title="Loading timestamp...">Checking...</span>
+        <div class="flex items-center gap-3 self-start sm:self-center">
+          <!-- 30-day Operational Trend -->
+          <div id="trendContainer" class="hidden items-center gap-2 font-mono text-xs text-zinc-600 dark:text-zinc-400" title="Operational share over the last 30 recorded days">
+            <span class="text-zinc-500 dark:text-zinc-400">30d</span>
+            <span id="trendSparkline" class="inline-flex items-center"></span>
+            <span id="trendValue" class="font-semibold text-zinc-950 dark:text-white tabular-nums"></span>
+          </div>
+
+          <!-- Relative Last Checked with UTC tooltip -->
+          <div class="text-xs text-zinc-600 dark:text-zinc-400 flex items-center gap-1.5 font-mono" id="timeContainer">
+            <svg class="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span id="lastUpdatedRelative" title="Loading timestamp...">Checking...</span>
+          </div>
         </div>
       </div>
 

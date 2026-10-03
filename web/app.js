@@ -1,6 +1,6 @@
 import { initTheme } from './js/theme.js';
 import { formatRelativeTime, debounce, copyTextToClipboard } from './js/utils.js';
-import { renderFilterChips, renderPaginationButtons, showToast } from './js/components.js';
+import { renderFilterChips, renderPaginationButtons, renderSparkline, showToast } from './js/components.js';
 import { renderTableHead, renderTableRows } from './js/table.js';
 import { state, loadData, getProcessedItems, toggleSortColumn, resetStateFilters } from './js/state.js';
 import { exportFilteredData } from './js/export.js';
@@ -16,6 +16,9 @@ const el = {
   heroDot: document.getElementById('heroDot'),
   heroStatusText: document.getElementById('heroStatusText'),
   lastUpdatedRelative: document.getElementById('lastUpdatedRelative'),
+  trendContainer: document.getElementById('trendContainer'),
+  trendSparkline: document.getElementById('trendSparkline'),
+  trendValue: document.getElementById('trendValue'),
   barOk: document.getElementById('barOk'),
   barChallenge: document.getElementById('barChallenge'),
   barDegraded: document.getElementById('barDegraded'),
@@ -131,6 +134,28 @@ function updateTabBadges() {
   if (state.data.map) {
     el.tabCountMap.textContent = (state.data.map.results || []).length.toLocaleString();
   }
+}
+
+// -------------------------------------------------------------
+// 30-day Operational Trend
+// -------------------------------------------------------------
+async function updateTrend() {
+  const history = await loadData('history');
+  if (!history || !Array.isArray(history.days) || history.days.length < 2) return;
+
+  const recent = history.days.slice(-30);
+  const pct = recent.map((d) => (d.total ? (d.operational / d.total) * 100 : 0));
+
+  el.trendSparkline.innerHTML = renderSparkline(pct);
+  const last = pct[pct.length - 1];
+  const delta = last - pct[0];
+  el.trendValue.textContent = `${last.toFixed(1)}%`;
+  el.trendValue.className = `font-semibold tabular-nums ${
+    delta >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'
+  }`;
+  el.trendContainer.title = `Operational ${pct[0].toFixed(1)}% → ${last.toFixed(1)}% over ${recent.length} days`;
+  el.trendContainer.classList.remove('hidden');
+  el.trendContainer.classList.add('inline-flex');
 }
 
 // -------------------------------------------------------------
@@ -372,6 +397,7 @@ function initApp() {
   initTheme(el.themeToggle, el.sunIcon, el.moonIcon);
   setupEvents();
   renderActiveTab();
+  updateTrend();
 }
 
 // Launch application on DOM ready

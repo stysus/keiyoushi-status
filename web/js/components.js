@@ -235,6 +235,32 @@ export function renderPaginationButtons(currentPage, totalPages) {
   return btnHtml;
 }
 
+/**
+ * Builds a compact inline SVG sparkline from numeric values.
+ * @param {number[]} values
+ * @param {{width?: number, height?: number, padding?: number}} [opts]
+ * @returns {string}
+ */
+export function renderSparkline(values, { width = 120, height = 28, padding = 2 } = {}) {
+  if (!Array.isArray(values) || values.length < 2) return '';
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const span = max - min || 1;
+  const stepX = (width - padding * 2) / (values.length - 1);
+  const points = values
+    .map((v, i) => {
+      const x = padding + i * stepX;
+      const y = height - padding - ((v - min) / span) * (height - padding * 2);
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(' ');
+  const rising = values[values.length - 1] >= values[0];
+  const stroke = rising ? 'stroke-emerald-500' : 'stroke-rose-500';
+  return `<svg viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" preserveAspectRatio="none" class="overflow-visible" role="img">
+    <polyline fill="none" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" class="${stroke}" points="${points}" />
+  </svg>`;
+}
+
 let toastTimeout;
 /**
  * Displays a non-blocking toast message.

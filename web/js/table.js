@@ -29,6 +29,18 @@ function getLatencyColorClass(duration) {
 }
 
 /**
+ * Builds a hover tooltip with the response code and redirect target.
+ * @param {Object} item
+ * @returns {string}
+ */
+function urlMeta(item) {
+  const parts = [];
+  if (item.http_code) parts.push(`HTTP ${item.http_code}`);
+  if (item.final_url && item.final_url !== item.url) parts.push(`→ ${item.final_url}`);
+  return parts.join(' · ');
+}
+
+/**
  * Generates table header HTML based on the active tab and sort state.
  * @param {string} activeTab
  * @param {string|null} sortColumn
@@ -163,7 +175,7 @@ export function renderTableRows(items, activeTab) {
             ${escapeHtml(item.name)}
           </td>
           <td class="py-2.5 px-4 font-mono text-xs">
-            <a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer" 
+            <a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(urlMeta(item))}"
                class="text-zinc-700 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white hover:underline break-all inline-flex items-center gap-1 font-normal">
               ${escapeHtml(item.url)}
             </a>
@@ -202,7 +214,7 @@ export function renderTableRows(items, activeTab) {
           <td class="py-2.5 px-4 font-mono text-xs">
             ${
               item.url
-                ? `<a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer" 
+                ? `<a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(urlMeta(item))}"
                       class="text-zinc-700 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white hover:underline break-all inline-flex items-center gap-1 font-normal">
                      ${escapeHtml(item.url)}
                    </a>`
