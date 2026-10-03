@@ -106,6 +106,9 @@ def log_result(result: CheckResult, source: Source) -> None:
     log.info("%s %s (%s) %s", result.status, source.name, source.url, result.info)
 
 
+DEFAULT_SOURCES_PATH = Path("build/sources.json")
+
+
 async def fetch_sources() -> list[Source]:
     async with aiohttp.ClientSession(connector=create_connector()) as session:
         log.info("Fetching repository index from %s", REPO_INDEX_URL)
@@ -114,8 +117,39 @@ async def fetch_sources() -> list[Source]:
     return extract_sources(index)
 
 
-async def get_shards_cli(chunk_size: int = 100) -> None:
+async def load_sources(path: Path | None = None) -> list[Source]:
+    """Load the source list from a cached JSON file, else fetch it fresh.
+
+    detect dumps the list once and shards read it back, so every shard sees the
+    same sources even if index.pb changes mid-run.
+
+    Returns:
+        The source list, either cached or freshly fetched.
+    """
+    if path is not None and await path.exists():
+        log.info("Loading sources from %s", path)
+        payload = json.loads(await path.read_text(encoding="utf-8"))
+        return [Source(item["name"], item["url"]) for item in payload]
+    return await fetch_sources()
+
+
+async def dump_sources_cli(path: Path = DEFAULT_SOURCES_PATH) -> None:
     sources = await fetch_sources()
+    await path.parent.mkdir(parents=True, exist_ok=True)
+    await path.write_text(
+        json.dumps([{"name": s.name, "url": s.url} for s in sources], indent=2),
+        encoding="utf-8",
+    )
+    log.info("Wrote %d sources to %s", len(sources), path)
+
+
+def _sources_path_from_env() -> Path | None:
+    value = os.getenv("SOURCES_FILE")
+    return Path(value) if value else None
+
+
+async def get_shards_cli(chunk_size: int = 100) -> None:
+    sources = await load_sources(_sources_path_from_env())
     total_sources = len(sources)
     total_shards = max(1, math.ceil(total_sources / chunk_size))
     payload = {
@@ -179,7 +213,7 @@ async def merge_shards(
 
 
 async def main() -> None:
-    sources = await fetch_sources()
+    sources = await load_sources(_sources_path_from_env())
     total_sources = len(sources)
 
     shard_index = int(os.getenv("SHARD_INDEX", "0"))
@@ -252,6 +286,9 @@ if __name__ == "__main__":
     if args and args[0] == "--get-shards":
         chunk_size = int(args[1]) if len(args) > 1 else 100
         asyncio.run(get_shards_cli(chunk_size))
+    elif args and args[0] == "--dump-sources":
+        path = Path(args[1]) if len(args) > 1 else DEFAULT_SOURCES_PATH
+        asyncio.run(dump_sources_cli(path))
     elif args and args[0] == "--merge":
         output = Path(args[1]) if len(args) > 1 else DEFAULT_EXTENSIONS_JSON
         shards = Path(args[2]) if args[2:] else DEFAULT_SHARDS_DIR
