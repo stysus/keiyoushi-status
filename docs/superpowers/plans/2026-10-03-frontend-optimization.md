@@ -689,3 +689,19 @@ git commit -m "refactor(web): extract overview module and pagination math; dedup
 **Placeholder scan:** no `TBD`/"handle edge cases" steps; every step names a file and a concrete change.
 
 **Proportion:** five tasks, one per spec phase; code blocks are config values and test bodies the implementer cannot derive, not full implementations.
+
+---
+
+## CI cadence (revised after execution)
+
+The original "CI green between phases" rule was replaced to avoid spending Actions
+minutes on every intermediate commit:
+
+- Work is done on a short-lived branch (e.g. `chore/frontend-minors`).
+- The workflow triggers only on `push` to `main`, so branch pushes run **no** CI.
+- When the work is final, the branch is rebased onto `main` and merged; that single
+  `main` push runs CI once for the whole batch.
+- `workflow_dispatch` remains available for a manual run; the scheduled cron is unchanged.
+
+Post-review minor findings (sort focus, `theme-color`, tabpanel label, link hardening,
+`<noscript>` loading state) were fixed under this cadence.
