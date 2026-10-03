@@ -1,7 +1,7 @@
 {
   "total": 125,
   "matched": 123,
-  "timestamp": "2026-10-03T09:08:09+00:00",
+  "timestamp": "2026-10-03T09:15:41+00:00",
   "results": [
     {
       "number": 19621,
@@ -90,7 +90,7 @@
       "source_name": "Gölge Bahçesi",
       "matches": [
         {
-          "status": "ok",
+          "status": "error",
           "name": "Gölge Bahçesi",
           "url": "https://golgebahcesi.com",
           "score": 100.0,
@@ -851,7 +851,7 @@
       "source_name": "Gölge Bahçesi",
       "matches": [
         {
-          "status": "ok",
+          "status": "error",
           "name": "Gölge Bahçesi",
           "url": "https://golgebahcesi.com",
           "score": 100.0,
