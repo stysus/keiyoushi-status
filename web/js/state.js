@@ -202,3 +202,32 @@ export function resetStateFilters() {
   state.sortColumn = null;
   state.sortDirection = 'asc';
 }
+
+const VALID_TABS = new Set(['extensions', 'issues', 'map']);
+
+/**
+ * Seeds state from the URL query (?tab=&q=&status=) so a filtered view is
+ * shareable and survives a reload. Unknown values are ignored.
+ */
+export function readStateFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const tab = params.get('tab');
+  if (tab && VALID_TABS.has(tab)) state.activeTab = tab;
+  const status = params.get('status');
+  if (status && (status === 'all' || STATUS_CONFIG[status])) state.filterStatus = status;
+  const q = params.get('q');
+  if (q) state.searchQuery = q;
+}
+
+/**
+ * Mirrors the shareable state (tab, query, status) back into the URL.
+ * Uses replaceState so typing/filtering does not flood browser history.
+ */
+export function writeStateToUrl() {
+  const params = new URLSearchParams();
+  if (state.activeTab !== 'extensions') params.set('tab', state.activeTab);
+  if (state.searchQuery.trim()) params.set('q', state.searchQuery);
+  if (state.filterStatus !== 'all') params.set('status', state.filterStatus);
+  const qs = params.toString();
+  window.history.replaceState(null, '', `${window.location.pathname}${qs ? `?${qs}` : ''}`);
+}

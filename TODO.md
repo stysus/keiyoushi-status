@@ -99,9 +99,9 @@ Kerja bertahap. Centang saat selesai. `[ ]` belum, `[x]` selesai.
 - [x] Selftest: hari baseline yang sudah rusak tak lagi menyembunyikan collapse nyata; recovery wajar tak memicu alarm
 - [x] Terverifikasi: median op share 0.8311, guard lolos pada data 1530 baris
 
-### UX opsional (tanya dulu)
-- [ ] Auto-refresh + indikator umur data
-- [ ] Deep-link state ke URL (`?tab=&q=&status=`)
+### UX opsional
+- [x] Deep-link state ke URL (`?tab=&q=&status=`) — seed saat init, tulis via `replaceState` (debounced); terverifikasi di browser
+- [ ] Auto-refresh + indikator umur data (versi hemat: timer umur 60s + refetch saat `visibilitychange`)
 
 ### Skip
 - ~~Virtualisasi tabel~~ — 1530 baris lancar.

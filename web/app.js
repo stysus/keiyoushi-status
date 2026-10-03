@@ -2,7 +2,7 @@ import { initTheme } from './js/theme.js';
 import { formatRelativeTime, debounce, copyTextToClipboard } from './js/utils.js';
 import { renderFilterChips, renderPaginationButtons, renderSparkline, showToast } from './js/components.js';
 import { renderTableHead, renderTableRows } from './js/table.js';
-import { state, loadData, getProcessedItems, toggleSortColumn, resetStateFilters } from './js/state.js';
+import { state, loadData, getProcessedItems, toggleSortColumn, resetStateFilters, readStateFromUrl, writeStateToUrl } from './js/state.js';
 import { exportFilteredData } from './js/export.js';
 import { getTierCategory } from './js/config.js';
 
@@ -225,15 +225,7 @@ async function renderActiveTab() {
 // -------------------------------------------------------------
 // Tab Switching
 // -------------------------------------------------------------
-function switchTab(targetTab) {
-  if (state.activeTab === targetTab) return;
-
-  state.activeTab = targetTab;
-  state.filterStatus = 'all';
-  state.currentPage = 1;
-  state.sortColumn = null;
-  state.sortDirection = 'asc';
-
+function applyTabStyles(targetTab) {
   el.tabBtns.forEach((btn) => {
     const isTarget = btn.dataset.tab === targetTab;
     if (isTarget) {
@@ -254,7 +246,19 @@ function switchTab(targetTab) {
       }
     }
   });
+}
 
+function switchTab(targetTab) {
+  if (state.activeTab === targetTab) return;
+
+  state.activeTab = targetTab;
+  state.filterStatus = 'all';
+  state.currentPage = 1;
+  state.sortColumn = null;
+  state.sortDirection = 'asc';
+
+  applyTabStyles(targetTab);
+  writeStateToUrl();
   renderActiveTab();
 }
 
@@ -270,6 +274,7 @@ function setupEvents() {
   // 2. Search Input with Debounce
   const debouncedSearch = debounce(() => {
     state.currentPage = 1;
+    writeStateToUrl();
     renderActiveTab();
   }, 120);
 
@@ -284,6 +289,7 @@ function setupEvents() {
     state.searchQuery = '';
     el.clearSearchBtn.classList.add('hidden');
     state.currentPage = 1;
+    writeStateToUrl();
     renderActiveTab();
   });
 
@@ -301,6 +307,7 @@ function setupEvents() {
     const s = chip.dataset.status;
     state.filterStatus = state.filterStatus === s ? 'all' : s;
     state.currentPage = 1;
+    writeStateToUrl();
     renderActiveTab();
   });
 
@@ -347,6 +354,7 @@ function setupEvents() {
     resetStateFilters();
     el.searchInput.value = '';
     el.clearSearchBtn.classList.add('hidden');
+    writeStateToUrl();
     renderActiveTab();
   });
 
@@ -395,6 +403,10 @@ function setupEvents() {
 // -------------------------------------------------------------
 function initApp() {
   initTheme(el.themeToggle, el.sunIcon, el.moonIcon);
+  readStateFromUrl();
+  applyTabStyles(state.activeTab);
+  el.searchInput.value = state.searchQuery;
+  el.clearSearchBtn.classList.toggle('hidden', !state.searchQuery);
   setupEvents();
   renderActiveTab();
   updateTrend();
