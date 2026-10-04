@@ -1,8 +1,42 @@
 {
-  "total": 121,
-  "matched": 119,
-  "timestamp": "2026-10-04T03:25:03+00:00",
+  "total": 123,
+  "matched": 121,
+  "timestamp": "2026-10-04T08:53:53+00:00",
   "results": [
+    {
+      "number": 19649,
+      "title": "MangaFreak \"Latest\" not refreshing",
+      "source_name": "Mangafreak",
+      "matches": [
+        {
+          "status": "ok",
+          "name": "Mangafreak",
+          "url": "https://ww3.mangafreak.me",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19648,
+      "title": "Manga Ball Source Search Does Not Work",
+      "source_name": "Manga Ball",
+      "matches": [
+        {
+          "status": "blocked",
+          "name": "Manga Ball",
+          "url": "https://mangaball.com",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
     {
       "number": 19644,
       "title": "Raijin Scans (FR)",
@@ -177,7 +211,7 @@
       "source_name": "Temple Scan",
       "matches": [
         {
-          "status": "ok",
+          "status": "warning",
           "name": "Temple Scan",
           "url": "https://aedexnox.akan01.com",
           "score": 100.0,
