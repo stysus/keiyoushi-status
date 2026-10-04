@@ -1,8 +1,57 @@
 {
-  "total": 127,
-  "matched": 125,
-  "timestamp": "2026-10-03T10:08:53+00:00",
+  "total": 121,
+  "matched": 119,
+  "timestamp": "2026-10-04T03:25:03+00:00",
   "results": [
+    {
+      "number": 19644,
+      "title": "Raijin Scans (FR)",
+      "source_name": "Raijin Scans",
+      "matches": [
+        {
+          "status": "redirect",
+          "name": "Raijin Scans",
+          "url": "https://raijin-scans.fr",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19640,
+      "title": "MikoRoku : Some of titles have a chapter, but can't show the list",
+      "source_name": "MikoRoku",
+      "matches": [
+        {
+          "status": "ok",
+          "name": "MikoRoku",
+          "url": "https://mikoroku.com",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19634,
+      "title": "Kawaiimanga (AR)",
+      "source_name": "Kawaiimanga",
+      "matches": [
+        {
+          "status": "ok",
+          "name": "Kawii Manga",
+          "url": "https://kawaiimanga.org",
+          "score": 90.9,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
     {
       "number": 19624,
       "title": "Despair Manga: URL changed",
@@ -28,38 +77,6 @@
           "status": "ok",
           "name": "Kawii Manga",
           "url": "https://kawaiimanga.org",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19621,
-      "title": "Comix",
-      "source_name": "Comix",
-      "matches": [
-        {
-          "status": "iuam",
-          "name": "Comix",
-          "url": "https://comix.to",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19608,
-      "title": "Bakai: `No pages found`  error when opening chapters",
-      "source_name": "Bakai",
-      "matches": [
-        {
-          "status": "not_found",
-          "name": "Bakai",
-          "url": "https://bakai.org",
           "score": 100.0,
           "methods": [
             "gh:body→extName"
@@ -133,38 +150,6 @@
       ]
     },
     {
-      "number": 19594,
-      "title": "Damconuong: api not found",
-      "source_name": "Damconuong",
-      "matches": [
-        {
-          "status": "redirect",
-          "name": "DamCoNuong",
-          "url": "https://damconuong.name",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19593,
-      "title": "[eBookRenta] Not possible to read/download purchased chapters in app, possible only in WebView. Error: \"Log in via WebView and purchase this chapter to read\"",
-      "source_name": "eBookRenta",
-      "matches": [
-        {
-          "status": "ok",
-          "name": "EbookRenta",
-          "url": "https://www.ebookrenta.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 19576,
       "title": "VoraToon: HTTP 403 error / check website in WebView",
       "source_name": "Voratoon",
@@ -185,24 +170,6 @@
       "title": "Source request (EN): NovelCrow (orphaned/previously down)",
       "source_name": "Novelcrow",
       "matches": []
-    },
-    {
-      "number": 19571,
-      "title": "VoraToon New Domain Again after servers down",
-      "source_name": "VoraToon",
-      "matches": [
-        {
-          "status": "ok",
-          "name": "VoraToon",
-          "url": "https://v5.voratoon.com",
-          "score": 100.0,
-          "methods": [
-            "url",
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
     },
     {
       "number": 19549,
@@ -415,23 +382,6 @@
           "status": "ok",
           "name": "Point Zero Toons",
           "url": "https://kitsuneyako.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19143,
-      "title": "Url change report(manhwaz)",
-      "source_name": "Manhwaz",
-      "matches": [
-        {
-          "status": "dns_error",
-          "name": "ManhwaZ",
-          "url": "https://manhwaz.com",
           "score": 100.0,
           "methods": [
             "gh:body→extName",
@@ -1497,22 +1447,6 @@
       ]
     },
     {
-      "number": 15824,
-      "title": "MikoRoku: `Unexpected JSON token` error",
-      "source_name": "MikoRoku",
-      "matches": [
-        {
-          "status": "redirect",
-          "name": "MikoRoku",
-          "url": "https://www.mikoroku.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 15751,
       "title": "Tempest Scans (Turkish) New URL",
       "source_name": "Tempest Scans",
@@ -1593,23 +1527,6 @@
       ]
     },
     {
-      "number": 14508,
-      "title": "Mikoroku: New website URL (`mikoroku.com`)",
-      "source_name": "MikoRoku",
-      "matches": [
-        {
-          "status": "redirect",
-          "name": "MikoRoku",
-          "url": "https://www.mikoroku.com",
-          "score": 100.0,
-          "methods": [
-            "url",
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 14354,
       "title": "巴卡漫画无法通过人机验证",
       "source_name": "巴卡漫画",
@@ -1618,22 +1535,6 @@
           "status": "iuam",
           "name": "巴卡漫画",
           "url": "https://bakamh.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 14316,
-      "title": "MikoRoku: `NXDOMAIN`, `NullPointerException` error",
-      "source_name": "MikoRoku",
-      "matches": [
-        {
-          "status": "redirect",
-          "name": "MikoRoku",
-          "url": "https://www.mikoroku.com",
           "score": 100.0,
           "methods": [
             "gh:body→extName"
