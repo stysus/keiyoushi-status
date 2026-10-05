@@ -1,17 +1,17 @@
 {
-  "total": 123,
-  "matched": 121,
-  "timestamp": "2026-10-04T08:53:53+00:00",
+  "total": 116,
+  "matched": 114,
+  "timestamp": "2026-10-05T15:11:02+00:00",
   "results": [
     {
-      "number": 19649,
-      "title": "MangaFreak \"Latest\" not refreshing",
-      "source_name": "Mangafreak",
+      "number": 19678,
+      "title": "Emperor scan doesn't show the caps",
+      "source_name": "Emperor scan",
       "matches": [
         {
-          "status": "ok",
-          "name": "Mangafreak",
-          "url": "https://ww3.mangafreak.me",
+          "status": "redirect",
+          "name": "Emperor Scan",
+          "url": "https://imperiomanhua.com",
           "score": 100.0,
           "methods": [
             "gh:body→extName",
@@ -21,14 +21,102 @@
       ]
     },
     {
-      "number": 19648,
-      "title": "Manga Ball Source Search Does Not Work",
-      "source_name": "Manga Ball",
+      "number": 19676,
+      "title": "Incomplete list in some works orckumangas",
+      "source_name": "Orckumangas",
+      "matches": []
+    },
+    {
+      "number": 19674,
+      "title": "Hentaihere \"No Result Found\"",
+      "source_name": "Hentaihere",
+      "matches": [
+        {
+          "status": "ok",
+          "name": "HentaiHere",
+          "url": "https://hentaihere.com",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19672,
+      "title": "Dilar: `Unsupported encryption protocol version: 13`",
+      "source_name": "Dilar",
+      "matches": [
+        {
+          "status": "ok",
+          "name": "Dilar",
+          "url": "https://dilar.tube",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19671,
+      "title": "Unsupported Reader Signer Build",
+      "source_name": "The Blank",
       "matches": [
         {
           "status": "blocked",
-          "name": "Manga Ball",
-          "url": "https://mangaball.com",
+          "name": "The Blank",
+          "url": "https://theblank.net",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19670,
+      "title": "Mangolibreria not loading cover and error 404",
+      "source_name": "Mangolibreria",
+      "matches": [
+        {
+          "status": "iuam",
+          "name": "MangoLibreria",
+          "url": "https://lectorfenix.com",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19662,
+      "title": "Nexus Scanlation chapters not loading",
+      "source_name": "NexusScanlation",
+      "matches": [
+        {
+          "status": "redirect",
+          "name": "NexusScanlation",
+          "url": "https://nexusscanlation.com",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19656,
+      "title": "GoodToon Mass Migration Bug",
+      "source_name": "GoodToon",
+      "matches": [
+        {
+          "status": "redirect",
+          "name": "GoodToon",
+          "url": "https://www.goodtoon005.com",
           "score": 100.0,
           "methods": [
             "gh:body→extName",
@@ -50,70 +138,6 @@
           "methods": [
             "gh:body→extName",
             "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19640,
-      "title": "MikoRoku : Some of titles have a chapter, but can't show the list",
-      "source_name": "MikoRoku",
-      "matches": [
-        {
-          "status": "ok",
-          "name": "MikoRoku",
-          "url": "https://mikoroku.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19634,
-      "title": "Kawaiimanga (AR)",
-      "source_name": "Kawaiimanga",
-      "matches": [
-        {
-          "status": "ok",
-          "name": "Kawii Manga",
-          "url": "https://kawaiimanga.org",
-          "score": 90.9,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19624,
-      "title": "Despair Manga: URL changed",
-      "source_name": "Despair Manga",
-      "matches": [
-        {
-          "status": "redirect",
-          "name": "Despair Manga",
-          "url": "https://despair-manga.net",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19623,
-      "title": "Kawii Manga: HTTP error 404 - sections don't appear and it doesn't work",
-      "source_name": "Kawii Manga",
-      "matches": [
-        {
-          "status": "ok",
-          "name": "Kawii Manga",
-          "url": "https://kawaiimanga.org",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
           ]
         }
       ]
@@ -189,35 +213,12 @@
       "source_name": "Voratoon",
       "matches": [
         {
-          "status": "ok",
+          "status": "redirect",
           "name": "VoraToon",
           "url": "https://v5.voratoon.com",
           "score": 100.0,
           "methods": [
             "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19575,
-      "title": "Source request (EN): NovelCrow (orphaned/previously down)",
-      "source_name": "Novelcrow",
-      "matches": []
-    },
-    {
-      "number": 19549,
-      "title": "Temple Scan still displays error: IllegalStateException: Could not determine the site's RSC field-key salt",
-      "source_name": "Temple Scan",
-      "matches": [
-        {
-          "status": "warning",
-          "name": "Temple Scan",
-          "url": "https://aedexnox.akan01.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
           ]
         }
       ]
@@ -235,32 +236,6 @@
           "methods": [
             "gh:body→extName",
             "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19510,
-      "title": "mangadex extension throws \"handshake failed\" in Mihon Nightly r7916 and above",
-      "source_name": "MangaDex",
-      "matches": [
-        {
-          "status": "ok",
-          "name": "MangaDex",
-          "url": "https://mangadex.org",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        },
-        {
-          "status": "ok",
-          "name": "MangaDE",
-          "url": "https://mangade.io",
-          "score": 93.3,
-          "methods": [
-            "gh:body→extName"
           ]
         }
       ]
@@ -420,55 +395,6 @@
           "methods": [
             "gh:body→extName",
             "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19137,
-      "title": "The Blank - Attestation refused",
-      "source_name": "The Blank",
-      "matches": [
-        {
-          "status": "blocked",
-          "name": "The Blank",
-          "url": "https://theblank.net",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19127,
-      "title": "Epsilon scan Attestation Refused",
-      "source_name": "Epsilon Scan",
-      "matches": [
-        {
-          "status": "blocked",
-          "name": "Epsilon Scan",
-          "url": "https://epsilonscan.to",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19126,
-      "title": "Madara Scans: One result in Browse, `No chapters found` error / no series details",
-      "source_name": "Madara Scans",
-      "matches": [
-        {
-          "status": "redirect",
-          "name": "Madara Scans",
-          "url": "https://madarascans.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
           ]
         }
       ]
@@ -878,22 +804,6 @@
       ]
     },
     {
-      "number": 18032,
-      "title": "Blackout Comics: `Search Json Error`",
-      "source_name": "Blackout Comics",
-      "matches": [
-        {
-          "status": "blocked",
-          "name": "Blackout Comics",
-          "url": "https://blackoutcomics.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 18022,
       "title": "ONF MANGAS failure",
       "source_name": "ONF MANGAS",
@@ -1054,23 +964,6 @@
           "score": 100.0,
           "methods": [
             "url",
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 17781,
-      "title": "Mangolibreria Error ",
-      "source_name": "MangoLibreria",
-      "matches": [
-        {
-          "status": "dns_error",
-          "name": "MangoLibreria",
-          "url": "https://mangolibreria.com",
-          "score": 100.0,
-          "methods": [
             "gh:body→extName",
             "gh:title→extName"
           ]
@@ -1360,22 +1253,6 @@
           "score": 100.0,
           "methods": [
             "url",
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 16551,
-      "title": "Manga168: No chapters found",
-      "source_name": "Manga168",
-      "matches": [
-        {
-          "status": "error",
-          "name": "Manga168",
-          "url": "https://manga1688.com",
-          "score": 100.0,
-          "methods": [
             "gh:body→extName"
           ]
         }
@@ -2020,7 +1897,7 @@
       "source_name": "vomic",
       "matches": [
         {
-          "status": "ok",
+          "status": "warning",
           "name": "vomic",
           "url": "https://www.vomicmh.com",
           "score": 100.0,
