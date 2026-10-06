@@ -1,8 +1,43 @@
 {
-  "total": 116,
-  "matched": 114,
-  "timestamp": "2026-10-05T15:11:02+00:00",
+  "total": 113,
+  "matched": 111,
+  "timestamp": "2026-10-06T10:28:29+00:00",
   "results": [
+    {
+      "number": 19690,
+      "title": "Ikiru change domain",
+      "source_name": "Ikiru",
+      "matches": [
+        {
+          "status": "redirect",
+          "name": "Ikiru",
+          "url": "https://08.ikiru.wtf",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19681,
+      "title": "Extension \"ManhwaWeb\": 404 Error",
+      "source_name": "ManhwaWeb",
+      "matches": [
+        {
+          "status": "ok",
+          "name": "ManhwaWeb",
+          "url": "https://manhwaweb.com",
+          "score": 100.0,
+          "methods": [
+            "url",
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
     {
       "number": 19678,
       "title": "Emperor scan doesn't show the caps",
@@ -25,39 +60,6 @@
       "title": "Incomplete list in some works orckumangas",
       "source_name": "Orckumangas",
       "matches": []
-    },
-    {
-      "number": 19674,
-      "title": "Hentaihere \"No Result Found\"",
-      "source_name": "Hentaihere",
-      "matches": [
-        {
-          "status": "ok",
-          "name": "HentaiHere",
-          "url": "https://hentaihere.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19672,
-      "title": "Dilar: `Unsupported encryption protocol version: 13`",
-      "source_name": "Dilar",
-      "matches": [
-        {
-          "status": "ok",
-          "name": "Dilar",
-          "url": "https://dilar.tube",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
     },
     {
       "number": 19671,
@@ -117,23 +119,6 @@
           "status": "redirect",
           "name": "GoodToon",
           "url": "https://www.goodtoon005.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19644,
-      "title": "Raijin Scans (FR)",
-      "source_name": "Raijin Scans",
-      "matches": [
-        {
-          "status": "redirect",
-          "name": "Raijin Scans",
-          "url": "https://raijin-scans.fr",
           "score": 100.0,
           "methods": [
             "gh:body→extName",
@@ -330,23 +315,6 @@
       ]
     },
     {
-      "number": 19212,
-      "title": "Pawchive posts are all treated as duplicates",
-      "source_name": "Pawchive",
-      "matches": [
-        {
-          "status": "ok",
-          "name": "Pawchive",
-          "url": "https://pawchive.pw",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 19190,
       "title": "KuroMangas: `Sessão recusada pelo site`/`CSRF token mismatch` error",
       "source_name": "Kuromanga",
@@ -378,23 +346,6 @@
           "score": 90.0,
           "methods": [
             "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19173,
-      "title": "A extensão Point Zero Toons não apresenta resultado de pesquisa",
-      "source_name": "Point Zero Toons",
-      "matches": [
-        {
-          "status": "ok",
-          "name": "Point Zero Toons",
-          "url": "https://kitsuneyako.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
           ]
         }
       ]
@@ -1897,7 +1848,7 @@
       "source_name": "vomic",
       "matches": [
         {
-          "status": "warning",
+          "status": "ok",
           "name": "vomic",
           "url": "https://www.vomicmh.com",
           "score": 100.0,
