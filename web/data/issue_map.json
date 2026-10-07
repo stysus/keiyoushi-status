@@ -1,8 +1,81 @@
 {
-  "total": 113,
-  "matched": 111,
-  "timestamp": "2026-10-06T10:28:29+00:00",
+  "total": 118,
+  "matched": 115,
+  "timestamp": "2026-10-07T02:48:14+00:00",
   "results": [
+    {
+      "number": 19713,
+      "title": "绅士漫画拉取图片报错403",
+      "source_name": "绅士漫画",
+      "matches": []
+    },
+    {
+      "number": 19710,
+      "title": "Luna Toons Issue",
+      "source_name": "Luna Toons",
+      "matches": [
+        {
+          "status": "redirect",
+          "name": "Luna Toons",
+          "url": "https://lunatoons.org",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19704,
+      "title": "MangaLib (RU): NullPointerException on Popular/Latest, no titles load",
+      "source_name": "MangaLib",
+      "matches": [
+        {
+          "status": "waf",
+          "name": "MangaLib",
+          "url": "https://mangalib.me",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19701,
+      "title": "No results appear in the recent section submanhwa",
+      "source_name": "Submanhwa",
+      "matches": [
+        {
+          "status": "iuam",
+          "name": "Submanhwa",
+          "url": "https://submanhwa.com",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19698,
+      "title": "Dilar: Unsupported encryption protocol version: 14",
+      "source_name": "Dilar",
+      "matches": [
+        {
+          "status": "ok",
+          "name": "Dilar",
+          "url": "https://dilar.tube",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
     {
       "number": 19690,
       "title": "Ikiru change domain",
@@ -711,7 +784,7 @@
       "source_name": "VCP",
       "matches": [
         {
-          "status": "iuam",
+          "status": "dns_error",
           "name": "VCP",
           "url": "https://vercomicsporno.com",
           "score": 100.0,
