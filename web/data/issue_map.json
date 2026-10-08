@@ -1,8 +1,152 @@
 {
-  "total": 118,
+  "total": 117,
   "matched": 115,
-  "timestamp": "2026-10-07T02:48:14+00:00",
+  "timestamp": "2026-10-08T14:59:30+00:00",
   "results": [
+    {
+      "number": 19746,
+      "title": "Comix 1.6.42 \"Field baseUrl is required\" error preventing chapters from loading",
+      "source_name": "Comix",
+      "matches": [
+        {
+          "status": "blocked",
+          "name": "Comix",
+          "url": "https://comix.to",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19744,
+      "title": "RavenManga",
+      "source_name": "RavenManga",
+      "matches": [
+        {
+          "status": "ok",
+          "name": "RavenManga",
+          "url": "https://raventard.xyz",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19742,
+      "title": "Temple Scan 403 forbidden when tried to accessed",
+      "source_name": "Temple Scan",
+      "matches": [
+        {
+          "status": "ok",
+          "name": "Temple Scan",
+          "url": "https://aedexnox.akan01.com",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19736,
+      "title": "Soft Epsilon Scan : Reader signer bingings not found",
+      "source_name": "Soft Epsilon Scan ver:",
+      "matches": [
+        {
+          "status": "blocked",
+          "name": "Epsilon Scan",
+          "url": "https://epsilonscan.to",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        },
+        {
+          "status": "blocked",
+          "name": "Soft Epsilon Scan",
+          "url": "https://epsilonsoft.to",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19735,
+      "title": "Kodoku Studio has url and site structure changed.",
+      "source_name": "kodokustudio",
+      "matches": [
+        {
+          "status": "redirect",
+          "name": "Kodoku Studio",
+          "url": "https://kodokustudio.com",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19733,
+      "title": "Paradise scans show 404 in app but load normally in webview",
+      "source_name": "Paradise Scans",
+      "matches": [
+        {
+          "status": "ok",
+          "name": "Paradise Scans",
+          "url": "https://paradisescans.com",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19721,
+      "title": "Emperor Scan no carga (cambio de dominio)",
+      "source_name": "Emperor Scan",
+      "matches": [
+        {
+          "status": "redirect",
+          "name": "Emperor Scan",
+          "url": "https://imperiomanhua.com",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19719,
+      "title": "Reader signer bindings not found - The Blank",
+      "source_name": "The Blank",
+      "matches": [
+        {
+          "status": "blocked",
+          "name": "The Blank",
+          "url": "https://theblank.net",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
     {
       "number": 19713,
       "title": "绅士漫画拉取图片报错403",
@@ -39,39 +183,6 @@
           "methods": [
             "gh:body→extName",
             "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19701,
-      "title": "No results appear in the recent section submanhwa",
-      "source_name": "Submanhwa",
-      "matches": [
-        {
-          "status": "iuam",
-          "name": "Submanhwa",
-          "url": "https://submanhwa.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19698,
-      "title": "Dilar: Unsupported encryption protocol version: 14",
-      "source_name": "Dilar",
-      "matches": [
-        {
-          "status": "ok",
-          "name": "Dilar",
-          "url": "https://dilar.tube",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
           ]
         }
       ]
@@ -124,61 +235,6 @@
           "methods": [
             "gh:body→extName",
             "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19676,
-      "title": "Incomplete list in some works orckumangas",
-      "source_name": "Orckumangas",
-      "matches": []
-    },
-    {
-      "number": 19671,
-      "title": "Unsupported Reader Signer Build",
-      "source_name": "The Blank",
-      "matches": [
-        {
-          "status": "blocked",
-          "name": "The Blank",
-          "url": "https://theblank.net",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19670,
-      "title": "Mangolibreria not loading cover and error 404",
-      "source_name": "Mangolibreria",
-      "matches": [
-        {
-          "status": "iuam",
-          "name": "MangoLibreria",
-          "url": "https://lectorfenix.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19662,
-      "title": "Nexus Scanlation chapters not loading",
-      "source_name": "NexusScanlation",
-      "matches": [
-        {
-          "status": "redirect",
-          "name": "NexusScanlation",
-          "url": "https://nexusscanlation.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
           ]
         }
       ]
@@ -258,22 +314,6 @@
           "status": "ok",
           "name": "Gölge Bahçesi",
           "url": "https://golgebahcesi.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19576,
-      "title": "VoraToon: HTTP 403 error / check website in WebView",
-      "source_name": "Voratoon",
-      "matches": [
-        {
-          "status": "redirect",
-          "name": "VoraToon",
-          "url": "https://v5.voratoon.com",
           "score": 100.0,
           "methods": [
             "gh:body→extName"
@@ -369,23 +409,6 @@
       "title": "NyxScans Novels in Series List",
       "source_name": "NyxScans Novels in Series List",
       "matches": []
-    },
-    {
-      "number": 19259,
-      "title": "Error with Leercapitulo extension",
-      "source_name": "Leercapitulo",
-      "matches": [
-        {
-          "status": "ok",
-          "name": "LeerCapitulo",
-          "url": "https://www.leercapitulo.co",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
     },
     {
       "number": 19190,
@@ -662,41 +685,6 @@
       ]
     },
     {
-      "number": 18609,
-      "title": "Komga: Permissions/settings leak with multiple server instances",
-      "source_name": "Komga: Permissions/settings leak with multiple server instances",
-      "matches": [
-        {
-          "status": "error",
-          "name": "Komga",
-          "url": "https://127.0.0.1:25600",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        },
-        {
-          "status": "error",
-          "name": "Komga (2)",
-          "url": "https://127.0.0.1:25600",
-          "score": 100.0,
-          "methods": [
-            "gh:title→extName"
-          ]
-        },
-        {
-          "status": "error",
-          "name": "Komga (3)",
-          "url": "https://127.0.0.1:25600",
-          "score": 100.0,
-          "methods": [
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 18441,
       "title": "RawBaka: `HTTP 400` error",
       "source_name": "Rawbaka",
@@ -784,7 +772,7 @@
       "source_name": "VCP",
       "matches": [
         {
-          "status": "dns_error",
+          "status": "iuam",
           "name": "VCP",
           "url": "https://vercomicsporno.com",
           "score": 100.0,
@@ -2036,7 +2024,7 @@
       "source_name": "Hiveworks Comics",
       "matches": [
         {
-          "status": "ok",
+          "status": "error",
           "name": "Hiveworks Comics",
           "url": "https://hiveworkscomics.com",
           "score": 100.0,
