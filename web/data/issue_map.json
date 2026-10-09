@@ -1,8 +1,73 @@
 {
-  "total": 117,
-  "matched": 115,
-  "timestamp": "2026-10-08T14:59:30+00:00",
+  "total": 119,
+  "matched": 117,
+  "timestamp": "2026-10-09T06:24:28+00:00",
   "results": [
+    {
+      "number": 19766,
+      "title": "Mantrazscan domain change url",
+      "source_name": "Mantraz scan 1.6.",
+      "matches": [
+        {
+          "status": "error",
+          "name": "Mantraz Scan",
+          "url": "https://mantrazscan.co",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19757,
+      "title": "Taurus Fansub: `Expected URL scheme` error when paid chapters is shown",
+      "source_name": "TaurusFansub",
+      "matches": [
+        {
+          "status": "ok",
+          "name": "Taurus Fansub",
+          "url": "https://lectortaurus.com",
+          "score": 100.0,
+          "methods": [
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19756,
+      "title": "Milftoon extension shows \"No results found\"",
+      "source_name": "Milftoon",
+      "matches": [
+        {
+          "status": "ok",
+          "name": "Milftoon",
+          "url": "https://milftoon.xxx",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19754,
+      "title": "Lmtos: Use search filters for Popular, browse/search results are incorrect + only loads first page",
+      "source_name": "Lmtos",
+      "matches": [
+        {
+          "status": "iuam",
+          "name": "Lmtos",
+          "url": "https://lmtos.net",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
     {
       "number": 19746,
       "title": "Comix 1.6.42 \"Field baseUrl is required\" error preventing chapters from loading",
@@ -38,17 +103,16 @@
     },
     {
       "number": 19742,
-      "title": "Temple Scan 403 forbidden when tried to accessed",
+      "title": "Temple Scan: `HTTP 403` error",
       "source_name": "Temple Scan",
       "matches": [
         {
-          "status": "ok",
+          "status": "redirect",
           "name": "Temple Scan",
           "url": "https://aedexnox.akan01.com",
           "score": 100.0,
           "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
+            "gh:body→extName"
           ]
         }
       ]
@@ -273,23 +337,6 @@
       ]
     },
     {
-      "number": 19599,
-      "title": "Fenix Project: Site changed from WordPress/Madara to Phoenix LiveView (needs rewrite)",
-      "source_name": "Fenix Project",
-      "matches": [
-        {
-          "status": "redirect",
-          "name": "Fenix Project",
-          "url": "https://fenixproject.site",
-          "score": 100.0,
-          "methods": [
-            "url",
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
       "number": 19597,
       "title": "The chapter does not exist and never works.",
       "source_name": "Mangatek",
@@ -364,22 +411,6 @@
           "status": "ok",
           "name": "Comikey",
           "url": "https://comikey.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19357,
-      "title": "Shademanga does not display works marked [+18]",
-      "source_name": "Shadow Manga",
-      "matches": [
-        {
-          "status": "iuam",
-          "name": "Shadow Manga",
-          "url": "https://shademanga.com",
           "score": 100.0,
           "methods": [
             "gh:body→extName"
@@ -847,7 +878,7 @@
           ]
         },
         {
-          "status": "ok",
+          "status": "iuam",
           "name": "Mangack",
           "url": "https://mangack.com",
           "score": 92.3,
@@ -1276,7 +1307,7 @@
       "source_name": "Manhwa Scan",
       "matches": [
         {
-          "status": "ok",
+          "status": "error",
           "name": "Mantraz Scan",
           "url": "https://mantrazscan.co",
           "score": 100.0,
@@ -1628,7 +1659,7 @@
           ]
         },
         {
-          "status": "ok",
+          "status": "warning",
           "name": "GocTruyenTranh",
           "url": "https://goctruyentranh.com",
           "score": 90.3,
@@ -2024,7 +2055,7 @@
       "source_name": "Hiveworks Comics",
       "matches": [
         {
-          "status": "error",
+          "status": "ok",
           "name": "Hiveworks Comics",
           "url": "https://hiveworkscomics.com",
           "score": 100.0,
