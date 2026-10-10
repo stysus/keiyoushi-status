@@ -1,8 +1,225 @@
 {
-  "total": 119,
-  "matched": 117,
-  "timestamp": "2026-10-09T06:24:28+00:00",
+  "total": 130,
+  "matched": 126,
+  "timestamp": "2026-10-10T10:08:54+00:00",
   "results": [
+    {
+      "number": 19801,
+      "title": "ManhwaWeb MissingFieldException on new entries",
+      "source_name": "Manhwaweb",
+      "matches": [
+        {
+          "status": "ok",
+          "name": "ManhwaWeb",
+          "url": "https://manhwaweb.com",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19798,
+      "title": "⁠Source shows Unsupported encryption protocol version: 15 error⁠",
+      "source_name": "Dilar",
+      "matches": [
+        {
+          "status": "ok",
+          "name": "Dilar",
+          "url": "https://dilar.tube",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19797,
+      "title": "Traducciones Moonlight error 403 at open mangas",
+      "source_name": "Traducciones Moonlight",
+      "matches": [
+        {
+          "status": "ok",
+          "name": "Traducciones Moonlight",
+          "url": "https://traduccionesmoonlight.com",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19793,
+      "title": "4KHD: Invalid image data when loading full-size images",
+      "source_name": "4KHD",
+      "matches": [
+        {
+          "status": "ok",
+          "name": "4KHD",
+          "url": "https://www.4khd.com",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19790,
+      "title": "Could not find environment bundle",
+      "source_name": "Comix",
+      "matches": [
+        {
+          "status": "ok",
+          "name": "Comix",
+          "url": "https://comix.to",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19786,
+      "title": "((ArabToon)) Domain update and layout changes",
+      "source_name": "ArabToons",
+      "matches": [
+        {
+          "status": "ok",
+          "name": "عرب تونز",
+          "url": "https://arabtoons.net",
+          "score": 100.0,
+          "methods": [
+            "url"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19785,
+      "title": "Some images fail to load but work fine in webview.",
+      "source_name": "Comix",
+      "matches": [
+        {
+          "status": "ok",
+          "name": "Comix",
+          "url": "https://comix.to",
+          "score": 100.0,
+          "methods": [
+            "url",
+            "gh:body→extName"
+          ]
+        },
+        {
+          "status": "ok",
+          "name": "GEDE Comix",
+          "url": "https://gedecomix.com",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19783,
+      "title": "Cambio de url",
+      "source_name": "Templescanesp",
+      "matches": []
+    },
+    {
+      "number": 19778,
+      "title": "data fetching problem",
+      "source_name": "1.6.56 arab toons",
+      "matches": []
+    },
+    {
+      "number": 19777,
+      "title": "HTTP 521 error Damconuong",
+      "source_name": "DamCoNuong",
+      "matches": [
+        {
+          "status": "ok",
+          "name": "DamCoNuong",
+          "url": "https://damconuong.pet",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName",
+            "gh:title→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19775,
+      "title": "Error displaying chapters on catharsisworld",
+      "source_name": "Catharsis world",
+      "matches": [
+        {
+          "status": "ok",
+          "name": "Catharsis World",
+          "url": "https://newcatharsis.dig-it.info",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19774,
+      "title": "Ikiru: HTTP 404, check website in WebView",
+      "source_name": "Ikiru",
+      "matches": [
+        {
+          "status": "ok",
+          "name": "Ikiru",
+          "url": "https://09.ikiru.wtf",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19771,
+      "title": "Cbhentai: reader element not found",
+      "source_name": "CBHentai",
+      "matches": [
+        {
+          "status": "iuam",
+          "name": "CBHentai",
+          "url": "https://2tencb.pro",
+          "score": 100.0,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19769,
+      "title": "Managakalot.fun gives encryption unavailable error on new chapters",
+      "source_name": "mangakalot.fun",
+      "matches": [
+        {
+          "status": "ok",
+          "name": "Mangakakalot.fun",
+          "url": "https://mangakakalot.fun",
+          "score": 93.3,
+          "methods": [
+            "gh:body→extName"
+          ]
+        }
+      ]
+    },
     {
       "number": 19766,
       "title": "Mantrazscan domain change url",
@@ -44,39 +261,6 @@
           "status": "ok",
           "name": "Milftoon",
           "url": "https://milftoon.xxx",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName",
-            "gh:title→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19754,
-      "title": "Lmtos: Use search filters for Popular, browse/search results are incorrect + only loads first page",
-      "source_name": "Lmtos",
-      "matches": [
-        {
-          "status": "iuam",
-          "name": "Lmtos",
-          "url": "https://lmtos.net",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 19746,
-      "title": "Comix 1.6.42 \"Field baseUrl is required\" error preventing chapters from loading",
-      "source_name": "Comix",
-      "matches": [
-        {
-          "status": "blocked",
-          "name": "Comix",
-          "url": "https://comix.to",
           "score": 100.0,
           "methods": [
             "gh:body→extName",
@@ -257,11 +441,12 @@
       "source_name": "Ikiru",
       "matches": [
         {
-          "status": "redirect",
+          "status": "ok",
           "name": "Ikiru",
-          "url": "https://08.ikiru.wtf",
+          "url": "https://09.ikiru.wtf",
           "score": 100.0,
           "methods": [
+            "url",
             "gh:body→extName",
             "gh:title→extName"
           ]
@@ -1122,31 +1307,6 @@
           "name": "Hades Scans",
           "url": "https://hadesscans.com",
           "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        }
-      ]
-    },
-    {
-      "number": 17374,
-      "title": "[FR] Scan-Manga: Broken extension due to hardcoded invalid subdomain",
-      "source_name": "Scan-Manga",
-      "matches": [
-        {
-          "status": "redirect",
-          "name": "Scan-Manga",
-          "url": "https://m.scan-manga.com",
-          "score": 100.0,
-          "methods": [
-            "gh:body→extName"
-          ]
-        },
-        {
-          "status": "blocked",
-          "name": "Manga Can",
-          "url": "https://mangacanblog.com",
-          "score": 94.7,
           "methods": [
             "gh:body→extName"
           ]
